@@ -1,7 +1,7 @@
 
 
 export default {
-    '/': 'index',
+    '/': 'editor',
     // '/about': 'about',
     // '/home': 'home',
 }
