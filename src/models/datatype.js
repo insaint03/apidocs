@@ -65,6 +65,9 @@ export default class Datatype {
     // array basis types
     static get arrays() { return Datatype.all.filter((d)=>d.origin === 'array'); }
 
+    static list(filter) { return Datatype.all.filter(filter || (()=>true)); }
+    static children(basis) { return Datatype.list((d)=>d.basis === basis);}
+
     constructor(name, basistype) {
         this._name = name;
         this._origin = basistype ? basistype : name;
@@ -80,8 +83,10 @@ export default class Datatype {
     rename(value) { this._name = value; }
 
     // basis readonly (direct upper type)
-    get basis() { return Datatype.find(this._basistype || this._origin); }
+    get basis() { return Datatype.find(this._basistype || this.origin); }
+    set basis(value) { this._basistype = value.name; }
     get basistype() { return this._basistype; }
+    set basistype(value) { this._basistype = value; }
     // origin readonly (originated type, primitive)
     get origin() { return Datatype.find(this._origin) || this; }
     get origintype() { return this._origin || this.name; }
@@ -131,8 +136,10 @@ export default class Datatype {
     set samples(value) { this.samples = this.samples.concat([value]) ; }
 
     get is_collection() {
-        return ['array', 'object'].includes(this.origin);
+        return this.is_array || this.is_object;
     }
+    get is_array() { return this.basistype === 'array'; }
+    get is_object() { return this.basistype === 'object'; }
 
     /**
      * items should be array.

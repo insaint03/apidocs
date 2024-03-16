@@ -1,29 +1,30 @@
 <template>
   <v-col :cols="colspan">
-    <v-card :elevation="elevation" @click="focusing = title">
-      <v-card-title>{{ title }}</v-card-title>
-      <template v-if="active">
-        <slot>
-          <v-card-text>
-            {{ title }}
-          </v-card-text>
-        </slot>
-      </template>
-      <slot name="unfocused">
-        <v-list>
-          <v-list-item title="sample#1" />
-          <v-list-item title="sample#2" />
-          <v-list-item title="sample#3" />
-          <v-list-item title="sample#4" />
-        </v-list>
-      </slot>
-      <slot name="actions">
-        <v-card-actions>
-          <v-btn text @click="dialog = true">
-            ADD
-          </v-btn>
-        </v-card-actions>
-      </slot>
+    <v-card :elevation="elevation">
+      <v-card-title @click="set_focus">{{ title }}</v-card-title>
+      <v-container fluid class="ma-0 pa-0">
+      <v-row>
+        <v-col :cols="active?2:12">
+          <slot name="unfocused">
+            <v-list>
+              <v-list-item title="sample#1" />
+              <v-list-item title="sample#2" />
+              <v-list-item title="sample#3" />
+              <v-list-item title="sample#4" />
+            </v-list>
+          </slot>
+        </v-col>
+        <v-col v-if="active">
+          <slot>
+            <v-card-text>
+              {{ title }}
+            </v-card-text>
+          </slot>
+        </v-col>
+      </v-row>
+      </v-container>
+      
+      <slot name="actions" />
     </v-card>
   </v-col>
 </template>
@@ -45,6 +46,12 @@ export default {
     }
   },
   methods: {
+    set_focus() {
+      console.log('set_focus', this.title);
+      if(!this.active) {
+        this.focusing = this.title;
+      }
+    }
   },
   computed: {
     active() {
