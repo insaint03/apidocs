@@ -1,41 +1,31 @@
-# vue3-bolierplate
+# Api Documentation
 
-Vite based vue3-boilerplate template.
-Includes:
- - [x] vue-router
- - [x] vuetify3
- - [x] pinia store
+Build / View (web-based) API Documentation System
+- [ ] editor
+- [ ] viewer
+- [ ] github support
 
-## How to run
+## Editor
+Better, simplified RestAPI builder in advance common templating.
+A document comprised 3 components: parameters, entities, templates.
 
-```bash
-# run preview (default port 8080 @/vite.config.js)
-$ vite
-
-# run preview with port set
-$ vite --port [PORT_NUMBER]
-
-# run unit test
-$ vitest
-```
-
-## Folder Hierarchy
-
- - [ ] **/.github** github actions
- - [x] **/src** main source root, aliased `'@/'`
-   - [x] **./models** data models
-   - [x] **./assets** media & data assets
-   - [x] **./components** common components
-   - [x] **./views** vue-router components and its path fragment
-   - [x] **./plugins** common plugins, including vuetify, vue-router
-   - [x] **./stores** pinia stores
- - [x] **/tests**  test folder, aliased `'%/'` (\*\*.test.\*\* or \*\*.spec.\*\*)
-   - [x] **./models** test for data models
-   - [x] **./components** test for components
-   - [x] **./plugins** test for plugins
-   - [x] **./stores** test store setup
-   
+### Parameters
+A **Parameter** is data schema and/or parameter datatype definition. Which corresponds Parameter/Schema entity at OpenAPI Specification.
+OpenAPI Specification distinct parameter and/or schema to minimize schema migration efforts. Though it makes extra burden on defining data-entry. Here, it either aggregated in a single class, paramters.
+Parameters on the documentation has determined every elements on openAPI specification except placement. 
 
 
-## Licensed
-MIT
+### Entities
+A **Entity** is a request-response tuple/pair. An API design inherited to have - a single response to a request. If it's not, it must be distinct by parameter separation. There it should be an another pair, because parameter is not the same.
+Grouping entities within identical pathes comprises an Endpoint at openAPI spec definition.
+
+### Templates
+**Templates** provide combinatorial manner, which are corresponding Tags at openAPI specification, but also integrates templated i) path syntax ii) method preset and either iii) request/response parameter preset/candidates. Mix & Match templates will ease building multiple entity variations at less-designer-effort.
+
+
+## Viewer
+
+
+
+## Github support
+
