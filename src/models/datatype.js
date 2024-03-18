@@ -70,8 +70,14 @@ export default class Datatype {
 
     constructor(name, basistype) {
         this._name = name;
-        this._origin = basistype ? basistype : name;
-        this._basistype = basistype;
+        if(basistype!=undefined) {
+            let _basis = Datatype.find(basistype, true);
+            this._basistype = _basis.name;
+        } else {
+            this._basistype = name;
+            this._origin = name;
+        }
+        
         
         if(Datatype.find(name, false)) {
             throw new DatatypeDuplication(name);
@@ -88,8 +94,21 @@ export default class Datatype {
     get basistype() { return this._basistype; }
     set basistype(value) { this._basistype = value; }
     // origin readonly (originated type, primitive)
-    get origin() { return Datatype.find(this._origin) || this; }
-    get origintype() { return this._origin || this.name; }
+    get origin() { 
+        return Datatype.find(this.origintype || this.name);
+    }
+    get origintype() { 
+        if(this.name === this.basistype) {
+            return this.name;
+        }
+        // lookup parents
+        let cursor = this.basis;
+        let iterations = 1e3;
+        while(0<iterations-- && cursor._origin == null) {
+            cursor = cursor.basis;
+        }
+        return cursor._origin;
+    }
     get hierarchy() { 
         if(!this._hierarchy) {
             let cursor = this;
@@ -138,8 +157,8 @@ export default class Datatype {
     get is_collection() {
         return this.is_array || this.is_object;
     }
-    get is_array() { return this.basistype === 'array'; }
-    get is_object() { return this.basistype === 'object'; }
+    get is_array() { return this.origintype === 'array'; }
+    get is_object() { return this.origintype === 'object'; }
 
     /**
      * items should be array.
