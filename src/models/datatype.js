@@ -106,10 +106,10 @@ export default class Datatype {
     }
 
     // 
-    get validation() { return this._validation;}
+    get validation() { return this._validation || null; }
     set validation(fn) { 
         // TODO: validation function check
-        this._validation = fn; 
+        this._validation = fn;
     }
 
     is_valid(value) {

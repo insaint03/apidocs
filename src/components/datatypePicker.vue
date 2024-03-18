@@ -1,5 +1,5 @@
 <template>
-  <v-autocomplete v-model="value" :items="items" item-value="name" item-title="name" auto-select-first>
+  <v-autocomplete v-model="value" :items="items" item-value="name" item-title="name" auto-select-first label="basetype">
   </v-autocomplete>
 </template>
 
