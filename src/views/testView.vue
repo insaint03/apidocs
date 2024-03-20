@@ -26,7 +26,7 @@
 </template>
 <script>
 import editorDialog from '@/components/editorDialog.vue';
-import Datatype from '@/models/datatype.js';
+import Parameter from '@/models/parameter.js';
 
 export default {
   name: 'homeView',
@@ -41,7 +41,7 @@ export default {
         { key: 'name', label: 'Name', required: true },
         { key: 'summary', label: 'Summary', required: false },
         { key: 'description', label: 'Description', required: false },
-        { key: 'type', label: 'Type', is: 'datatype-picker', items: Datatype.all, itemTitle: 'name', itemValue: 'name' },
+        { key: 'type', label: 'Type', is: 'parameter-picker', items: Parameter.all, itemTitle: 'name', itemValue: 'name' },
       ],
     }
   }
