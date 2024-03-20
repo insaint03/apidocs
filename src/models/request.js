@@ -1,5 +1,5 @@
 import Message from './message.js';
-import Datatype from './datatype.js';
+import Parameter from './parameter.js';
 
 
 export default class Request extends Message {

@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 
 const tabs = [
-    'datatype',
+    'parameter',
     'entity',
     'template',
 ];
@@ -12,9 +12,7 @@ export const useEditorStore = defineStore('editor', ()=>({
     // focusing tab
     focusing: ref('entity'),
     // current editing data
-    editing: ref({
-        datatype: null,
-        entity: null,
-        template: null,
-    })
+    on_parameter: ref(null),
+    on_entity: ref(null),
+    on_template: ref(null),
 }));

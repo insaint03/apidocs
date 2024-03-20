@@ -1,20 +1,21 @@
-import DatatypeDuplication from "@/exceptions/DatatypeDuplication";
-import DatatypeNotFound from "@/exceptions/DatatypeNotFound";
-import DatatypeNotValid from "@/exceptions/DatatypeNotValid";
+import NameDuplication from "@/exceptions/NameDuplication";
+import ValueNotFound from "@/exceptions/ValueNotFound";
+import InvalidValue from "@/exceptions/InvalidValue";
 
-export default class Datatype {
+export default class Parameter {
+    static _type = 'parameter'
     static _store = [];
     static find(name, must=true) { 
-        const ret = Datatype._store.find((d)=>{ return d.name === name; });
+        const ret = Parameter._store.find((d)=>{ return d.name === name; });
         if(must && !ret) {
-            throw new DatatypeNotFound(name);
+            throw new ValueNotFound(Parameter._type, name);
         }
         return ret;
     }
 
 
     static _initiate(){
-        Datatype._store = [
+        Parameter._store = [
             // foundational
             {name: 'string', basis: null, summary: 'String', validation: (v)=>{ return typeof v === 'string'; }},
             {name: 'number', basis: null, summary: 'Number', validation: (v)=>{ return typeof v === 'number'; }},
@@ -39,7 +40,7 @@ export default class Datatype {
             {name: 'uuid', basis: 'string', summary: 'UUID', desc: 'Universally Unique Identifier', validation: (v)=>/^[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}$/i.test(v)},
             
         ].map((opt)=>{
-            let dt = new Datatype(opt.name, opt.basis);
+            let dt = new Parameter(opt.name, opt.basis);
             dt._is_primitive = true;
             dt.summary = opt.summary;
             dt.description = opt.desc;
@@ -49,53 +50,70 @@ export default class Datatype {
     }
 
     static get all() { 
-        if(Datatype._store.length <= 0) {
-            Datatype._initiate();
+        if(Parameter._store.length <= 0) {
+            Parameter._initiate();
         }
-        return Datatype._store;
+        return Parameter._store;
     }
     // initial primitive types
-    static get primitives() { return Datatype.all.filter((d)=>d.is_primitive); }
+    static get primitives() { return Parameter.all.filter((d)=>d.is_primitive); }
     // types that has origins
-    static get derivatives() { return Datatype.all.filter((d)=>d.basistype!=null); }
+    static get derivatives() { return Parameter.all.filter((d)=>d.basistype!=null); }
     // custom generated types 
-    static get customs() { return Datatype.derivatives.filter((d)=>!d.is_primitive); }
+    static get customs() { return Parameter.derivatives.filter((d)=>!d.is_primitive); }
     // object basis types
-    static get objects() { return Datatype.all.filter((d)=>d.origin === 'object'); }
+    static get objects() { return Parameter.all.filter((d)=>d.origin === 'object'); }
     // array basis types
-    static get arrays() { return Datatype.all.filter((d)=>d.origin === 'array'); }
+    static get arrays() { return Parameter.all.filter((d)=>d.origin === 'array'); }
 
-    static list(filter) { return Datatype.all.filter(filter || (()=>true)); }
-    static children(basis) { return Datatype.list((d)=>d.basis === basis);}
+    static list(filter) { return Parameter.all.filter(filter || (()=>true)); }
+    static children(basis) { return Parameter.list((d)=>d.basis === basis);}
+    static create(prefix, basis='string') {
+        // generate unique name
+        let name = prefix || '';
+        let unique_counter = 0;
+        let max_iteration = 1e2;
+        while(Parameter.name_exists(name) && 0<max_iteration--) {
+            name = `${prefix}${++unique_counter}`;
+        }
+        if(max_iteration <= 0) {
+            name = `${prefix}${Date.now()}`;
+        }
+        return new Parameter(name, basis);
+    }
+    static name_exists(name) { return Parameter.find(name, false) != null; }
 
     constructor(name, basistype) {
-        this._name = name;
+        this.name = name;
         if(basistype!=undefined) {
-            let _basis = Datatype.find(basistype, true);
+            let _basis = Parameter.find(basistype, true);
             this._basistype = _basis.name;
         } else {
             this._basistype = name;
             this._origin = name;
         }
         
-        
-        if(Datatype.find(name, false)) {
-            throw new DatatypeDuplication(name);
-        }
-        Datatype._store.push(this);
+        Parameter._store.push(this);
     }
 
     get name() { return this._name; }
-    rename(value) { this._name = value; }
+    set name(value) { 
+        // name change validation
+        if(Parameter.find(value, false)) {
+            throw new NameDuplication(Parameter._type, value);
+        }
+        this._name = value;
+
+    }
 
     // basis readonly (direct upper type)
-    get basis() { return Datatype.find(this._basistype || this.origin); }
+    get basis() { return Parameter.find(this._basistype || this.origin); }
     set basis(value) { this._basistype = value.name; }
     get basistype() { return this._basistype; }
     set basistype(value) { this._basistype = value; }
     // origin readonly (originated type, primitive)
     get origin() { 
-        return Datatype.find(this.origintype || this.name);
+        return Parameter.find(this.origintype || this.name);
     }
     get origintype() { 
         if(this.name === this.basistype) {
@@ -136,7 +154,7 @@ export default class Datatype {
         return this.hierarchy.reduce((pass, dt)=>{
             const determined = dt.validation(value);
             if(!determined) {
-                throw new DatatypeNotValid(dt.name, `not valid ${value} for ${dt.name}`);
+                throw new InvalidValue(Parameter._type, dt.name, `not valid ${value} for ${dt.name}`);
             }
             return pass && dt.validation(value);
         }, true);
@@ -178,6 +196,6 @@ export default class Datatype {
     }
     // item row generator for object basis types
     static obj_item_row(key, typename, desc=null, required=false, nullable=true, defaults=null) {
-        return {key, type: Datatype.find(typename), desc, required, nullable, defaults};
+        return {key, type: Parameter.find(typename), desc, required, nullable, defaults};
     }
 }

@@ -5,7 +5,7 @@
       <v-list-item title="Preview" @click="show_preview=true" />
     </template>
     <v-row :key="`editor-tab.${focusing}`">
-      <datatype-tab  />
+      <parameter-tab  />
       <entity-tab  />
       <template-tab  />
     </v-row>
@@ -28,8 +28,8 @@ import { useEditorStore } from '@/stores/editor';
 import { useServiceStore } from '@/stores/service';
 
 import basisPage from '@/views/basis.vue';
-import infoForm from '@/components/infoForm.vue';
-import previewForm from '@/components/previewForm.vue';
+import infoForm from '@/components/forms/infoForm.vue';
+import previewForm from '@/components/forms/previewForm.vue';
 
 import tabs from '@/components/editorTabs';
 

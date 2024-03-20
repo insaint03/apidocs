@@ -56,7 +56,6 @@ export default {
   },
   methods: {
     set_focus() {
-      console.log('set_focus', this.title);
       if(!this.active) {
         this.focusing = this.title;
       }

@@ -1,11 +1,11 @@
-import datatypeTab from "./datatypeTab.vue"
+import parameterTab from "./parameterTab.vue"
 import entityTab from "./entityTab.vue"
 import templateTab from "./templateTab.vue"
 
 export default [
     {
-        title: 'datatype',
-        component: datatypeTab,
+        title: 'parameter',
+        component: parameterTab,
     },
     {
         title: 'entity',

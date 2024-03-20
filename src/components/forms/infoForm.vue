@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import formCard from '@/components/formCard.vue';
+import formCard from '@/components/forms/formCard.vue';
 import uiconf from '@/uiconf';
 
 export default {

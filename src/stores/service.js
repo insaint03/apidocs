@@ -4,7 +4,7 @@ import { ref } from "vue";
 
 export const useServiceStore = defineStore('service', ()=>({
     info: ref({}),
-    datatypes: ref([]),
+    parameters: ref([]),
     templates: ref([]),
     entities: ref([]),
 }));
