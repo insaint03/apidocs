@@ -31,6 +31,21 @@ export default {
     editorList,
     requestForm,
   },
+  methods: {
+    select(d) {
+      this.the_entity = d;
+    },
+    add_new() {
+      // this.dialog = true;
+      // let item = Entity.create('entity', 'string');
+      // this.entities.push(item);
+      // this.select(item);
+    },
+    remove() {
+      this.entities = this.entities.filter(dt => dt != this.the_entity);
+      // this.the_entity = null;
+    }
+  },
   computed: {
     the_entity: {
       get() { return this.entities[this.on_entity]; },

@@ -61,10 +61,15 @@ export default class Parameter {
     static get derivatives() { return Parameter.all.filter((d)=>d.basistype!=null); }
     // custom generated types 
     static get customs() { return Parameter.derivatives.filter((d)=>!d.is_primitive); }
+    // custom derivatives
+    static inheriteds(type) { return Parameter.all.filter((d)=>d.origin === type);}
+    
     // object basis types
-    static get objects() { return Parameter.all.filter((d)=>d.origin === 'object'); }
+    static get objects() { return Parameter.inheriteds('object'); }
     // array basis types
-    static get arrays() { return Parameter.all.filter((d)=>d.origin === 'array'); }
+    static get arrays() { return Parameter.inheriteds('array'); }
+    // string basis types
+    static get strings() { return Parameter.inheriteds('string'); }
 
     static list(filter) { return Parameter.all.filter(filter || (()=>true)); }
     static children(basis) { return Parameter.list((d)=>d.basis === basis);}

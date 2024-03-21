@@ -21,16 +21,7 @@
 import Parameter from '@/models/parameter';
 import formCard from './formCard.vue';
 import baseForm from './baseForm.vue';
-
-const parameterFields = [ 
-  { key: 'name', label: 'Name', required: true, cols: 5 },
-  { key: 'basistype', label: 'BaseType', required: true, is: 'parameter-picker', items: Parameter.all, itemTitle: 'name', itemValue: 'name', cols: 6 },
-  { key: 'summary', label: 'Summary', required: true },
-  { key: 'description', label: 'Description', required: false },
-  { key: 'validation', label: 'Validation', required: false },
-  { key: 'items', label: 'Items', required: false },
-  { key: 'samples', label: 'Samples', required: false },
-];
+import fields from '@/fields.js';
 
 export default {
   name: 'parameterForm',
@@ -63,7 +54,7 @@ export default {
   data() {
     return {
       value: this.modelValue,
-      fields: parameterFields,
+      fields: fields.parameters,
     }
   }
 }
