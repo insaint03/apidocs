@@ -1,5 +1,5 @@
 <template>
-  <v-autocomplete v-model="value" 
+  <v-autocomplete v-model="value" v-model:search="search"
     :items="items" item-value="name" item-title="name" 
     auto-select-first close-text
     @keyup.enter="force_update"
@@ -22,11 +22,13 @@ export default {
   },
   methods: {
     force_update() {
-      let name = this.value;
+      let name = this.search;
       console.log('force_update', name);
       if(!Parameter.name_exists(name)) {
         // create new if not exists
-        this.parameters.push(Parameter.create(name, this.expecting));
+        let newtype = Parameter.create(name, this.expecting)
+        this.parameters.push(newtype);
+        this.value = newtype;
       }
     }
   },
@@ -52,6 +54,7 @@ export default {
   },
   data() {
     return {
+      search: null,
     }
   }
 }
