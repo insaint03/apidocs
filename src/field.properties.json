@@ -45,6 +45,7 @@
       "required": false
     },
     "query": {
+      "is": "query-field",
       "required": false
     },
     "cookies": {
@@ -96,11 +97,22 @@
     "response": {}
   },
   "query": {
-    "key": {},
-    "expect": {},
-    "required": {},
-    "default": {},
-    "inherit": {},
+    "key": {
+      "required": true
+    },
+    "expect": {
+      "is": "parameter-picker",
+      "required": true
+    },
+    "required": {
+      "is": "v-checkbox"
+    },
+    "default": {
+
+    },
+    "inherit": {
+      "readonly": true
+    },
     "misc": {}
   },
   "cookie": {
