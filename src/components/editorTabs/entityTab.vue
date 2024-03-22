@@ -4,15 +4,8 @@
       <editor-list v-model="entities" @select="select">
       </editor-list>
     </template>
-    <v-row>
-      <v-col>
-        <request-form v-model="the_entity" :key="`editor-entity.${on_entity}`">
-        </request-form>
-      </v-col>
-      <v-col>
-        <h3>Response</h3>
-      </v-col>
-    </v-row>
+    <entity-form v-model="the_entity" :key="`editor-entity.${on_entity}`">
+    </entity-form>
   </editor-tab>
 </template>
 <script>
@@ -22,14 +15,14 @@ import { useEditorStore } from '@/stores/editor';
 
 import editorTab from '@/components/editorTabs/editorTab.vue';
 import editorList from '@/components/editorList.vue';
-import requestForm from '@/components/forms/requestForm.vue';
+import entityForm from '@/components/forms/entityForm.vue';
 
 export default {
   name: 'entityTab',
   components: {
     editorTab,
     editorList,
-    requestForm,
+    entityForm,
   },
   methods: {
     select(d) {

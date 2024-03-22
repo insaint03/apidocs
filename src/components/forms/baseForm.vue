@@ -14,11 +14,11 @@
 </template>
 
 <script>
-import parameterPicker from '@/components/parameterPicker.vue';
+import inputFields from '@/components/inputFields'
 export default {
   name: 'baseForm',
   components: {
-    parameterPicker,
+    ...inputFields,
   },
   props: {
     fields: {

@@ -1,0 +1,121 @@
+{
+  "parameters": {
+    "name": {
+      "required": true,
+      "cols": 4
+    },
+    "basistype": {
+      "required": true,
+      "is": "parameter-picker",
+      "cols": 5
+    },
+    "migrate": {
+      "required": false,
+      "clarable": true,
+      "hint": "Fill schema name to export migration"
+    },
+    "summary": {
+      "required": false
+    },
+    "description": {
+      "required": false
+    },
+    "validation": {
+      "required": false
+    },
+    "items": {
+      "required": false
+    },
+    "samples": {
+      "required": false
+    }
+  },
+  "request": {
+    "method": {
+      "required": true,
+      "is": "http-method-picker"
+    },
+    "path": {
+      "required": true
+    },
+    "summary": {
+      "required": false
+    },
+    "description": {
+      "required": false
+    },
+    "query": {
+      "required": false
+    },
+    "cookies": {
+      "required": false
+    },
+    "headers": {
+      "required": false
+    },
+    "body": {
+      "is": "parameter-picker",
+      "required": false
+    }
+  },
+  "response": {
+    "mimetype": {
+      "required": true,
+      "is": "http-mime-picker"
+    },
+    "status": {
+      "required": true,
+      "is": "http-status-picker"
+    },
+    "summary": {
+      "required": true
+    },
+    "description": {
+      "required": true
+    },
+    "cookies": {
+      "required": true,
+      "is": "v-select"
+    },
+    "headers": {
+      "required": true,
+      "is": "v-select"
+    },
+    "body": {
+      "required": true,
+      "is": "v-select"
+    }
+  },
+  "template": {
+    "name": {},
+    "tag": {},
+    "summary": {},
+    "description": {},
+    "inherit": {},
+    "request": {},
+    "response": {}
+  },
+  "query": {
+    "key": {},
+    "expect": {},
+    "required": {},
+    "default": {},
+    "inherit": {},
+    "misc": {}
+  },
+  "cookie": {
+    "key": {},
+    "expect": {},
+    "required": {},
+    "inherit": {},
+    "misc": {}
+  },
+  "headers": {
+    "key": {},
+    "expect": {},
+    "required": {},
+    "default": {},
+    "inherit": {},
+    "misc": {}
+  }
+}

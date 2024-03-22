@@ -23,7 +23,6 @@ export default {
   methods: {
     force_update() {
       let name = this.search;
-      console.log('force_update', name);
       if(!Parameter.name_exists(name)) {
         // create new if not exists
         let newtype = Parameter.create(name, this.expecting)

@@ -1,5 +1,5 @@
 import Message from './message.js';
-import Parameter from './parameter.js';
+// import Parameter from './parameter.js';
 
 
 export default class Request extends Message {
@@ -45,18 +45,20 @@ export default class Request extends Message {
 
     set path(v) {
         // compare fragments
-        let tokens = v.split('/');
-        tokens.forEach((token, ti)=>{
-            let frag = this._fragments[ti] || null;
+        // let tokens = v.split('/');
+        // tokens.forEach((token, ti)=>{
+        //     let frag = this._fragments[ti] || null;
             
-        })
+        // })
+        this._fragments = v.split('/');
 
     }
 
     get query() {
-        return this.query==null 
-            ? null
-            : `?${Object.entries(this.query).map(([k,v])=>`${k}=${v}`).join('&')}`;
+        return null;
+        // return this.query==null 
+        //     ? null
+        //     : `?${Object.entries(this.query).map(([k,v])=>`${k}=${v}`).join('&')}`;
     }
 
     set query(v) {
