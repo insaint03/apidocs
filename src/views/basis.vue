@@ -1,16 +1,14 @@
 <template>
-  <v-app app>
-    <v-main>
+  <v-app>
+    <v-main scrollable>
     <slot name="appBar">
       <app-bar :title="title">
         <slot name="navigation_menu"></slot>
       </app-bar>
     </slot>
-      <v-container fluid>
-        <slot>
-
-        </slot>
-      </v-container>
+      <v-sheet class="d-flex ma-1 pa-1">
+        <slot />
+      </v-sheet>
     </v-main>
   </v-app>
 </template>

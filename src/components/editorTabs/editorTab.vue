@@ -1,38 +1,38 @@
 <template>
-  <v-col :cols="colspan">
-    <v-card :elevation="elevation">
-      <v-card-title  @click="set_focus">{{ title }}</v-card-title>
-      <v-container fluid class="ma-0 pa-0">
-      <v-row>
-        <v-col :cols="active?2:12">
-          <slot name="unfocused">
-            <v-list>
-              <v-tooltip>
-                <template #activator="{props}">
-                  <v-list-item title="sample#1" v-bind="props" />
-                </template>
-                <v-card>
-                  <v-card-title>sample</v-card-title>
-                  <v-card-subtitle>subtitle</v-card-subtitle>
-                  <v-card-text>text lorem ipsum</v-card-text>
-                </v-card>
-              </v-tooltip>
-              <v-list-item title="sample#2" />
-              <v-list-item title="sample#3" />
-              <v-list-item title="sample#4" />
-            </v-list>
-          </slot>
-        </v-col>
-        <v-col v-if="active">
-          <slot>
-            <v-card-text>
-              {{ title }}
-            </v-card-text>
-          </slot>
-        </v-col>
-      </v-row>
+  <v-col :cols="colspan" class="editor-tabcol">
+    <v-card :elevation="elevation" class="editor-tabcard" @click="set_focus">
+      <v-card-title>{{ title }}</v-card-title>
+      <v-container>
+        <v-row>
+          <v-col :cols="active ? 2 : 12">
+            <slot name="unfocused">
+              <v-list>
+                <v-tooltip>
+                  <template #activator="{ props }">
+                    <v-list-item title="sample#1" v-bind="props" />
+                  </template>
+                  <v-card>
+                    <v-card-title>sample</v-card-title>
+                    <v-card-subtitle>subtitle</v-card-subtitle>
+                    <v-card-text>text lorem ipsum</v-card-text>
+                  </v-card>
+                </v-tooltip>
+                <v-list-item title="sample#2" />
+                <v-list-item title="sample#3" />
+                <v-list-item title="sample#4" />
+              </v-list>
+            </slot>
+          </v-col>
+          <v-col v-if="active">
+            <slot>
+              <v-card-text>
+                {{ title }}
+              </v-card-text>
+            </slot>
+          </v-col>
+        </v-row>
       </v-container>
-      
+
       <slot name="actions" />
     </v-card>
   </v-col>
@@ -56,7 +56,7 @@ export default {
   },
   methods: {
     set_focus() {
-      if(!this.active) {
+      if (!this.active) {
         this.focusing = this.title;
       }
     }
@@ -76,3 +76,21 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.v-col {
+  padding: 0px;
+}
+
+.editor-tabcard {
+  min-height: 75vh;
+}
+
+.editor-tabcard:hover::after {
+  display: none;
+}
+
+.v-row {
+  margin: 0px;
+}
+</style>
