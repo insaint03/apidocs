@@ -4,11 +4,25 @@
       <v-list-item title="Service" @click="show_service=true" />
       <v-list-item title="Preview" @click="show_preview=true" />
     </template>
-    <v-row :key="`editor-tab.${focusing}`">
-      <parameter-tab  />
-      <entity-tab  />
-      <template-tab  />
+    <v-container fluid>
+    <v-row class="ma-0 pa-1" align-content="stretch">
+      <!-- parameter tab -->
+      <editor-list v-model:focusing="focusing" 
+        title="parameters" 
+        :items="parameters" 
+        form="parameter-form" 
+        @add="add_parameter" @select="on_parameter=it.name" />
+      <editor-list v-model:focusing="focusing" 
+        title="entries" 
+        :items="entries"
+        form="entity-form" />
+      <editor-list v-model:focusing="focusing" 
+        title="templates" 
+        :items="templates"
+        form="template-form" />
     </v-row>
+    </v-container>
+
 
     <!-- system info dialog -->
     <v-dialog v-model="show_service" max-width="600">
@@ -23,21 +37,22 @@
 </template>
 
 <script>
-import { mapState, mapWritableState } from 'pinia';
-import { useEditorStore } from '@/stores/editor';
-import { useServiceStore } from '@/stores/service';
+// import {  mapWritableState } from 'pinia';
+// import {  } from '@/stores/editor';
+// import { useServiceStore } from '@/stores/service';
 
 import basisPage from '@/views/basis.vue';
+import editorList from '@/components/editorList.vue';
 import infoForm from '@/components/forms/infoForm.vue';
 import previewForm from '@/components/forms/previewForm.vue';
+import fields from '@/fields';
 
-import tabs from '@/components/editorTabs';
+import Parameter from '@/models/parameter';
 
-// import datatypeTab from '@/components/editorTabs/datatypeTab.vue';
-// import entityTab from '@/components/editorTabs/entityTab.vue';
-// import templateTab from '@/components/editorTabs/templateTab.vue';
-const tabnames = tabs.map(tab => tab.title);
-const tab_components = Object.fromEntries(tabs.map(tab => [`${tab.title}Tab`, tab.component]));
+// import tabs from '@/components/editorTabs';
+
+// const tabnames = tabs.map(tab => tab.title);
+// const tab_components = Object.fromEntries(tabs.map(tab => [`${tab.title}Tab`, tab.component]));
 
 export default {
   name: 'editorPage',
@@ -47,28 +62,49 @@ export default {
     basisPage,
     infoForm,
     previewForm,
+    editorList,
     //
-    ...tab_components,
+    // ...tab_components,
+  },
+  methods: {
+    add_parameter() {
+      this.parameters.push(Parameter.create('param'));
+    },
   },
   props: {
     focused: {type: String, default: ()=>'entry'},
   },
   computed: {
-    ...mapState(useEditorStore, ['tabs', 'focusing']),
-    ...mapWritableState(useServiceStore, {service: 'info'}),
+    // ...mapWritableState(useEditorStore, ['tabs', 'focusing']),
+    // ...mapWritableState(useServiceStore, {service: 'info'}),
   },
   data() {
     return {
+      fields,
+      focusing: 'parameters',
       show_service: false,
       show_preview: false,
       // focusing: this.focused,
       elevation: 2,
-      templates: [],
       parameters: [],
       entries: [],
-      requests: [],
-      responses: [],
+      templates: [],
+      on_parameter: null,
     };
   }
 }
 </script>
+
+<style scoped>
+.v-col {
+  padding-left: 0px;
+  padding-right: 0px;
+
+}
+.v-col:start {
+  padding-left: 4px;
+}
+.v-col:end {
+  padding-right: 4px;
+}
+</style>

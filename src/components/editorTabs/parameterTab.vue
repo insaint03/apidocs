@@ -1,26 +1,23 @@
 <template>
-  <editor-tab title="parameters">
-    <template #unfocused>
-      <editor-list v-model="parameters" @select="select">
-      </editor-list>
+  <editor-tab title="parameters" :items="parameters" :item-index="on_parameter">
+    <template #item="{item, props}">
+      <v-list-item v-bind="props" @click="select(item)">
+        <v-list-item-title>{{ item.name}}</v-list-item-title>
+        <v-list-item-subtitle>{{ item.basis }}</v-list-item-subtitle>
+      </v-list-item>
     </template>
 
-    <!-- default slot, with selection -->
-    <template v-if="the_parameter">
-      <parameter-form v-model="the_parameter" :key="`editor-param.${on_parameter}`" />
+    <template #item-tooltip="{ item }">
     </template>
-    <!-- default slot, on empty selection -->
-    <template v-else>
+
+    <template #editor="{ item }">
+      <parameter-form :modelValue="item" />
+    </template>
+
+    <template #empty>
       <v-card-text @click="add_new">
         Generate New
       </v-card-text>
-    </template>
-
-    <!-- create new -->
-    <template #actions>
-      <v-card-actions>
-        <v-btn @click="add_new">NEW</v-btn>
-      </v-card-actions>
     </template>
   </editor-tab>
 </template>
