@@ -1,6 +1,6 @@
 <template>
-  <v-col cols="2" @click="$emit('update:focusing', title)">
-    <v-card elevation="1">
+  <v-col cols="2">
+    <v-card elevation="1" @click="$emit('update:focusing', title)">
       <v-card-actions>
         <v-btn icon="mdi-plus" @click="$emit('add')"></v-btn>
         <v-spacer />
@@ -12,7 +12,7 @@
           <slot name="item" :item="it" :index="ii">
             <v-tooltip>
               <template #activator="{ props }">
-                <v-list-item slim v-bind="props" @click="editing=it"
+                <v-list-item slim v-bind="props" @click="onclick(it)"
                   :title="it[itemTitle || 'name']" :subtitle="it[itemSubtitle || 'basistype']">
                 </v-list-item>
               </template>
@@ -22,9 +22,6 @@
         </template>
       </v-list>
     </v-card>
-  </v-col>
-  <v-col v-if="focusing===title" cols="6" >
-    <component :is="form" :model-value="editing" />
   </v-col>
 </template>
 
@@ -71,6 +68,7 @@ export default {
   },
   methods: {
     onclick(it) {
+      console.log('on click', it);
       this.$emit('select', it);
     }
   },

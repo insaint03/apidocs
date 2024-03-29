@@ -6,15 +6,21 @@ export default class Parameter {
     static _type = 'parameter'
     static _store = [];
     static find(name, must=true) { 
-        const ret = Parameter._store.find((d)=>{ return d.name === name; });
+        const ret = Parameter.all.find((d)=>d.name === name);
         if(must && !ret) {
             throw new ValueNotFound(Parameter._type, name);
         }
         return ret;
     }
 
+    static get _has_initiated(){
+        return 0<Parameter._store.length;
+    }
 
     static _initiate(){
+        if(0<Parameter._has_initiated) {
+            return;
+        }
         Parameter._store = [
             // foundational
             {name: 'string', basis: null, summary: 'String', validation: (v)=>{ return typeof v === 'string'; }},
@@ -49,10 +55,10 @@ export default class Parameter {
         });
     }
 
-    static get all() { 
-        if(Parameter._store.length <= 0) {
+    static get all() {
+        if(!Parameter._has_initiated) {
             Parameter._initiate();
-        }
+        } 
         return Parameter._store;
     }
     // initial primitive types
@@ -86,10 +92,12 @@ export default class Parameter {
         }
         return new Parameter(name, basis);
     }
-    static name_exists(name) { return Parameter.find(name, false) != null; }
+    static name_exists(name) { 
+        return Parameter.find(name, false) != null; 
+    }
 
     constructor(name, basistype) {
-        this.name = name;
+        this._name = name;
         if(basistype!=undefined) {
             let _basis = Parameter.find(basistype, true);
             this._basistype = _basis.name;

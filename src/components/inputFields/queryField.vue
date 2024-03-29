@@ -14,7 +14,6 @@ export default {
     modelValue: { type: Array, required: false },
   },
   data() {
-    console.log(fields.query);
     return {
       value: this.modelValue || [{}],
       fields: fields.query,
