@@ -4,11 +4,18 @@ import httpPathField from "./httpPathField.vue"
 import HttpMimePicker from "./httpMimePicker.vue"
 import httpStatusPicker from "./httpStatusPicker.vue"
 
+import queryField from "./queryField.vue"
+import tableValues from "./tableValues.vue"
+
 
 export default {
     parameterPicker,
     httpMethodPicker,
     httpPathField,
     HttpMimePicker,
-    httpStatusPicker
+    httpStatusPicker,
+
+    // table values
+    queryField,
+    tableValues,
 }

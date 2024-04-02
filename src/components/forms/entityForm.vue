@@ -6,8 +6,8 @@
     <!-- request form -->
     <v-row>
       <v-col>
-    <base-form v-model="request" :fields="request_fields">
-    </base-form>
+        <base-form v-model="request" :fields="request_fields">
+        </base-form>
       </v-col>
       <v-col>
         <base-form v-model="response" :fields="response_fields">
@@ -18,12 +18,12 @@
 </template>
 
 <script>
-import {mapWritableState} from 'pinia';
+import { mapWritableState } from 'pinia';
 import { useServiceStore } from '@/stores/service';
 import { useEditorStore } from '@/stores/editor';
 
 
-import fields from '@/fields.js' ;
+import fields from '@/fields.js';
 import Request from '@/models/request';
 import Response from '@/models/response';
 

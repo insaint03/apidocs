@@ -1,0 +1,172 @@
+title: OpenMeter API
+version: 1.0.0
+description: |
+    OpenMeter is a cloud native usage metering service.
+    The OpenMeter API allows you to ingest events, query meter usage, and manage resources.
+    ---
+    *Operations with the ☁ (cloud) notation are only available in OpenMeter Cloud.*
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+externalDocs:
+  description: Documentation
+  url: https://openmeter.io/docs
+
+parameters:
+  datetime:
+    basistype: string
+    validation: "(s)=>/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/i.test(s)"
+    description: |
+      The date and time in ISO 8601 format.
+      Example: `2021-01-01T00:00:00Z`
+  event_data:
+    basistype: object
+    items:
+      - key: tokens
+        type: decimal
+        required: true
+      - key: model
+        type: string
+        required: true
+      - key: type
+        type: string
+        required: true
+    samples:
+      - tokens: 1234
+        model: model1
+        type: type1
+      - tokens: 3456
+        model: model2
+        type: type2
+      - tokens: 5678
+        model: model3
+        type: type3
+  event:
+    basistype: object
+    items:
+      id:
+        type: uuid
+        required: true
+      source:
+        type: string
+        required: true
+      specversion:
+        type: string
+        required: true
+      type:
+        type: string
+        required: true
+      subject:
+        type: string
+        required: true
+      time:
+        type: datetime
+      data:
+        type: event_data
+    samples:
+      - id: 123e4567-e89b-12d3-a456-426614174000
+        source: /api/v1/events
+        specversion: 1.0
+        type: event
+        subject: /api/v1/events
+        time: 2021-01-01T00:00:00Z
+      - id: 123e4567-e89b-12d3-a456-426614174001
+        source: /api/v1/events
+        specversion: 1.0
+        type: event
+        subject: /api/v1/events
+        time: 2021-01-01T00:00:01Z
+      - id: 123e4567-e89b-12d3-a456-426614174002
+        source: /api/v1/events
+        specversion: 1.0
+        type: event
+        subject: /api/v1/events
+        time: 2021-01-01T00:00:02Z  
+  events:
+    bsistype: array
+    items: event
+  meter:
+    basistype: object
+    items:
+      id:
+        type: string
+        required: true
+      slug:
+        type: string
+        required: true
+      description:
+        type: string
+        required: true
+entities:
+  - template:
+      - get_events
+      - response_events
+    request:
+      method: GET
+      path: /api/v1/events
+      description: |
+        Get a list of events.
+      query:
+        - key: from
+          type: datetime
+        - key: to
+          type: datetime
+        - key: limit
+          type: integer
+          defaults: 100
+          misc: min 1 step 1 to max 100
+    response:
+      status: 200
+      mimetype: application/json
+      body: events
+  - template:
+      - get_events
+      - response_bad_request
+    request:
+      method: GET
+      path: /api/v1/events
+      query:
+        - key: from
+          type: datetime
+        - key: to
+          type: datetime
+        - key: limit
+          type: integer
+          defaults: 100
+          misc: min 1 step 1 to max 100
+    reponse:
+      status: 400
+      mimetype: application/json
+      body: error
+templates:
+  events:
+    tagname: Events
+    request:
+      path: /api/v1/events
+  get_events:
+    inherit: events
+    request:
+      method: GET
+      path: /api/v1/events
+      query:
+        - key: from
+          type: datetime
+        - key: to
+          type: datetime
+        - key: limit
+          type: integer
+          defaults: 100
+          misc: min 1 step 1 to max 100
+  response_events:
+    response:
+      status: 200
+      mimetype: application/json
+      body: events
+  reponse_bad_request:
+    response:
+      status: 400
+      mimetype: application/json
+      body: error
+  
+
+      

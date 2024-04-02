@@ -21,8 +21,12 @@
 </template>
 
 <script>
+import formCard from '@/components/forms/formCard.vue';
 export default {
   name: 'templateForm',
+  components: {
+    formCard,
+  },
   props: {
     modelValue: {
       type: Object,

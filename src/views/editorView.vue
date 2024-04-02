@@ -1,74 +1,126 @@
 <template>
-  <basis-page title="Editor">
-    <template #navigation_menu>
-      <v-list-item title="Service" @click="show_service=true" />
-      <v-list-item title="Preview" @click="show_preview=true" />
-    </template>
-    <v-row :key="`editor-tab.${focusing}`">
-      <parameter-tab  />
-      <entity-tab  />
-      <template-tab  />
-    </v-row>
-
-    <!-- system info dialog -->
-    <v-dialog v-model="show_service" max-width="600">
-      <info-form v-model:value="service" @close="show_service=false" />
-    </v-dialog>
+  <v-app>
+    <!-- templates tab -->
+    <template-tab />
+    <!-- app bar in center -->
+    <v-app-bar app flat dark density="compact" color="primary">
+      <v-toolbar-title>Editor</v-toolbar-title>
+      <v-spacer />
+      <v-toolbar-items>
+        <v-btn icon @click="toggle_param"><v-icon>mdi-chevron-left</v-icon></v-btn>
+        <v-btn icon @click="toggle_template"><v-icon>mdi-chevron-right</v-icon></v-btn>
+      </v-toolbar-items>
+    </v-app-bar>
+    <!-- parameter tab -->
+    <parameter-tab />
+    <!-- entity tab -->
+    <v-main>
+      <v-container fluid>
+        <!-- service info -->
+        <v-row class="ma-0 pa-1" align-content="stretch">
+          <v-col>
+            <info-form v-model:value="service" />
+          </v-col>
+        </v-row>
+        <!-- entities -->
+        <entity-tab />
+      </v-container>
+    </v-main>
 
     <!-- preview dialog -->
-    <v-dialog v-model="show_preview" fullscreen transition="dialog-bottom-transition">
-      <preview-form v-model="service" @close="show_preview=false"  />
-    </v-dialog>
-  </basis-page>
+  </v-app>
 </template>
 
 <script>
-import { mapState, mapWritableState } from 'pinia';
-import { useEditorStore } from '@/stores/editor';
-import { useServiceStore } from '@/stores/service';
+// import {  mapWritableState } from 'pinia';
+// import {  } from '@/stores/editor';
+// import { useServiceStore } from '@/stores/service';
 
-import basisPage from '@/views/basis.vue';
+// import editorList from '@/components/editorList.vue';
 import infoForm from '@/components/forms/infoForm.vue';
-import previewForm from '@/components/forms/previewForm.vue';
+// import previewForm from '@/components/forms/previewForm.vue';
+import parameterTab from '@/components/editorTabs/parameterTab.vue';
+import templateTab from '@/components/editorTabs/templateTab.vue';
+import entityTab from '@/components/editorTabs/entityTab.vue';
 
-import tabs from '@/components/editorTabs';
+import fields from '@/fields';
 
-// import datatypeTab from '@/components/editorTabs/datatypeTab.vue';
-// import entityTab from '@/components/editorTabs/entityTab.vue';
-// import templateTab from '@/components/editorTabs/templateTab.vue';
-const tabnames = tabs.map(tab => tab.title);
-const tab_components = Object.fromEntries(tabs.map(tab => [`${tab.title}Tab`, tab.component]));
+// import Parameter from '@/models/parameter';
 
 export default {
   name: 'editorPage',
   components: {
-    // templateBar,
-    // editorTab,
-    basisPage,
     infoForm,
-    previewForm,
-    //
-    ...tab_components,
+    parameterTab,
+    entityTab,
+    templateTab,
+  },
+  methods: {
+    toggle_param() {
+      // this.focusing = this.focusing === 'parameters' ? 'entities' : 'parameters';
+    },
+    toggle_template() {
+      // this.focusing = this.focusing === 'templates' ? 'entities' : 'templates';
+    },
+    add_entity(option) {
+      console.log(option);
+      this.entities.push({
+        // request: new Request(option.request),
+        // response: new Response(option.response),
+        // templates: option.templates,
+      });
+    },
+    remove_entities(...ents) {
+      this.entities = this.entities.filter((e) => !ents.includes(e));
+    },
+
+    add_template() {
+      this.templates.push({});
+    },
+    remove_templates(...tmpls) {
+      this.templates = this.templates.filter((t) => !tmpls.includes(t));
+    },
+
   },
   props: {
-    focused: {type: String, default: ()=>'entry'},
+    focused: { type: String, default: () => 'entry' },
   },
   computed: {
-    ...mapState(useEditorStore, ['tabs', 'focusing']),
-    ...mapWritableState(useServiceStore, {service: 'info'}),
+    // ...mapWritableState(useEditorStore, ['tabs', 'focusing']),
+    // ...mapWritableState(useServiceStore, {service: 'info'}),
   },
   data() {
     return {
+      fields,
+      focusing: 'entities',
       show_service: false,
       show_preview: false,
       // focusing: this.focused,
       elevation: 2,
-      templates: [],
+      service: {},
       parameters: [],
-      entries: [],
-      requests: [],
-      responses: [],
+      entities: [],
+      templates: [],
+      on_parameter: null,
+      on_entity: null,
+      on_template: null,
     };
   }
 }
 </script>
+
+<style scoped>
+.v-col {
+  padding-left: 0px;
+  padding-right: 0px;
+
+}
+
+.v-col:start {
+  padding-left: 4px;
+}
+
+.v-col:end {
+  padding-right: 4px;
+}
+</style>

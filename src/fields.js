@@ -7,6 +7,13 @@ import props from "@/field.properties.json";
 
 const common_setting = {};
 const field_keys = {
+  service: [
+    'title',
+    'version',
+    'summary',
+    'description',
+    'urls',
+  ],
   parameters: [
     "name",
     "basistype",
@@ -45,6 +52,7 @@ const field_keys = {
     "request",
     "response",
   ],
+  items: ["required", "key", "datatype", "description"],
   query: ["key", "expect", "required", "default", "inherit", "misc"],
   cookie: ["key", "expect", "required", "inherit", "misc"],
   headers: ["key", "expect", "required", "inherit", "misc"],

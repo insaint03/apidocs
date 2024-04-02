@@ -1,24 +1,14 @@
 <template>
-  <editor-tab title="templates">
-    <template #unfocused>
-      <editor-list v-model="templates" title="templates">
-      </editor-list>
-    </template>
-
-    <!-- default slot-->
-    <template-form v-model="editing.template">
-    </template-form>
-
-    <template #actions>
-      <v-card-actions>
-        <v-btn @click="generate_item">NEW</v-btn>
-      </v-card-actions>
-      <new-dialog title="new template" @submit="add_new" @cancel="add_cancel" v-model="generate">
-        <v-text-field v-model="generate.name" label="Name" required />
-      </new-dialog>
-    </template>
-
-  </editor-tab>
+  <v-navigation-drawer :model-value="true" location="right" :key="`editor-templates.${last_updated}`" permanent>
+    <v-list-subheader>{{ title }}</v-list-subheader>
+    <v-list-item title="Add" append-icon="mdi-plus" @click="generate_item" />
+    <v-divider />
+    <v-tooltip v-for="tmp, ti in templates" :key="`template-${tmp.name}.${ti}`">
+      <template #activator="{props}">
+        <v-list-item v-bind="props" :title="tmp.name" icon="mdi-pencil" @click="the_template = tmp" />
+      </template>
+    </v-tooltip>
+  </v-navigation-drawer>
 </template>
 <script>
 // import Template from '@/models/template';
@@ -53,11 +43,11 @@ export default {
   },
   computed: {
     the_template: {
-      get() { return this.editing.template; },
-      set(v) { this.editing.template = v; },
+      get() { return this.templates[this.on_template]; },
+      set(v) { this.on_template = v.name; },
     },
     ...mapWritableState(useServiceStore, ['templates']),
-    ...mapWritableState(useEditorStore, ['editing']),
+    ...mapWritableState(useEditorStore, ['on_template']),
   },
   data() {
     return {

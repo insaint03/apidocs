@@ -1,32 +1,19 @@
 <template>
-  <form-card>
-    <template #title>
-      <v-toolbar-title>{{ value.name }}</v-toolbar-title>
-      <v-chip color="accent">{{ value.basistype }}</v-chip>
-    </template>
-
-    <base-form v-model="value" :fields="fields">
-      <template #item-items v-if="value.is_array">
-        <v-select v-model="value.items" multiple :items="alltypes" item-title="name" item-value="name" label="item types" placeholder="any"/>
-      </template>
-      <template #item-items v-else-if="value.is_object">
-        <v-data-table :items="value.items" />
-      </template>
-      <template #item-items v-else><v-divider /></template>
-    </base-form>
-  </form-card>
+  <base-form v-model="value" :fields="fields">
+    
+  </base-form>
 </template>
 
 <script>
 import Parameter from '@/models/parameter';
-import formCard from './formCard.vue';
+// import formCard from './formCard.vue';
 import baseForm from './baseForm.vue';
 import fields from '@/fields.js';
 
 export default {
   name: 'parameterForm',
   components: {
-    formCard,
+    // formCard,
     baseForm,
   },
   methods: {
