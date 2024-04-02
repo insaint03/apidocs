@@ -1,57 +1,59 @@
 <template>
-  <v-col :cols="cols">
-    <v-sheet elevation="3" class="d-flex flex-fill flex-stretch" @click="focusing=title">
-      <!-- editor list region (left) -->
-      <v-list lines="one" :opened="[title]" :key="`param-list.${last_updated}`">
-        <!-- add new -->
-        <v-list-subheader>{{ title }}</v-list-subheader>
-        <v-list-item title="Add" subtitle="String" append-icon="mdi-plus" @click="add_new" />
-        <v-divider />
-        <v-list-group :value="title" class="editor-list">
-          <v-list-item v-for="param, pi in parameters" :key="`param-${param.name}.${param.basistype}_${pi}`"
-            :title="param.name" :subtitle="param.basistype" @click="select(param)" />
-        </v-list-group>
-        <v-spacer />
-        <v-divider />
-        <v-list-item title="defaults" @click="select(null)" />
-      </v-list>
-      <!-- editor form (right) -->
-      <v-sheet v-if="activated" class="editor-form">
-        <v-card v-if="selected != null">
-          <v-card-actions>
-            <v-card-title>{{ selected.name }}</v-card-title>
-            <v-card-subtitle>{{ selected.basistype }}</v-card-subtitle>
-            <v-spacer />
-            <v-btn icon><v-icon>mdi-trash</v-icon></v-btn>
-          </v-card-actions>
-          <!-- parameter editor form -->
-          <base-form v-model="selected" :fields="fields" :key="`param-editor.${last_updated}`">
-            <template #item-items="{item}" >
-              <v-select v-if="item.is_array" v-model="item.items" multiple :items="alltypes" item-title="name" item-value="name"
-                label="item types" placeholder="any" />
-              <v-data-table v-else-if="item.is_object" :items="selected.items" />
-              <v-divider v-else />
-            </template>
-          </base-form>
-        </v-card>
-        <v-card v-else>
-          <base-form class="align-self-stretch" v-model="generate" :fields="generate_fields" />
-          <v-card-actions>
-            <v-btn @click="generate={}">Cancel</v-btn>
-            <v-spacer />
-            <v-btn color="primary" @click="add_new">ADD</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-sheet>
-    </v-sheet>
-  </v-col>
+  <v-navigation-drawer :model-value="true" location="left" :key="`editor-parameters.${last_updated}`" permanent>
+    <!-- editor list region (left) -->
+    <v-list-subheader>{{ title }}</v-list-subheader>
+    <v-list-item title="Add" subtitle="String" append-icon="mdi-plus" @click="add_new" />
+    <v-divider />
+    <v-tooltip v-for="param, pi in parameters" :key="`param-${param.name}.${param.basistype}_${pi}`">
+      <template #activator="{props}">
+        <v-list-item v-bind="props" :title="param.name" :subtitle="param.basistype" icon="mdi-pencil" @click="select(param)" />
+      </template>
+      {{ param.name }} [{{ param.basistype }}]
+    </v-tooltip>
+    <v-spacer />
+    <v-divider />
+    <v-tooltip>
+      <template #activator="{ props }">
+        <v-list-item v-bind="props" title="_default" subtitle="" @click="set_defaults=true" />
+      </template>
+      Defaul parameter creation name prefix, and basis type setting.
+    </v-tooltip>
+  </v-navigation-drawer>
+
+  <!-- modal -->
+  <modal-form v-model="selected" v-model:show="edits">
+    <base-form :fields="fields" v-model="selected">
+      <template #item-items>
+        <parameter-picker v-if="selected.is_array" v-model="selected.items" chips multiple />
+        <table-values v-else-if="selected.is_object" v-model="selected.items" :fields="item_fields">
+          <template #value-required="{value}">
+            <v-icon>{{ value ? 'mdi-check' : '' }}</v-icon>
+          </template>
+          <template #item-datatype="{ item }">
+            <parameter-picker v-model="item.datatype" />
+          </template>
+          <template #item-required="{ item }">
+            <v-checkbox v-model="item.required" label="required" />
+          </template>
+        </table-values>
+        <v-divider v-else />
+      </template>
+    </base-form>
+  </modal-form>
+  <modal-form v-model="generate" :fields="generate_fields" v-model:show="set_defaults" />
 </template>
+
 <script>
 import Parameter from '@/models/parameter';
 import { mapWritableState } from 'pinia';
 import { useServiceStore } from '@/stores/service';
 import { useEditorStore } from '@/stores/editor';
+
+import modalForm from '@/components/forms/modalForm.vue';
 import baseForm from '@/components/forms/baseForm.vue';
+import parameterPicker from '@/components/inputFields/parameterPicker.vue';
+import tableValues from '@/components/inputFields/tableValues.vue';
+
 // import editorTab from '@/components/editorTabs/editorTab.vue';
 // import editorList from '@/components/editorList.vue';
 import fields from '@/fields'
@@ -61,7 +63,12 @@ const title = 'parameters';
 export default {
   name: 'parameterTab',
   components: {
+    modalForm,
     baseForm,
+
+    parameterPicker,
+    tableValues,
+
   },
   methods: {
     select(item) {
@@ -70,11 +77,12 @@ export default {
     },
     add_new() {
       let item = Parameter.create(
-        this.generate.name || 'param',
-        this.generate.basis || 'string'
+        this.default_name,
+        this.default_basis,
       );
       this.parameters.push(item);
-      this.select(item);
+      this.last_updated = Date.now();
+      // this.select(item);
     },
     remove() {
       this.parameters = this.parameters.filter(dt => dt != this.the_parameter);
@@ -82,6 +90,9 @@ export default {
     }
   },
   computed: {
+    default_name() { return this.generate.name || 'param'},
+    default_basis() { return this.generate.basis || 'string'},
+
     activated() {
       return this.focusing === title;
     },
@@ -91,17 +102,16 @@ export default {
     alltypes() {
       return Parameter.all;
     },
-    the_parameter: {
-      get() {
-        return Parameter.find(this.on_parameter, false);
-      },
-      set(v) { this.on_parameter = v.name; }
+    edits: {
+      get() { return this.selected != null; },
+      set(v) { if(v===false) { this.selected = null; } },
     },
-    ...mapWritableState(useEditorStore, ['focusing','on_parameter']),
+    ...mapWritableState(useEditorStore, ['focusing', 'on_parameter']),
     ...mapWritableState(useServiceStore, ['parameters']),
   },
   data() {
     return {
+      show: true,
       title,
       fields: fields.parameters,
       selected: null,
@@ -110,8 +120,10 @@ export default {
         basistype: 'string',
       },
       generate_fields: fields.parameters
-        .filter((pf)=>pf.required)
-        .map((pf)=>Object.assign({}, pf, {cols: 12})),
+        .filter((pf) => pf.required)
+        .map((pf) => Object.assign({}, pf, { cols: 12 })),
+      item_fields: fields.items,
+      set_defaults: false,
       last_updated: Date.now(),
       // primitives: Parameter.primitives,
     };
@@ -126,6 +138,7 @@ export default {
   height: 70vh;
   overflow-y: auto;
 }
+
 .editor-form {
   max-width: 50vw;
 }

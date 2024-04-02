@@ -1,32 +1,34 @@
 <template>
-  <basis-page title="Editor">
-    <template #navigation_menu>
-      <v-list-item title="Service" @click="show_service = true" />
-      <v-list-item title="Preview" @click="show_preview = true" />
-    </template>
-    <v-container fluid>
-      <v-row class="ma-0 pa-1" align-content="stretch">
-        <!-- parameter tab -->
-        <parameter-tab />
-
-        <!-- entity tab -->
+  <v-app>
+    <!-- templates tab -->
+    <template-tab />
+    <!-- app bar in center -->
+    <v-app-bar app flat dark density="compact" color="primary">
+      <v-toolbar-title>Editor</v-toolbar-title>
+      <v-spacer />
+      <v-toolbar-items>
+        <v-btn icon @click="toggle_param"><v-icon>mdi-chevron-left</v-icon></v-btn>
+        <v-btn icon @click="toggle_template"><v-icon>mdi-chevron-right</v-icon></v-btn>
+      </v-toolbar-items>
+    </v-app-bar>
+    <!-- parameter tab -->
+    <parameter-tab />
+    <!-- entity tab -->
+    <v-main>
+      <v-container fluid>
+        <!-- service info -->
+        <v-row class="ma-0 pa-1" align-content="stretch">
+          <v-col>
+            <info-form v-model:value="service" />
+          </v-col>
+        </v-row>
+        <!-- entities -->
         <entity-tab />
-
-        <!-- template tab -->
-        <template-tab />
-      </v-row>
-    </v-container>
-
-    <!-- system info dialog -->
-    <v-dialog v-model="show_service" max-width="600">
-      <info-form v-model:value="service" @close="show_service = false" />
-    </v-dialog>
+      </v-container>
+    </v-main>
 
     <!-- preview dialog -->
-    <v-dialog v-model="show_preview" fullscreen transition="dialog-bottom-transition">
-      <preview-form v-model="service" @close="show_preview = false" />
-    </v-dialog>
-  </basis-page>
+  </v-app>
 </template>
 
 <script>
@@ -34,54 +36,32 @@
 // import {  } from '@/stores/editor';
 // import { useServiceStore } from '@/stores/service';
 
-import basisPage from '@/views/basis.vue';
 // import editorList from '@/components/editorList.vue';
 import infoForm from '@/components/forms/infoForm.vue';
-import previewForm from '@/components/forms/previewForm.vue';
+// import previewForm from '@/components/forms/previewForm.vue';
 import parameterTab from '@/components/editorTabs/parameterTab.vue';
-import entityTab from '@/components/editorTabs/entityTab.vue';
 import templateTab from '@/components/editorTabs/templateTab.vue';
+import entityTab from '@/components/editorTabs/entityTab.vue';
 
 import fields from '@/fields';
 
-import Parameter from '@/models/parameter';
-// import Request from '@/models/request';
-// import Response from '@/models/response';
-// import Template from '@/models/template';
-
-// import tabs from '@/components/editorTabs';
-
-// const tabnames = tabs.map(tab => tab.title);
-// const tab_components = Object.fromEntries(tabs.map(tab => [`${tab.title}Tab`, tab.component]));
+// import Parameter from '@/models/parameter';
 
 export default {
   name: 'editorPage',
   components: {
-    // templateBar,
-    // editorTab,
-    basisPage,
     infoForm,
-    previewForm,
-    // editorList,
-
-    // parameterForm,
-    // entityForm,
-    // templateForm,
-    //
-    // ...tab_components,
     parameterTab,
     entityTab,
     templateTab,
   },
   methods: {
-    // add_parameter(prefix, basis) {
-    //   let item = Parameter.create(prefix || 'parameter',  basis || 'string');
-    //   this.parameters.push(item);
-    // },
-    // remove_parameters(...params) {
-    //   this.parameters = this.parameters.filter((p)=>!params.includes(p));
-    // },
-
+    toggle_param() {
+      // this.focusing = this.focusing === 'parameters' ? 'entities' : 'parameters';
+    },
+    toggle_template() {
+      // this.focusing = this.focusing === 'templates' ? 'entities' : 'templates';
+    },
     add_entity(option) {
       console.log(option);
       this.entities.push({
@@ -91,14 +71,14 @@ export default {
       });
     },
     remove_entities(...ents) {
-      this.entities = this.entities.filter((e)=>!ents.includes(e));
+      this.entities = this.entities.filter((e) => !ents.includes(e));
     },
 
     add_template() {
       this.templates.push({});
     },
-    remove_templates(...tmpls){
-      this.templates = this.templates.filter((t)=>!tmpls.includes(t));
+    remove_templates(...tmpls) {
+      this.templates = this.templates.filter((t) => !tmpls.includes(t));
     },
 
   },
@@ -117,6 +97,7 @@ export default {
       show_preview: false,
       // focusing: this.focused,
       elevation: 2,
+      service: {},
       parameters: [],
       entities: [],
       templates: [],

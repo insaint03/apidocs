@@ -5,6 +5,7 @@ import HttpMimePicker from "./httpMimePicker.vue"
 import httpStatusPicker from "./httpStatusPicker.vue"
 
 import queryField from "./queryField.vue"
+import tableValues from "./tableValues.vue"
 
 
 export default {
@@ -16,4 +17,5 @@ export default {
 
     // table values
     queryField,
+    tableValues,
 }

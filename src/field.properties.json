@@ -1,4 +1,20 @@
 {
+  "service": {
+    "title": {
+      "required": true
+    },
+    "version": {
+      "required": true
+    },
+    "summary": {
+      "required": true
+    },
+    "description": {
+      "required": true
+    },
+    "urls": {
+    }
+  },
   "parameters": {
     "name": {
       "required": true,
@@ -28,6 +44,24 @@
     },
     "samples": {
       "required": false
+    }
+  },
+  "items": {
+    "required": {
+      "title": "*",
+      "cols": 2
+    },
+    "key": {
+      "required": true,
+      "cols": 3
+    },
+    "datatype": {
+      "required": true,
+      "cols": 3
+    },
+    "description": {
+      "required": false,
+      "cols": 4
     }
   },
   "request": {
