@@ -11,7 +11,7 @@
     </v-col>
     <!-- right editor area -->
     <v-col cols="8">
-      <v-expansion-panels mandatory multiple>
+      <v-expansion-panels multiple>
         <!-- tmpl combinations -->
         <v-expansion-panel title="templates">
           <template #text>
