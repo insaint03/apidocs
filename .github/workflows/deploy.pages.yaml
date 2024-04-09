@@ -16,7 +16,7 @@ jobs:
             - name: Install Dependencies
               run: npm install
             - name: build package
-              run: vite build
+              run: npm run build
             - name: push to gh-pages
               uses: peaceiris/actions-gh-pages@v4
               with:
