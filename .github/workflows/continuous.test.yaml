@@ -9,10 +9,10 @@ jobs:
       contents: read
     steps:
       # checkout the image
-      - uses: actions/checkout@latest
+      - uses: actions/checkout@v4
       # setup node
       - name: 'Install Node'
-        uses: actions/setup-node@latest
+        uses: actions/setup-node@v4
       # install deps
       - name: 'Install Deps'
         run: npm install
