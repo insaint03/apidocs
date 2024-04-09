@@ -23,7 +23,7 @@
   <!-- modal -->
   <modal-form v-model="selected" v-model:show="edits">
     <base-form :fields="fields" v-model="selected">
-      <template #item-items>
+      <template #item-items v-if="selected">
         <parameter-picker v-if="selected.is_array" v-model="selected.items" chips multiple />
         <table-values v-else-if="selected.is_object" v-model="selected.items" :fields="item_fields">
           <template #value-required="{value}">

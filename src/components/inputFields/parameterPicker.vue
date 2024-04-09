@@ -16,7 +16,7 @@ import { useServiceStore } from '@/stores/service';
 export default {
   name: 'parameterPicker',
   props: {
-    modelValue: { type: String, required: false },
+    modelValue: { type: [String, Array], required: false },
     derived: { type: [String, Array], required: false },
     expecting: { type: String, required: false, default: ()=>'object'},
   },

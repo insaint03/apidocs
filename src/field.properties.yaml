@@ -1,0 +1,120 @@
+service:
+  title:
+    required: true
+  version:
+    required: true
+  summary:
+    required: true
+  description:
+    required: true
+  urls: {}
+parameters:
+  name:
+    required: true
+    cols: 6
+  basistype:
+    required: true
+    is: parameter-picker
+    cols: 6
+  migrate:
+    required: false
+    clarable: true
+    hint: Fill schema name to export migration
+  description:
+    is: v-textarea
+    required: false
+  validation:
+    required: false
+    hint: "(v)=>{ return is_v_valid(v) ? true : false; }"
+  items:
+    is: table-values
+    required: false
+  samples:
+    is: table-values
+    required: false
+items:
+  required:
+    title: "*"
+    cols: 2
+  key:
+    required: true
+    cols: 3
+  datatype:
+    required: true
+    cols: 3
+  description:
+    required: false
+    cols: 4
+request:
+  method:
+    required: true
+    is: http-method-picker
+  path:
+    required: true
+  summary:
+    required: false
+  description:
+    required: false
+  query:
+    is: query-field
+    required: false
+  cookies:
+    required: false
+  headers:
+    required: false
+  body:
+    is: parameter-picker
+    required: false
+response:
+  mimetype:
+    required: true
+    is: http-mime-picker
+  status:
+    required: true
+    is: http-status-picker
+  summary:
+    required: true
+  description:
+    required: true
+  cookies:
+    required: true
+    is: v-select
+  headers:
+    required: true
+    is: v-select
+  body:
+    required: true
+    is: v-select
+template:
+  name: {}
+  tag: {}
+  summary: {}
+  description: {}
+  inherit: {}
+  request: {}
+  response: {}
+query:
+  key:
+    required: true
+  expect:
+    is: parameter-picker
+    required: true
+  required:
+    is: v-checkbox
+  default: {}
+  inherit:
+    readonly: true
+  misc: {}
+cookie:
+  key: {}
+  expect: {}
+  required: {}
+  inherit: {}
+  misc: {}
+headers:
+  key: {}
+  expect: {}
+  required: {}
+  default: {}
+  inherit: {}
+  misc: {}

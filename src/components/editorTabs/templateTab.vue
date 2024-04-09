@@ -50,6 +50,7 @@ export default {
   data() {
     return {
       generate: null,
+      last_updated: Date.now(),
     };
   },
 }

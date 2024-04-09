@@ -1,9 +1,5 @@
-// import Parameter from '@/models/parameter';
-// import Request from '@/models/request';
-// import Response from '@/models/response';
-// import Template from '@/models/template';
+import props from '@/field.properties.yaml'
 
-import props from "@/field.properties.json";
 
 const common_setting = {};
 const field_keys = {
@@ -17,11 +13,10 @@ const field_keys = {
   parameters: [
     "name",
     "basistype",
-    "migrate",
-    "summary",
+    "items",
     "description",
     "validation",
-    "items",
+    "migrate",
     "samples",
   ],
   request: [
@@ -58,14 +53,6 @@ const field_keys = {
   headers: ["key", "expect", "required", "inherit", "misc"],
 };
 
-console.log("field props",  
-  Object.entries(field_keys)
-  .map(([category,keys])=>({
-    category, 
-    p: props[category], 
-    keys,
-    // ks: keys.filter((k)=>!props[category][k])
-  })));
 export default Object.fromEntries(
   Object.entries(field_keys).map(([category, keys]) => [
     category,
