@@ -100,9 +100,16 @@ export default {
   },
   methods: {
     append() {
-      this.value.push(Object.assign({}, this.generate));
+      if(this.items != null && 0<this.items.length) {
+        this.value.push(...this.items);
+      } else if(this.generate!=null) {
+        this.value.push(Object.assign({}, this.generate));
+      } else {
+        this.value.push({});
+      }
       // clear out
-      // this.generate = {};
+      this.generate = {};
+      this.items = null;
     },
     apply() {
       this.selected_values.forEach((item) => {
@@ -141,7 +148,11 @@ export default {
     parse_items(parser, input) {
       try {
         let values = parser(input);
-        if(values instanceof Array) {
+        // null out as soon
+        if(values == null) {
+          return null;
+        }
+        else if(values instanceof Array) {
           this.generate = values[0];
           this.items = values;
         } else {
@@ -154,11 +165,11 @@ export default {
       }
     },
     validate_yaml() {
-      this.yaml_error = this.parse_items(yaml.load, this.yaml);
+      this.yaml_error = this.parse_items(yaml.load, this.yaml || '');
       return this.yaml_error == null ? true : this.yaml_error;
     },
     validate_json() {
-      this.json_error = this.parse_items(JSON.parse, this.json);
+      this.json_error = this.parse_items(JSON.parse, this.json || '');
       return this.json_error == null ? true : this.json_error;
     },
   },
@@ -193,7 +204,7 @@ export default {
       generate: {},
       items: null,
       text_editor_conf: {
-        validateOn: 'input',
+        validateOn: 'lazy-input',
         persistentPlaceholder: true,
       },
     };
