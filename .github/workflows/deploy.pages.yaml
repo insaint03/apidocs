@@ -1,0 +1,28 @@
+name: push pages
+run-name: push pages
+on:
+    - workflow_dispatch
+jobs:
+    push:
+        runs-on: ubuntu-latest
+        env:
+            BRANCH: gh-pages
+            FOLDER: docs
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+            - name: Install Node
+              uses: actions/setup-node@v4
+            - name: Install Dependencies
+              run: npm install
+            - name: build package
+              run: vite build
+            - name: push to gh-pages
+              uses: peaceiris/actions-gh-pages@v4
+              with:
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  publish_dir: ./${{ env.FOLDER }}
+                  publish_branch: ${{ env.BRANCH }}
+
+
+              
