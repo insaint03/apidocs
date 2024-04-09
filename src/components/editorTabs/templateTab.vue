@@ -1,6 +1,6 @@
 <template>
-  <v-navigation-drawer :model-value="true" location="right" :key="`editor-templates.${last_updated}`" permanent>
-    <v-list-subheader>{{ title }}</v-list-subheader>
+  <v-navigation-drawer :model-value="modelValue" location="right" :key="`editor-templates.${last_updated}`" permanent>
+    <v-list-subheader>templates</v-list-subheader>
     <v-list-item title="Add" append-icon="mdi-plus" @click="generate_item" />
     <v-divider />
     <v-tooltip v-for="tmp, ti in templates" :key="`template-${tmp.name}.${ti}`">
@@ -16,18 +16,16 @@ import { mapWritableState } from 'pinia';
 import { useEditorStore } from '@/stores/editor';
 import { useServiceStore } from '@/stores/service';
 
-import editorTab from '@/components/editorTabs/editorTab.vue';
-import editorList from '@/components/editorList.vue';
-import templateForm from '@/components/forms/templateForm.vue';
-import newDialog from '@/components/newDialog.vue';
 
 export default {
   name: 'templateTab',
   components: {
-    editorTab,
-    editorList,
-    templateForm,
-    newDialog,
+  },
+  props: {
+    modelValue: {
+      type: Boolean,
+      required: true,
+    },
   },
   methods: {
     add_new() {

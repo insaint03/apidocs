@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer :model-value="true" location="left" :key="`editor-parameters.${last_updated}`" permanent>
+  <v-navigation-drawer :model-value="modelValue" location="left" :key="`editor-parameters.${last_updated}`" permanent>
     <!-- editor list region (left) -->
     <v-list-subheader>{{ title }}</v-list-subheader>
     <v-list-item title="Add" subtitle="String" append-icon="mdi-plus" @click="add_new" />
@@ -69,6 +69,13 @@ export default {
     parameterPicker,
     tableValues,
 
+  },
+  props: {
+    modelValue: {
+      type: Boolean,
+      required: false,
+      default: true,
+    }
   },
   methods: {
     select(item) {

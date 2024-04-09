@@ -1,18 +1,22 @@
 <template>
   <v-app>
     <!-- templates tab -->
-    <template-tab />
+    <template-tab v-model="show_tmpl" />
     <!-- app bar in center -->
     <v-app-bar app flat dark density="compact" color="primary">
       <v-toolbar-title>Editor</v-toolbar-title>
       <v-spacer />
       <v-toolbar-items>
-        <v-btn icon @click="toggle_param"><v-icon>mdi-chevron-left</v-icon></v-btn>
-        <v-btn icon @click="toggle_template"><v-icon>mdi-chevron-right</v-icon></v-btn>
+        <v-btn icon @click="toggle_param" title="show parameters" :active="!show_param">
+          <v-icon>mdi-chevron-left</v-icon>
+        </v-btn>
+        <v-btn icon @click="toggle_template" title="show templates" :active="!show_tmpl">
+          <v-icon>mdi-chevron-right</v-icon>
+        </v-btn>
       </v-toolbar-items>
     </v-app-bar>
     <!-- parameter tab -->
-    <parameter-tab />
+    <parameter-tab v-model="show_param" />
     <!-- entity tab -->
     <v-main>
       <v-container fluid>
@@ -57,10 +61,10 @@ export default {
   },
   methods: {
     toggle_param() {
-      // this.focusing = this.focusing === 'parameters' ? 'entities' : 'parameters';
+      this.show_param = !this.show_param;
     },
     toggle_template() {
-      // this.focusing = this.focusing === 'templates' ? 'entities' : 'templates';
+      this.show_tmpl = !this.show_tmpl;
     },
     add_entity(option) {
       console.log(option);
@@ -95,6 +99,8 @@ export default {
       focusing: 'entities',
       show_service: false,
       show_preview: false,
+      show_param: true,
+      show_tmpl: true,
       // focusing: this.focused,
       elevation: 2,
       service: {},
