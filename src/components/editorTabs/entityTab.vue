@@ -4,9 +4,14 @@
     <v-col cols="4">
       <v-list>
         <v-list-item>
-          <v-btn text color="primary"><v-icon>mdi-plus</v-icon> New Entity</v-btn>
+          <v-btn text color="primary" @click="add_new"><v-icon>mdi-plus</v-icon> New Entity</v-btn>
         </v-list-item>
         <v-divider />
+        <v-list-item v-for="entity, ei in entities" :key="`entity-${ei}`"
+          :title="`[${entity.request.method}] ${entity.request.path}`" 
+          :subtitle="`${entity.response.mimetype} (${entity.response.status})`"
+          @click="select(entity)">
+        </v-list-item>
       </v-list>
     </v-col>
     <!-- right editor area -->
@@ -44,8 +49,8 @@ import { mapWritableState } from 'pinia';
 import { useServiceStore } from '@/stores/service';
 import { useEditorStore } from '@/stores/editor';
 
-import fields from '@/fields';
 
+import fields from '@/fields';
 import baseForm from '@/components/forms/baseForm.vue';
 // import parameterPicker from '@/components/inputFields/parameterPicker.vue';
 
@@ -62,13 +67,16 @@ export default {
     },
     add_new() {
       this.entities.push({
-        request: {},
-        response: {},
+        request: {
+          method: 'GET',
+          path: '/',
+        },
+        response: {
+          status: 200,
+          mimetype: 'text/plain',
+        },
       });
-      // this.dialog = true;
-      // let item = Entity.create('entity', 'string');
-      // this.entities.push(item);
-      // this.select(item);
+      
     },
     remove() {
       this.entities = this.entities.filter(dt => dt != this.the_entity);
@@ -100,8 +108,8 @@ export default {
         }
       ]
     },
-    the_entity: {
-      get() { return this.entities[this.on_entity]; },
+    item: {
+      get() { return this.entities[this.on_entity] || {}; },
       set(v) { this.on_entity = this.entities.indexOf(v); },
     },
     ...mapWritableState(useServiceStore, ['entities', 'templates']),
@@ -114,7 +122,6 @@ export default {
       param: null,
       tag: null,
       expended: [],
-      item: {},
       request_fields: fields.request,
       response_fields: fields.response,
       last_updated: Date.now(),
