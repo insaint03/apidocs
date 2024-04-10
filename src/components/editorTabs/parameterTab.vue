@@ -21,25 +21,7 @@
   </v-navigation-drawer>
 
   <!-- modal -->
-  <modal-form v-model="selected" v-model:show="edits">
-    <base-form :fields="fields" v-model="selected">
-      <template #item-items v-if="selected">
-        <parameter-picker v-if="selected.is_array" v-model="selected.items" chips multiple />
-        <table-values v-else-if="selected.is_object" v-model="selected.items" :fields="item_fields">
-          <template #value-required="{value}">
-            <v-icon>{{ value ? 'mdi-check' : '' }}</v-icon>
-          </template>
-          <template #item-datatype="{ item }">
-            <parameter-picker v-model="item.datatype" />
-          </template>
-          <template #item-required="{ item }">
-            <v-checkbox v-model="item.required" label="required" />
-          </template>
-        </table-values>
-        <v-divider v-else />
-      </template>
-    </base-form>
-  </modal-form>
+  <parameter-form v-model="selected" v-model:show="edits" />
   <modal-form v-model="generate" :fields="generate_fields" v-model:show="set_defaults" />
 </template>
 
@@ -50,12 +32,10 @@ import { useServiceStore } from '@/stores/service';
 import { useEditorStore } from '@/stores/editor';
 
 import modalForm from '@/components/forms/modalForm.vue';
-import baseForm from '@/components/forms/baseForm.vue';
+import parameterForm from '@/components/forms/parameterForm.vue';
+
 import parameterPicker from '@/components/inputFields/parameterPicker.vue';
 import tableValues from '@/components/inputFields/tableValues.vue';
-
-// import editorTab from '@/components/editorTabs/editorTab.vue';
-// import editorList from '@/components/editorList.vue';
 import fields from '@/fields'
 
 const title = 'parameters';
@@ -64,8 +44,8 @@ export default {
   name: 'parameterTab',
   components: {
     modalForm,
-    baseForm,
-
+    // baseForm,
+    parameterForm,
     parameterPicker,
     tableValues,
 
@@ -129,7 +109,7 @@ export default {
       generate_fields: fields.parameters
         .filter((pf) => pf.required)
         .map((pf) => Object.assign({}, pf, { cols: 12 })),
-      item_fields: fields.items,
+      
       set_defaults: false,
       last_updated: Date.now(),
       // primitives: Parameter.primitives,
