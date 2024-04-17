@@ -1,132 +1,143 @@
 <template>
-  <v-app>
-    <!-- templates tab -->
-    <template-tab v-model="show_tmpl" />
-    <!-- app bar in center -->
-    <v-app-bar app flat dark density="compact" color="primary">
-      <v-toolbar-title>Editor</v-toolbar-title>
-      <v-spacer />
-      <v-toolbar-items>
-        <v-btn icon @click="toggle_param" title="show parameters" :active="!show_param">
-          <v-icon>mdi-chevron-left</v-icon>
-        </v-btn>
-        <v-btn icon @click="toggle_template" title="show templates" :active="!show_tmpl">
-          <v-icon>mdi-chevron-right</v-icon>
-        </v-btn>
-      </v-toolbar-items>
-    </v-app-bar>
-    <!-- parameter tab -->
-    <parameter-tab v-model="show_param" />
-    <!-- entity tab -->
-    <v-main>
-      <v-container fluid>
-        <!-- service info -->
-        <v-row class="ma-0 pa-1" align-content="stretch">
-          <v-col>
-            <info-form v-model:value="service" />
-          </v-col>
-        </v-row>
-        <!-- entities -->
-        <entity-tab />
-      </v-container>
-    </v-main>
+  <!-- topmost appbar -->
+  <v-app-bar app>
+    <v-menu>
+      <template v-slot:activator="{ props }">
+        <v-app-bar-nav-icon v-bind="props" />
+      </template>
+      <!-- list -->
+      <v-list>
+        <v-list-item title="upload data..." />
+        <v-divider />
+        <v-list-item title="export as swagger..." />
+        <v-list-item title="export migration..." />
+      </v-list>
+    </v-menu>
+    <v-toolbar-title>{{ service.title || 'APIdocs' }}</v-toolbar-title>
+    <v-toolbar-items>
+      <v-btn icon @click="toggle_dataype_tab" :disabled="!show_datatype_tab" :active="nav_left">
+        <v-icon>mdi-chevron-right</v-icon>
+      </v-btn>
+      <v-btn icon @click="toggle_template_tab" :disabled="!show_template_tab" :active="nav_right">
+        <v-icon>mdi-chevron-left</v-icon>
+      </v-btn>
+    </v-toolbar-items>
+  </v-app-bar>
+  <!-- bottom navigation -->
+  <v-bottom-navigation v-model="tab" color="primary" absolute grow shift mandatory>
+    <v-btn v-for="item in tabs" :key="`tab-nav.${item}`" @click="tab = item" :value="item">
+      <v-icon>{{ tabitems[item].icon }}</v-icon>
+      <span>{{ tabitems[item].title }}</span>
+    </v-btn>
+  </v-bottom-navigation>
 
-    <!-- preview dialog -->
-  </v-app>
+
+  <!-- main area window controlled by bottom navigation -->
+  <v-main app>
+  <!-- left navbar area/datatype -->
+    <datatype-tab v-if="show_datatype_tab" v-model="datatypes" v-model:show="nav_left" />
+
+    <v-window v-model="tab">
+      <v-window-item value="info">
+        <edit-info v-model="service" />
+      </v-window-item>
+      <v-window-item value="datatypes">
+        <edit-datatype v-model="datatypes" />
+      </v-window-item>
+      <v-window-item value="entities">
+        <edit-entity v-model="entities" />
+      </v-window-item>
+      <v-window-item value="templates">
+        <edit-template v-model="templates" />
+      </v-window-item>
+      <v-window-item value="viewer">
+        <!-- <edit-viewer v-bind="{service, datatypes, entities, templates}"  /> -->
+      </v-window-item>
+    </v-window>
+  <!-- right navbar area/templates -->
+    <v-navigation-drawer v-if="show_template_tab" location="right" v-model="nav_right">
+      <v-list-subheader>Templates</v-list-subheader>
+    </v-navigation-drawer>
+  </v-main>
+  
+
+
 </template>
 
 <script>
-// import {  mapWritableState } from 'pinia';
-// import {  } from '@/stores/editor';
-// import { useServiceStore } from '@/stores/service';
+import Service from '@/models/service'
+import editors from './editor'
 
-// import editorList from '@/components/editorList.vue';
-import infoForm from '@/components/forms/infoForm.vue';
-// import previewForm from '@/components/forms/previewForm.vue';
-import parameterTab from '@/components/editorTabs/parameterTab.vue';
-import templateTab from '@/components/editorTabs/templateTab.vue';
-import entityTab from '@/components/editorTabs/entityTab.vue';
-
-import fields from '@/fields';
-
-// import Parameter from '@/models/parameter';
+const tabs = [
+  'info',
+  'datatypes',
+  'entities',
+  'templates',
+  'viewer',
+];
+const tabitems = {
+  info: {
+    icon: 'mdi-information',
+    title: 'Info',
+    is: editors.editInfo,
+  },
+  datatypes: {
+    icon: 'mdi-database',
+    title: 'Data Types',
+  },
+  entities: {
+    icon: 'mdi-database',
+    title: 'Entities',
+  },
+  templates: {
+    icon: 'mdi-file-document',
+    title: 'Templates',
+  },
+  viewer: {
+    icon: 'mdi-eye',
+    title: 'Viewer',
+  },
+};
+const tab_defaults = 'entities';
 
 export default {
-  name: 'editorPage',
+  name: 'editor2View',
   components: {
-    infoForm,
-    parameterTab,
-    entityTab,
-    templateTab,
+    ...editors
   },
   methods: {
-    toggle_param() {
-      this.show_param = !this.show_param;
+    toggle_dataype_tab() {
+      this.nav_left = !this.nav_left;
     },
-    toggle_template() {
-      this.show_tmpl = !this.show_tmpl;
+    toggle_template_tab() {
+      this.nav_right = !this.nav_right;
     },
-    add_entity(option) {
-      console.log(option);
-      this.entities.push({
-        // request: new Request(option.request),
-        // response: new Response(option.response),
-        // templates: option.templates,
-      });
-    },
-    remove_entities(...ents) {
-      this.entities = this.entities.filter((e) => !ents.includes(e));
-    },
-
-    add_template() {
-      this.templates.push({});
-    },
-    remove_templates(...tmpls) {
-      this.templates = this.templates.filter((t) => !tmpls.includes(t));
-    },
-
-  },
-  props: {
-    focused: { type: String, default: () => 'entry' },
   },
   computed: {
-    // ...mapWritableState(useEditorStore, ['tabs', 'focusing']),
-    // ...mapWritableState(useServiceStore, {service: 'info'}),
+    show_datatype_tab() {
+      return ['datatypes', 'entities'].includes(this.tab);
+    },
+    show_template_tab() {
+      return ['templates', 'entities'].includes(this.tab);
+    },
   },
   data() {
     return {
-      fields,
-      focusing: 'entities',
-      show_service: false,
-      show_preview: false,
-      show_param: true,
-      show_tmpl: true,
-      // focusing: this.focused,
-      elevation: 2,
-      service: {},
-      parameters: [],
+      tabs,
+      tabitems,
+
+      // concurrent focusing tab
+      tab: tab_defaults,
+      // side navigation drawers
+      nav_left: true,
+      nav_right: true,
+
+      // service info
+      service: new Service(),
+      datatypes: {},
       entities: [],
-      templates: [],
-      on_parameter: null,
-      on_entity: null,
-      on_template: null,
-    };
-  }
+      templates: {},
+    }
+  },
 }
 </script>
-
-<style scoped>
-.v-col {
-  padding-left: 0px;
-  padding-right: 0px;
-
-}
-
-.v-col:start {
-  padding-left: 4px;
-}
-
-.v-col:end {
-  padding-right: 4px;
-}
-</style>

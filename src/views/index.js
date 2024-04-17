@@ -1,5 +1,3 @@
-
-
 export default {
     '/': 'editor',
     // '/about': 'about',

@@ -6,9 +6,9 @@ const field_keys = {
   service: [
     'title',
     'version',
-    'summary',
-    'description',
-    'urls',
+    'license',
+    'contributors',
+    'links',
   ],
   parameters: [
     "name",

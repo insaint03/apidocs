@@ -1,13 +1,15 @@
 service:
-  title:
+  name:
     required: true
   version:
     required: true
-  summary:
+  license:
     required: true
+  contributors:
+    required: false
   description:
     required: true
-  urls: {}
+  links: {}
 parameters:
   name:
     required: true
