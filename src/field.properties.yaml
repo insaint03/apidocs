@@ -27,10 +27,10 @@ parameters:
     required: false
     hint: "(v)=>{ return is_v_valid(v) ? true : false; }"
   items:
-    is: table-values
+    # is: table-values
     required: false
   samples:
-    is: table-values
+    # is: table-values
     required: false
 items:
   required:

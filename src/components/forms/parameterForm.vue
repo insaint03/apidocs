@@ -6,11 +6,12 @@
         <v-card-subtitle><v-chip>{{ value.basistype || '_datatype' }}</v-chip></v-card-subtitle>
       </v-card-item>
       <base-form :fields="fields" v-model="value" :key="`param-modal.updated-${last_updated}`">
-        <template #item-items v-if="value">
-          <parameter-picker v-if="value.is_array" v-model="value.items" chips multiple />
-          <table-values v-else-if="value.is_object" v-model="value.items" :fields="item_fields">
-            <template #value-required="{value}">
-              <v-icon>{{ value ? 'mdi-check' : '' }}</v-icon>
+        <!-- items setup -->
+        <template #item-items="{ item }">
+          <!-- on object derivative -->
+          <table-values v-if="item.is_object" v-model="value.items" :fields="item_fields">
+            <template #value-required="{ item }">
+              <v-icon>{{ item ? 'mdi-check' : '' }}</v-icon>
             </template>
             <template #item-datatype="{ item }">
               <parameter-picker v-model="item.basistype" />
@@ -19,7 +20,19 @@
               <v-checkbox v-model="item.required" label="required" />
             </template>
           </table-values>
+          <!-- an array derivative -->
+          <parameter-picker v-else-if="item.is_array" v-model="item.items" chips multiple />
+          <!-- others -->
           <v-divider v-else />
+        </template>
+        <!-- samples setup -->
+        <template #item-samples="{ item }">
+          <!-- an object derivative -->
+          <table-values v-if="item.is_object" v-model="item.samples" :fields="item.items">
+          </table-values>
+          <!-- others -->
+          <table-values v-else="item.is_array" v-model="item.samples" :fields="[{ key: 'value', required: true }]">
+          </table-values>
         </template>
       </base-form>
       <v-card-actions>
@@ -35,7 +48,7 @@
 <script>
 // import Parameter from '@/models/parameter';
 // import formCard from './formCard.vue';
-import modalForm from '@/components/forms/modalForm.vue';
+// import modalForm from '@/components/forms/modalForm.vue';
 import baseForm from '@/components/forms/baseForm.vue';
 import fields from '@/fields.js';
 import parameterPicker from '@/components/inputFields/parameterPicker.vue';
@@ -45,7 +58,7 @@ export default {
   name: 'parameterForm',
   components: {
     // formCard,
-    modalForm,
+    // modalForm,
     baseForm,
     parameterPicker,
     tableValues,
@@ -64,13 +77,13 @@ export default {
   props: {
     modelValue: {
       type: Object,
-      required: true,
+      required: false,
       default: () => ({}),
     },
     show: {
       type: Boolean,
       required: false,
-      default: ()=>false,
+      default: () => false,
     },
   },
   watch: {

@@ -12,10 +12,8 @@
       </slot>
       <slot name="actions">
         <v-card-actions>
-          <v-btn text @click="dispose">Close</v-btn>
           <v-spacer />
-          <v-btn text @click="reset">Reset</v-btn>
-          <v-btn text @click="save">Save</v-btn>
+          <v-btn text @click="dispose">Close</v-btn>
         </v-card-actions>
       </slot>
     </v-card>
