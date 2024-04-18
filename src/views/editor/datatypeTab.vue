@@ -1,5 +1,6 @@
 <template>
-  <v-navigation-drawer loctaion="left" v-model="open" title="datatypes">
+  <v-navigation-drawer loctaion="left" :model-value="show" title="datatypes" permanent>
+    <v-list-subheader>Parameters</v-list-subheader>
     <!-- search -->
     <v-text-field v-model="search" label="Search" outlined append-icon="mdi-magnify" />
     <v-divider />
@@ -29,7 +30,7 @@ export default {
       required: true,
     },
     modelValue: {
-      type: Object,
+      type: Array,
       required: true,
     }
   },
@@ -50,7 +51,6 @@ export default {
       search: null,
       primitives: Parameter.primitives,
       value: this.modelValue,
-      open: this.show,
 
     }
   }

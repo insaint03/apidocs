@@ -14,7 +14,7 @@
       </v-col>
       <!-- right service description -->
       <v-col>
-        <v-sheet>
+        <v-sheet class="fill-height">
           <v-textarea v-model="value.description" label="Description" outlined rows="10" />
         </v-sheet>
       </v-col>

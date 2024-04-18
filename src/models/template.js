@@ -10,23 +10,11 @@ export default class Template {
         }
         this._name = name;
         this._parent = parent_name;
+        this._description = null;
         // request data
-        this._request = {
-            method: null,
-            path_fragments: [],
-            query: {},
-            cookies: [],
-            headers: [],
-            body: null,
-        }
+        this._request = new Request();
         // response data
-        this._response = {
-            status: 200,
-            mimetype: null,
-            cookies: {},
-            headers: {},
-            body: null,
-        }
+        this._response = new Response();
     }
 
     get name() {
@@ -38,5 +26,21 @@ export default class Template {
     }
     set path(v) {
         this._request.path_fragments = v.split('/');
+    }
+
+    get description() {
+        return this._description
+    }
+
+    set description(v) {
+        this._description = v;
+    }
+
+    get request() {
+        return this._request;
+    }
+
+    get response() {
+        return this._response
     }
 }

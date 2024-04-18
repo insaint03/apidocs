@@ -24,7 +24,7 @@
     </v-toolbar-items>
   </v-app-bar>
   <!-- bottom navigation -->
-  <v-bottom-navigation v-model="tab" color="primary" absolute grow shift mandatory>
+  <v-bottom-navigation v-model="tab" color="primary" grow shift mandatory>
     <v-btn v-for="item in tabs" :key="`tab-nav.${item}`" @click="tab = item" :value="item">
       <v-icon>{{ tabitems[item].icon }}</v-icon>
       <span>{{ tabitems[item].title }}</span>
@@ -42,22 +42,20 @@
         <edit-info v-model="service" />
       </v-window-item>
       <v-window-item value="datatypes">
-        <edit-datatype v-model="datatypes" />
+        <edit-datatype v-model="datatype_selected" />
       </v-window-item>
       <v-window-item value="entities">
-        <edit-entity v-model="entities" />
+        <edit-entity v-model="entity_selected" />
       </v-window-item>
       <v-window-item value="templates">
-        <edit-template v-model="templates" />
+        <edit-template v-model="template_selected" />
       </v-window-item>
       <v-window-item value="viewer">
         <!-- <edit-viewer v-bind="{service, datatypes, entities, templates}"  /> -->
       </v-window-item>
     </v-window>
   <!-- right navbar area/templates -->
-    <v-navigation-drawer v-if="show_template_tab" location="right" v-model="nav_right">
-      <v-list-subheader>Templates</v-list-subheader>
-    </v-navigation-drawer>
+    <template-tab v-if="show_template_tab" v-model="templates" v-model:show="nav_right" />
   </v-main>
   
 
@@ -66,6 +64,11 @@
 
 <script>
 import Service from '@/models/service'
+import Parameter from '@/models/parameter'
+import Template from '@/models/template'
+// import Entity from '@/models/entity'
+import Request from '@/models/request'
+import Response from '@/models/response'
 import editors from './editor'
 
 const tabs = [
@@ -112,6 +115,16 @@ export default {
     toggle_template_tab() {
       this.nav_right = !this.nav_right;
     },
+
+    add_datatype() {
+      this.datatypes.push(Object.assign({}, this.datatype_selected));
+    },
+    add_entity() {
+      this.entities.push(Object.assign({}, this.entity_selected));
+    },
+    add_template() {
+      this.templates.push(Object.assign({}, this.template_selected));
+    },
   },
   computed: {
     show_datatype_tab() {
@@ -119,6 +132,21 @@ export default {
     },
     show_template_tab() {
       return ['templates', 'entities'].includes(this.tab);
+    },
+
+    datatype_selected() {
+      return this.selected_datatype || new Parameter();
+    },
+
+    entity_selected() {
+      return this.selected_entity || {
+        request: new Request(),
+        response: new Response(),
+      };
+    },
+
+    template_selected() {
+      return this.selected_template || new Template();
     },
   },
   data() {
@@ -134,9 +162,15 @@ export default {
 
       // service info
       service: new Service(),
-      datatypes: {},
+
+      datatypes: [],
       entities: [],
-      templates: {},
+      templates: [],
+
+      // 
+      selected_datatype: null,
+      selected_entity: null,
+      selected_template: null,
     }
   },
 }
