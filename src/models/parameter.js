@@ -185,7 +185,7 @@ export default class Parameter {
     get samples() { return this._samples || []; }
     set samples(value) { this.samples = this.samples.concat([value]) ; }
 
-    get is_collection() {
+    get is_collective() {
         return this.is_array || this.is_object;
     }
     get is_array() { return this.origintype === 'array'; }
@@ -199,10 +199,10 @@ export default class Parameter {
      */
     get items() {
         // if null, it is array or object but typed "any"
-        return this.is_collection ? this._items : undefined;
+        return this.is_collective ? this._items : undefined;
     }
     set items(value) {
-        if(this.is_collection) {
+        if(this.is_collective) {
             this._items = value;
         }
         // ignore rests

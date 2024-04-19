@@ -4,7 +4,7 @@ import editInfo from './editInfo.vue'
 import editDatatype from './editDatatype.vue'
 import editEntity from './editEntity.vue'
 import editTemplate from './editTemplate.vue'
-// import viewer from './viewer.vue'
+import viewer from './viewer.vue'
 
 export default {
     datatypeTab,
@@ -13,5 +13,5 @@ export default {
     editDatatype,
     editEntity,
     editTemplate,
-    // viewer,
+    editViewer: viewer,
 }

@@ -13,16 +13,16 @@ const field_keys = {
   parameters: [
     "name",
     "basistype",
-    "items",
-    "description",
     "validation",
-    "migrate",
-    "samples",
+    "items",
+  ],
+  parameter_desc: [
+    "migration",
+    "description",
   ],
   request: [
     "method",
     "path",
-    "summary",
     "query",
     "cookies",
     "headers",
@@ -31,19 +31,20 @@ const field_keys = {
   response: [
     "mimetype",
     "status",
-    "summary",
     "cookies",
     "headers",
     "body",
   ],
   template: [
     "name",
-    "extends",
+    "extend",
+    "tagname",
   ],
   items: ["required", "key", "datatype", "description"],
   query: ["key", "expect", "required", "default", "inherit", "misc"],
-  cookie: ["key", "expect", "required", "inherit", "misc"],
+  cookies: ["key", "expect", "required", "inherit", "misc"],
   headers: ["key", "expect", "required", "inherit", "misc"],
+  entity: ["path", "method", "request_body", "response_type", "response_body"],
 };
 
 export default Object.fromEntries(

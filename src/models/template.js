@@ -4,12 +4,12 @@ import Response from './response'
 export default class Template {
     static _store = {};
 
-    constructor(name, parent_name) {
-        if(Template._store[name]) {
-            throw new Error('Template already exists');
-        }
+    constructor(name, basis) {
+        // if(Template._store[name]) {
+        //     throw new Error('Template already exists');
+        // }
         this._name = name;
-        this._parent = parent_name;
+        this._extends = basis;
         this._description = null;
         // request data
         this._request = new Request();
@@ -21,11 +21,13 @@ export default class Template {
         return this._name;
     }
 
-    get path() {
-        return this._request.path_fragments.join('/');
+    get extend() {
+        return this._extends;
     }
-    set path(v) {
-        this._request.path_fragments = v.split('/');
+
+    set extend(v) {
+        // TODO: map template
+        this._extends = v;
     }
 
     get description() {

@@ -1,44 +1,69 @@
 <template>
-  <v-card>
+  <v-card elevation="2">
     <v-toolbar>
-      <v-toolbar-title>{{ this.value.name || '_new_template' }}</v-toolbar-title>
+      <v-toolbar-title>{{ value.name || '_new_template' }}</v-toolbar-title>
     </v-toolbar>
-    
-<!-- common setup -->
-    <v-row>
-      <v-col>
-        <base-form v-model="value" :fields="fields.common" />
-      </v-col>
-      <v-col>
-        <v-textarea v-model="value.description" />
-      </v-col>
-    </v-row>
-    <!-- request -->
-    <v-row>
-      <v-col>
-        <base-form v-model="value" :fields="fields.request" />
-      </v-col>
-      <v-col>
-        <v-textarea v-model="value.request.description" />
-      </v-col>
-    </v-row>
-    <!-- response -->
-    <v-row>
-      <v-col>
-        <base-form v-model="value" :fields="fields.response" />
-      </v-col>
-      <v-col>
-        <v-textarea v-model="value.response.description" />
-      </v-col>
-    </v-row>
+    <v-container fluid>
+
+      <v-expansion-panels multiple variant="inset" v-model="panels">
+        <!-- common setup -->
+        <v-expansion-panel title="template" class="active" value="common">
+          <v-expansion-panel-text>
+            <v-row>
+              <v-col>
+                <base-form v-model="value" :fields="fields.template" />
+
+              </v-col>
+              <v-col>
+                <v-textarea v-model="value.description" />
+
+              </v-col>
+            </v-row>
+          </v-expansion-panel-text>
+        </v-expansion-panel>
+        <!-- request -->
+        <v-expansion-panel title="request" value="request">
+          <v-expansion-panel-text>
+            <v-row>
+              <v-col>
+                <base-form v-model="value" :fields="fields.request" />
+              </v-col>
+              <v-col>
+                <v-textarea v-model="value.request.description" />
+              </v-col>
+            </v-row>
+          </v-expansion-panel-text>
+        </v-expansion-panel>
+        <!-- response -->
+        <v-expansion-panel title="response" value="response">
+          <v-expansion-panel-text>
+            <v-row>
+              <v-col>
+                <base-form v-model="value" :fields="fields.response" />
+              </v-col>
+              <v-col>
+                <v-textarea v-model="value.response.description" />
+              </v-col>
+            </v-row>
+          </v-expansion-panel-text>
+        </v-expansion-panel>
+      </v-expansion-panels>
+    </v-container>
   </v-card>
 </template>
 <script>
 import Template from '@/models/template';
 import fields from '@/fields'
 
+import baseForm from '@/components/forms/baseForm.vue';
+// import tableValues from '@/components/inputFields/tableValues.vue';
+
 export default {
   name: 'editTemplate',
+  components: {
+    baseForm,
+    // tableValues,
+  },
   props: {
     modelValue: {
       type: Template,
@@ -48,12 +73,8 @@ export default {
   data() {
     return {
       value: this.modelValue,
-      fields: {
-        common: fields.templates,
-        request: fields.request,
-        response: fields.response,
-      },
-
+      fields: fields,
+      panels: ['common'],
     }
   }
 }

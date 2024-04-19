@@ -7,10 +7,10 @@
       </template>
       <!-- list -->
       <v-list>
-        <v-list-item title="upload data..." />
+        <v-list-item disabled title="upload data..." />
         <v-divider />
-        <v-list-item title="export as swagger..." />
-        <v-list-item title="export migration..." />
+        <v-list-item disabled title="export as swagger..." />
+        <v-list-item disabled title="export migration..." />
       </v-list>
     </v-menu>
     <v-toolbar-title>{{ service.title || 'APIdocs' }}</v-toolbar-title>
@@ -35,27 +35,29 @@
   <!-- main area window controlled by bottom navigation -->
   <v-main app>
   <!-- left navbar area/datatype -->
-    <datatype-tab v-if="show_datatype_tab" v-model="datatypes" v-model:show="nav_left" />
+    <datatype-tab v-if="show_datatype_tab" v-model="nav_left" />
 
-    <v-window v-model="tab">
-      <v-window-item value="info">
-        <edit-info v-model="service" />
-      </v-window-item>
-      <v-window-item value="datatypes">
-        <edit-datatype v-model="datatype_selected" />
-      </v-window-item>
-      <v-window-item value="entities">
-        <edit-entity v-model="entity_selected" />
-      </v-window-item>
-      <v-window-item value="templates">
-        <edit-template v-model="template_selected" />
-      </v-window-item>
-      <v-window-item value="viewer">
-        <!-- <edit-viewer v-bind="{service, datatypes, entities, templates}"  /> -->
-      </v-window-item>
-    </v-window>
+    <v-container fluid>
+      <v-window v-model="tab">
+        <v-window-item value="info">
+          <edit-info v-model="service" />
+        </v-window-item>
+        <v-window-item value="datatypes">
+          <edit-datatype v-model="datatype_selected" />
+        </v-window-item>
+        <v-window-item value="entities">
+          <edit-entity v-model="entity_selected" />
+        </v-window-item>
+        <v-window-item value="templates">
+          <edit-template v-model="template_selected" />
+        </v-window-item>
+        <v-window-item value="viewer">
+          <edit-viewer v-bind="{service, datatypes, entities, templates}"  />
+        </v-window-item>
+      </v-window>
+    </v-container>
   <!-- right navbar area/templates -->
-    <template-tab v-if="show_template_tab" v-model="templates" v-model:show="nav_right" />
+    <template-tab v-if="show_template_tab" v-model="nav_right" />
   </v-main>
   
 
@@ -63,13 +65,17 @@
 </template>
 
 <script>
-import Service from '@/models/service'
+// import Service from '@/models/service'
 import Parameter from '@/models/parameter'
 import Template from '@/models/template'
-// import Entity from '@/models/entity'
+
 import Request from '@/models/request'
 import Response from '@/models/response'
 import editors from './editor'
+
+import { mapWritableState } from 'pinia'
+import { useServiceStore } from '@/stores/service'
+
 
 const tabs = [
   'info',
@@ -104,7 +110,7 @@ const tabitems = {
 const tab_defaults = 'entities';
 
 export default {
-  name: 'editor2View',
+  name: 'editorView',
   components: {
     ...editors
   },
@@ -148,6 +154,13 @@ export default {
     template_selected() {
       return this.selected_template || new Template();
     },
+
+    ...mapWritableState(useServiceStore, [
+      'service',
+      'parameters',
+      'templates',
+      'entities',
+    ]),
   },
   data() {
     return {
@@ -160,14 +173,14 @@ export default {
       nav_left: true,
       nav_right: true,
 
-      // service info
-      service: new Service(),
-
-      datatypes: [],
-      entities: [],
-      templates: [],
-
       // 
+      // info: {},
+      // service: new Service(),
+      // parameters: [],
+      // entities: [],
+      // templates: [],
+
+      // selected items
       selected_datatype: null,
       selected_entity: null,
       selected_template: null,

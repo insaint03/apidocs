@@ -13,26 +13,22 @@ service:
 parameters:
   name:
     required: true
-    cols: 6
   basistype:
     required: true
     is: parameter-picker
-    cols: 6
-  migrate:
-    required: false
-    clarable: true
-    hint: Fill schema name to export migration
-  description:
-    is: v-textarea
-    required: false
   validation:
     required: false
     hint: "(v)=>{ return is_v_valid(v) ? true : false; }"
   items:
     # is: table-values
     required: false
-  samples:
-    # is: table-values
+parameter_desc:
+  migrate:
+    required: false
+    clarable: true
+    hint: Fill schema name to export migration
+  description:
+    is: v-textarea
     required: false
 items:
   required:
@@ -53,12 +49,7 @@ request:
     is: http-method-picker
   path:
     required: true
-  summary:
-    required: false
-  description:
-    required: false
   query:
-    is: query-field
     required: false
   cookies:
     required: false
@@ -70,13 +61,7 @@ request:
 response:
   mimetype:
     required: true
-    is: http-mime-picker
   status:
-    required: true
-    is: http-status-picker
-  summary:
-    required: true
-  description:
     required: true
   cookies:
     required: true
@@ -88,13 +73,12 @@ response:
     required: true
     is: v-select
 template:
-  name: {}
-  tag: {}
-  summary: {}
-  description: {}
-  inherit: {}
-  request: {}
-  response: {}
+  name:
+    required: false
+  extend: 
+    required: false
+  tagname:
+    required: false
 query:
   key:
     required: true
@@ -107,7 +91,7 @@ query:
   inherit:
     readonly: true
   misc: {}
-cookie:
+cookies:
   key: {}
   expect: {}
   required: {}
@@ -120,3 +104,11 @@ headers:
   default: {}
   inherit: {}
   misc: {}
+entity:
+  path: {}
+  method: {}
+  request_body: {}
+  response_type: {}
+  response_body: {}
+
+

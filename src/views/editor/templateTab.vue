@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer location="right" :model-value="show" permanent>
+  <v-navigation-drawer location="right" :model-value="modelValue" permanent>
     <v-list-subheader>Templates</v-list-subheader>
     <!-- search control -->
     <v-text-field v-model="search" label="Search" outlined append-icon="mdi-magnify" />
@@ -12,23 +12,22 @@
 </template>
 
 <script>
+import { mapWritableState } from 'pinia';
+import { useServiceStore } from '@/stores/service';
+
 // import Template from '@/models/template';
 
 export default {
   name: 'templateTab',
   props: {
-    show: {
-      type: Boolean,
-      required: true,
-    },
     modelValue: {
-      type: Array,
+      type: Boolean,
       required: true,
     }
   },
   computed: {
     ordereds() {
-      return [...this.value]
+      return [...this.templates]
         .sort((a, b) => a.name.localeCompare(b.name));
     },
     items() {
@@ -36,7 +35,8 @@ export default {
         ? new RegExp(this.search, 'i')
         : /^.*$/i;
       return this.ordereds.filter((it) => filter.test(it.name));
-    }
+    },
+    ...mapWritableState(useServiceStore, ['templates']),
   },
   data() {
     return {

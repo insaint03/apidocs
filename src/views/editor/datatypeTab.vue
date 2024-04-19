@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer loctaion="left" :model-value="show" title="datatypes" permanent>
+  <v-navigation-drawer loctaion="left" :model-value="modelValue" title="datatypes" permanent>
     <v-list-subheader>Parameters</v-list-subheader>
     <!-- search -->
     <v-text-field v-model="search" label="Search" outlined append-icon="mdi-magnify" />
@@ -21,22 +21,20 @@
 
 <script>
 import Parameter from '@/models/parameter';
+import { mapWritableState } from 'pinia';
+import { useServiceStore } from '@/stores/service';
 
 export default {
   name: 'datatypeTab',
   props: {
-    show: {
-      type: Boolean,
-      required: true,
-    },
     modelValue: {
-      type: Array,
+      type: Boolean,
       required: true,
     }
   },
   computed: {
     ordereds() {  
-      return [...this.value]
+      return [...this.parameters]
         .sort((a,b)=>a.name.localeCompare(b.name));
     },
     items() {
@@ -44,7 +42,8 @@ export default {
         ? new RegExp(this.search, 'i') 
         : /^.*$/i;
       return this.ordereds.filter((it)=>filter.test(it.name));
-    }
+    },
+    ...mapWritableState(useServiceStore, ['parameters']),
   },
   data() {
     return {
