@@ -199,7 +199,12 @@ export default class Parameter {
      */
     get items() {
         // if null, it is array or object but typed "any"
-        return this.is_collective ? this._items : undefined;
+        if(this.is_collective) {
+            this._items = this._items || [];
+            return this._items;
+        } else {
+            return undefined;
+        }
     }
     set items(value) {
         if(this.is_collective) {

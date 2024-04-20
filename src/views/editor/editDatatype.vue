@@ -31,7 +31,7 @@
     </v-row>
     <v-row>
       <v-col>
-        <table-values label="samples" v-model="value.samples" :fields="value.items" />
+        <table-values label="samples" v-model="value.samples" :fields="value.items || [{key: 'sample'}]" />
       </v-col>
     </v-row>
   </v-card>

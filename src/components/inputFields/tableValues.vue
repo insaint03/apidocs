@@ -1,69 +1,99 @@
 <template>
-  <v-row class="ma-0 pa-0">
-    <v-col cols="8">
+  <v-window continuous show-arrows="hover" v-model="modes">
+    <!-- text separate values -->
+    <v-window-item value="text">
+      <v-sheet>
+        <v-toolbar flat dense>
+          <v-tabs>
+            <v-tab v-for="f in fields" :key="`tab-${f.key}`" @click="tab = f.key" :value="f.key" :title="f.title">
+              {{ f.title || f.label || f.key }}
+            </v-tab>
+          </v-tabs>
+          <v-spacer />
+          <v-menu>
+            <template #activator="{ props }">
+              <v-btn text v-bind="props">{{ text_separator }}</v-btn>
+            </template>
+            <v-list-item v-for="sep in text_separators" :key="`sep-${sep}`" @click="text_separator = sep" :title="sep" />
+          </v-menu>
+        </v-toolbar>
+        <v-textarea v-model="separated_values" />
+      </v-sheet>
+    </v-window-item>
+    <!-- table control -->
+    <v-window-item value="table">
       <v-table density="compact">
         <thead>
           <tr>
+            <!-- checkbox column -->
             <th>
               <v-checkbox v-model="select_all" />
             </th>
+            <!-- field column -->
             <th v-for="(field, fi) in fields" :key="`field-${field.key}.${fi}`" :cols="field.cols" :title="field.title">
               {{ field.title || field.label || field.key }}
             </th>
+            <!-- action -->
+            <th>
+              <v-btn icon flat @click="append">
+                <v-icon>mdi-dots-vertical</v-icon>
+              </v-btn>
+            </th>
           </tr>
         </thead>
-        <tbody style="max-height: 25vh; overflow-y: auto;">
-          <tr v-for="(item, ii) in value" :key="`row-${ii}`" @click="toggle(ii)">
+        <tbody>
+          <tr v-for="(item, ii) in value" :key="`row-${ii}`">
             <td>
-              <v-checkbox :model-value="selected.includes(ii)" @update="(v) => toggle(v)" />
+              <v-checkbox :model-value="selected.includes(ii)" @update="(v) => toggle(v)" @click="toggle(ii)" />
             </td>
-            <td v-for="(field, fi) in fields" :key="`row-edit.${ii}x${fi}`">
+            <td v-for="(field, fi) in open_fields" :key="`row-edit.${ii}x${fi}`">
               <slot :name="`value-${field.key}`" :item="item" :field="field" :value="item[field.key]">
-                <v-checkbox v-if="field.is === 'v-checkbox'" readonly :model-value="item[field.key]" />
-                <v-chip v-else-if="field.is === 'v-chip'" readonly>{{ item[field.key] }}</v-chip>
-                <template v-else>{{ item[field.key] }}</template>
+                <component :is="field_components[field.key]" hide-details="auto" single-line variant="underlined"
+                  v-model="item[field.key]" />
               </slot>
+            </td>
+            <td>
+              <v-btn icon flat>
+                <v-icon>mdi-dots-vertical</v-icon>
+              </v-btn>
             </td>
           </tr>
         </tbody>
+        <tfoot>
+          <tr>
+            <td :colspan="open_fields.length + 2">
+              <v-toolbar flat dense>
+                <v-text-field v-model="search" label="Search" outlined prepand-icon="mdi-magnify" />
+                <v-spacer />
+                <v-toolbar-items>
+                  <v-btn icon flat @click="append">
+                    <v-icon>mdi-plus</v-icon>
+                  </v-btn>
+                </v-toolbar-items>
+              </v-toolbar>
+            </td>
+          </tr>
+        </tfoot>
       </v-table>
-    </v-col>
-    <v-col cols="4">
-      <v-card elevation="1" @keyup.enter="()=>has_select?apply():append()">
-        <v-tabs v-model="tab">
-          <v-tab value="form">form</v-tab>
-          <v-tab value="yaml">yaml</v-tab>
-          <v-tab value="json">json</v-tab>
-        </v-tabs>
-        <v-card-text>
-          <v-window v-model="tab">
-            <!-- form editor -->
-            <v-window-item value="form">
-              <template v-for="(field, fi) in fields" :key="`table-value.${field.key}-${fi}`">
-                <slot :name="`item-${field.key}`" :item="generate" :field="field" :value="generate[field.key]">
-                  <v-text-field :label="field.label || field.key" v-bind="{ ...inputBinds, ...field }"
-                    v-model="generate[field.key]" />
-                </slot>
-              </template>
-            </v-window-item>
-            <!-- yaml editor -->
-            <v-window-item value="yaml">
-              <v-textarea v-model="yaml" placeholder="YAML" :rules="[validate_yaml]" @keyup.enter.stop  v-bind="text_editor_conf" />
-            </v-window-item>
-            <v-window-item value="json">
-              <v-textarea v-model="json" placeholder="JSON" :rules="[validate_json]" @keyup.enter.stop v-bind="text_editor_conf" />
-            </v-window-item>
-          </v-window>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn :diabled="has_select" @click="append" text color="accent">New</v-btn>
+    </v-window-item>
+    <!-- serializer -->
+    <v-window-item value="serializer">
+      <v-sheet>
+        <v-toolbar flat>
+          <v-tabs>
+            <v-tab v-for="(ser, si) in Object.keys(serializer)" :key="`ser-${ser}.${si}`" @click="tab = ser" :value="ser" :title="ser">
+              {{ ser }}
+            </v-tab>
+          </v-tabs>
           <v-spacer />
-          <v-btn :disabled="!has_select" @click="apply" text color="primary">Save</v-btn>
-        </v-card-actions>
-      </v-card>
-
-    </v-col>
-  </v-row>
+          <v-btn icon @click="apply">
+            <v-icon>mdi-check</v-icon>
+          </v-btn>
+        </v-toolbar>
+        <v-textarea v-model="serialize_values" />
+      </v-sheet>
+    </v-window-item>
+  </v-window>
 </template>
 
 <script>
@@ -97,19 +127,20 @@ export default {
       type: Array,
       required: false,
     },
+    blank: {
+      type: Object,
+      required: false,
+      default: () => ({}),
+    },
+    mode: {
+      type: String,
+      required: false,
+      default: 'table',
+    }
   },
   methods: {
     append() {
-      if(this.items != null && 0<this.items.length) {
-        this.value.push(...this.items);
-      } else if(this.generate!=null) {
-        this.value.push(Object.assign({}, this.generate));
-      } else {
-        this.value.push({});
-      }
-      // clear out
-      this.generate = {};
-      this.items = null;
+      this.value.push(Object.assign({}, this.blank));
     },
     apply() {
       this.selected_values.forEach((item) => {
@@ -125,7 +156,7 @@ export default {
       } else {
         this.selected.push(v);
       }
-      this.generate=this.get_common();
+      this.generate = this.get_common();
     },
     get_common() {
       return this.selected_values.reduce((agg, item) => {
@@ -135,8 +166,8 @@ export default {
             agg[k] = v;
           });
         Object.entries(agg)
-          .filter(([k,v])=> v!=null && item[k] != v)
-          .forEach(([k,])=> {
+          .filter(([k, v]) => v != null && item[k] != v)
+          .forEach(([k,]) => {
             agg[k] = null;
           });
         return agg;
@@ -149,10 +180,10 @@ export default {
       try {
         let values = parser(input);
         // null out as soon
-        if(values == null) {
+        if (values == null) {
           return null;
         }
-        else if(values instanceof Array) {
+        else if (values instanceof Array) {
           this.generate = values[0];
           this.items = values;
         } else {
@@ -160,7 +191,7 @@ export default {
           this.items = null;
         }
         return null;
-      } catch(e) {
+      } catch (e) {
         return e.toString();
       }
     },
@@ -190,23 +221,60 @@ export default {
     selected_values() {
       return this.selected.map((i) => this.value[i]);
     },
+    field_components() {
+      return Object.fromEntries(this.fields.map((f) => [f.key, f.is || 'v-text-field']));
+    },
+    open_fields() {
+      return this.fields.filter((f) => !f.menu);
+    },
+    separated_values: {
+      get() {
+        return this.value.map((it) => it.join(this.text_separator)).join('\n');
+      },
+      set(v) {
+        this.value = v.split('\n').map((it) => it.split(this.text_separator));
+      }
+    },
+    serialize_values: {
+      get() {
+        return this.serialize(this.value);
+      },
+      set(v) {
+        this.value = this.deserialize(v);
+      }
+    }
+
   },
   data() {
     return {
       tab: 'form',
       selected: [],
-      value: Object.assign([], this.modelValue),
+      value: this.modelValue,
       more: 1,
       yaml: null,
       yaml_error: null,
       json: null,
       json_error: null,
       generate: {},
+      search: null,
       items: null,
       text_editor_conf: {
         validateOn: 'lazy-input',
         persistentPlaceholder: true,
       },
+      modes: this.mode,
+      text_separator: ',',
+      text_separators: [',', ';', '|', ],
+      serializer: {
+        json: {
+          forth: JSON.stringify,
+          back: JSON.parse,
+        },
+        yaml: {
+          forth: yaml.dump,
+          back: yaml.load,
+        },
+      }
     };
   }
 }
