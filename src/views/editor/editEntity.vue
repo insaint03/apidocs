@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container fluid>
     <v-expansion-panels variant="popout" multiple mandatory>
       <!-- entity input form -->
       <v-expansion-panel title="Form">
