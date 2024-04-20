@@ -1,31 +1,36 @@
 <template>
-  <v-scroll>
-    <!-- service info area -->
-    <v-card>
-      <v-toolbar>
-        <v-toolbar-title>
-          {{ service.title }}
-        </v-toolbar-title>
-        <v-spacer />
-      </v-toolbar>
-    </v-card>
+  <v-container fluid>
+    <v-row>
+      <v-col cols="10">
+      <v-scroll>
+        <!-- service info area -->
+        <v-card>
+          <v-toolbar>
+            <v-toolbar-title>
+              {{ service.title }}
+            </v-toolbar-title>
+            <v-spacer />
+          </v-toolbar>
+        </v-card>
 
-  </v-scroll>
-  <v-navigation-drawer location="right">
-    <v-list-item title="service info" />
-    <!-- data migrations -->
-    <v-list-group title="datatypes">
-      <v-list-item v-for="p in parameters" :key="`view-param-${p.name}`">
-        <v-list-item-title>{{ p.name }}</v-list-item-title>
-        <v-list-item-subtitle>{{ p.basistype }}</v-list-item-subtitle>
-      </v-list-item>
-    </v-list-group>
-    <v-list-group title="endpoints">
-      <v-list-group v-for="tag in tags" :key="`view-tag-${tag}`">
-        <!-- TODO: endpoint -->
-      </v-list-group>
-    </v-list-group>
-  </v-navigation-drawer>
+      </v-scroll>
+      </v-col>
+      <v-col cols="2">
+        <!-- right side panel for ToC -->
+        <v-list>
+          <v-list-item-subheader>Service</v-list-item-subheader>
+          <v-list-item>Service</v-list-item>
+          <v-list-item-subheader>Endpoints</v-list-item-subheader>
+          <v-list-item-group title="endpoints">
+          </v-list-item-group>
+          <v-list-item-subheader>Migrations</v-list-item-subheader>
+          <v-list-item-group title="dataScheme">
+            <v-list-item v-for="p in parameters" :key="p.name" :title="p.name" :subtitle="p.basistype" />
+          </v-list-item-group>
+        </v-list>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
