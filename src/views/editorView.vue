@@ -1,6 +1,6 @@
 <template>
   <!-- topmost appbar -->
-  <v-app-bar app>
+  <v-app-bar app flat density="compact">
     <v-menu>
       <template v-slot:activator="{ props }">
         <v-app-bar-nav-icon v-bind="props" />
@@ -24,8 +24,8 @@
     </v-toolbar-items>
   </v-app-bar>
   <!-- bottom navigation -->
-  <v-bottom-navigation v-model="tab" color="primary" grow shift mandatory>
-    <v-btn v-for="item in tabs" :key="`tab-nav.${item}`" @click="tab = item" :value="item">
+  <v-bottom-navigation v-model="tab" color="primary" grow shift mandatory flat>
+    <v-btn v-for="item in tabs" :key="`tab-nav.${item}`" @click="tab = item" :value="item" :color="tabitems[item].color || 'default'" >
       <v-icon>{{ tabitems[item].icon }}</v-icon>
       <span>{{ tabitems[item].title }}</span>
     </v-btn>
@@ -89,22 +89,27 @@ const tabitems = {
     icon: 'mdi-information',
     title: 'Info',
     is: editors.editInfo,
+    color: 'info',
   },
   datatypes: {
     icon: 'mdi-database',
     title: 'Data Types',
+    color: 'secondary',
   },
   entities: {
     icon: 'mdi-database',
     title: 'Entities',
+    color: 'primary',
   },
   templates: {
     icon: 'mdi-file-document',
     title: 'Templates',
+    color: 'warning',
   },
   viewer: {
     icon: 'mdi-eye',
     title: 'Viewer',
+    color: 'success',
   },
 };
 const tab_defaults = 'entities';

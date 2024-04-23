@@ -1,6 +1,6 @@
 <template>
-  <v-card elevation="2">
-    <v-toolbar>
+  <v-card>
+    <v-toolbar density="compact">
       <v-toolbar-title>{{ value.name || '_new_template' }}</v-toolbar-title>
     </v-toolbar>
     <v-container fluid>

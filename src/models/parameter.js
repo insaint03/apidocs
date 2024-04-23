@@ -203,6 +203,8 @@ export default class Parameter {
             this._items = this._items || [];
             return this._items;
         } else {
+            // clear out items
+            this._items = null;
             return undefined;
         }
     }

@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-toolbar flat>
+    <v-toolbar flat density="compact">
       <v-toolbar-title>
         {{ value.name || '_new_parameter' }}
         <v-chip>{{ value.basistype || 'unselected' }}</v-chip>

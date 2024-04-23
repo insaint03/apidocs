@@ -1,31 +1,27 @@
 <template>
-  <v-container fluid>
-    <v-expansion-panels variant="popout" multiple mandatory>
-      <!-- entity input form -->
-      <v-expansion-panel title="Form">
-        <v-expansion-panel-text>
-          <v-row>
-            <v-col>
-              <!-- TODO: template selector -->
-              <v-select multiple :items="templates" />
-              <v-textarea v-model="value.description" />
-            </v-col>
-            <v-col>
-              <base-form v-model="value" :fields="fields.entity" />
-            </v-col>
-          </v-row>
-        </v-expansion-panel-text>
-      </v-expansion-panel>
-      <!-- endpoint grouping area -->
-      <v-expansion-panel title="Endpoints">
-        <v-expansion-panel-text>
-          <v-data-table  />
-        </v-expansion-panel-text>
-      </v-expansion-panel>
-
-    </v-expansion-panels>
-  </v-container>
-    
+  <v-expansion-panels variant="popout" multiple>
+    <!-- entity input form -->
+    <v-expansion-panel title="Form">
+      <v-expansion-panel-text>
+        <v-row>
+          <v-col>
+            <!-- TODO: template selector -->
+            <v-select multiple :items="templates" />
+            <v-textarea v-model="value.description" />
+          </v-col>
+          <v-col>
+            <base-form v-model="value" :fields="fields.entity" />
+          </v-col>
+        </v-row>
+      </v-expansion-panel-text>
+    </v-expansion-panel>
+    <!-- endpoint grouping area -->
+    <v-expansion-panel title="Endpoints">
+      <v-expansion-panel-text>
+        <v-data-table />
+      </v-expansion-panel-text>
+    </v-expansion-panel>
+  </v-expansion-panels>
 </template>
 <script>
 import { mapWritableState } from 'pinia';
@@ -53,7 +49,7 @@ export default {
   computed: {
     ...mapWritableState(useServiceStore, [
       'parameters',
-      'entities', 
+      'entities',
       'templates'
     ]),
   },

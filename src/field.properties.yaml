@@ -5,6 +5,7 @@ service:
     required: true
   license:
     required: true
+    is: license-picker
   contributors:
     required: false
   description:

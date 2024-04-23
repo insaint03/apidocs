@@ -18,12 +18,11 @@
       <v-col cols="2">
         <!-- right side panel for ToC -->
         <v-list>
-          <v-list-item-subheader>Service</v-list-item-subheader>
           <v-list-item>Service</v-list-item>
-          <v-list-item-subheader>Endpoints</v-list-item-subheader>
+          <v-list-subheader>enpoint</v-list-subheader>
           <v-list-item-group title="endpoints">
           </v-list-item-group>
-          <v-list-item-subheader>Migrations</v-list-item-subheader>
+          <v-list-subheader>migration</v-list-subheader>
           <v-list-item-group title="dataScheme">
             <v-list-item v-for="p in parameters" :key="p.name" :title="p.name" :subtitle="p.basistype" />
           </v-list-item-group>

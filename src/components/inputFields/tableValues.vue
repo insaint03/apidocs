@@ -3,7 +3,7 @@
     <!-- text separate values -->
     <v-window-item value="text">
       <v-sheet>
-        <v-toolbar flat dense>
+        <v-toolbar flat density="compact">
           <v-tabs>
             <v-tab v-for="f in fields" :key="`tab-${f.key}`" @click="tab = f.key" :value="f.key" :title="f.title">
               {{ f.title || f.label || f.key }}
@@ -79,7 +79,7 @@
     <!-- serializer -->
     <v-window-item value="serializer">
       <v-sheet>
-        <v-toolbar flat>
+        <v-toolbar flat density="compact">
           <v-tabs>
             <v-tab v-for="(ser, si) in Object.keys(serializer)" :key="`ser-${ser}.${si}`" @click="tab = ser" :value="ser" :title="ser">
               {{ ser }}
@@ -237,12 +237,20 @@ export default {
     },
     serialize_values: {
       get() {
-        return this.serialize(this.value);
+        try {
+          return this.serialize(this.value);
+        } catch(ex) {
+          return '';
+        }
       },
       set(v) {
-        this.value = this.deserialize(v);
+        try {
+          this.value = this.deserialize(v);
+        } catch(ex) {
+          this.serialize_error = ex.toString();
+        }
       }
-    }
+    },
 
   },
   data() {
@@ -274,7 +282,8 @@ export default {
           forth: yaml.dump,
           back: yaml.load,
         },
-      }
+      },
+      serialize_error: null,
     };
   }
 }
