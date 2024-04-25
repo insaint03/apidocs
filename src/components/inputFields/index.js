@@ -8,6 +8,7 @@ import queryField from "./queryField.vue"
 import tableValues from "./tableValues.vue"
 import licensePicker from "./licensePicker.vue"
 import contributorForm from "./contributorForm.vue"
+import linkForm from './linkForm.vue'
 
 
 export default {
@@ -15,6 +16,7 @@ export default {
     tableValues,
     licensePicker,
     contributorForm,
+    linkForm,
 
     httpMethodPicker,
     httpPathField,

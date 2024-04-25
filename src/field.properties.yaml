@@ -11,7 +11,9 @@ service:
     is: contributor-form
   description:
     required: true
-  links: {}
+  links:
+    required: false
+    is: link-form
 parameters:
   name:
     required: true
