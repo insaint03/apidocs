@@ -8,6 +8,7 @@ service:
     is: license-picker
   contributors:
     required: false
+    is: contributor-form
   description:
     required: true
   links: {}

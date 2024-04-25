@@ -7,12 +7,14 @@ import httpStatusPicker from "./httpStatusPicker.vue"
 import queryField from "./queryField.vue"
 import tableValues from "./tableValues.vue"
 import licensePicker from "./licensePicker.vue"
+import contributorForm from "./contributorForm.vue"
 
 
 export default {
     parameterPicker,
     tableValues,
     licensePicker,
+    contributorForm,
 
     httpMethodPicker,
     httpPathField,
@@ -21,4 +23,5 @@ export default {
 
     // table values
     queryField,
+
 }
