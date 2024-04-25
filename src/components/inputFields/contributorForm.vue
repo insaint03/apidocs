@@ -1,8 +1,9 @@
 <template>
-  <table-values v-model="value" :fields="fields" />
+  <list-values v-model="value" :fields="fields" label="contributors"
+    itemId="name" itemTitle="name" itemSubtitle="role" />
 </template>
 <script>
-import tableValues from '@/components/inputFields/tableValues.vue';
+import listValues from '@/components/inputFields/listValues.vue';
 const contributor_fields = [
   {key: 'name', label: 'name', required: true},
   {key: 'role', label: 'role', required: true, is: 'v-autocomplete', items: ['author','contributor','tester']},
@@ -11,7 +12,7 @@ const contributor_fields = [
 export default {
   name: 'contributorForm',
   components: {
-    tableValues,
+    listValues,
   },
   props: {
     modelValue: {

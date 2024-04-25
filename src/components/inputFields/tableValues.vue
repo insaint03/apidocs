@@ -49,6 +49,7 @@
             <td v-for="(field, fi) in open_fields" :key="`row-edit.${ii}x${fi}`">
               <slot :name="`value-${field.key}`" :item="item" :field="field" :value="item[field.key]">
                 <component :is="field_components[field.key]" hide-details="auto" single-line variant="underlined"
+                  v-bind="item"
                   v-model="item[field.key]" />
               </slot>
             </td>

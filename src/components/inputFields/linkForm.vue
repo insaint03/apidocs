@@ -1,8 +1,9 @@
 <template>
-  <table-values v-model="value" :fields="fields" />
+  <list-values v-model="value" :fields="fields" label="links" 
+    itemTitle="type" itemSubtitle="url" itemId="url" />
 </template>
 <script>
-import tableValues from '@/components/inputFields/tableValues.vue';
+import listValues from '@/components/inputFields/listValues.vue';
 const fields = [
   {key: 'type', label: 'type', required: true, is: 'v-autocomplete', items: ['repository','homepage','package','documents','others']},
   {key: 'url', label: 'url', required: true},
@@ -10,7 +11,7 @@ const fields = [
 export default {
   name: 'linkForm',
   components: {
-    tableValues,
+    listValues,
   },
   props: {
     modelValue: {
