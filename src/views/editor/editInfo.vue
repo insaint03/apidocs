@@ -15,7 +15,7 @@
       <!-- right service description -->
       <v-col>
         <v-sheet class="fill-height">
-          <v-textarea v-model="value.description" label="Description" outlined rows="10" />
+          <desc-text v-model="value.description" label="description" /> 
         </v-sheet>
       </v-col>
     </v-row>
@@ -26,11 +26,13 @@
 import fields from '@/fields'
 import Service from '@/models/service'
 import baseForm from '@/components/forms/baseForm.vue'
+import descText from '@/components/inputFields/descText.vue'
 
 export default {
   name: 'editInfo',
   components: {
     baseForm,
+    descText,
   },
   props: {
     modelValue: {

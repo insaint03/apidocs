@@ -1,5 +1,5 @@
 <template>
-  <v-list :key="`items.${value.length}`">
+  <v-list>
     <template v-if="label">
       <v-list-item-subheader @click="modal">{{ label }}</v-list-item-subheader>
       <v-divider />

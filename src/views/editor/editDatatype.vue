@@ -31,7 +31,8 @@
     </v-row>
     <v-row>
       <v-col>
-        <table-values label="samples" v-model="value.samples" :fields="value.items || [{key: 'sample'}]" />
+        <list-values label="samples" v-model="value.samples" :fields="value.items || [{key: 'key'}]"
+          itemId="key" itemTitle="key" />
       </v-col>
     </v-row>
   </v-card>
@@ -43,12 +44,14 @@ import fields from '@/fields';
 import parameterPicker from '@/components/inputFields/parameterPicker.vue';
 import baseForm from '@/components/forms/baseForm.vue';
 import tableValues from '@/components/inputFields/tableValues.vue';
+import listValues from '@/components/inputFields/listValues.vue';
 
 export default {
   name: 'editDatatype',
   components: {
     baseForm,
     tableValues,
+    listValues,
     parameterPicker,
   },
   props: {

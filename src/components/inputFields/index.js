@@ -4,13 +4,16 @@ import httpPathField from "./httpPathField.vue"
 import HttpMimePicker from "./httpMimePicker.vue"
 import httpStatusPicker from "./httpStatusPicker.vue"
 
-import queryField from "./queryField.vue"
 import tableValues from "./tableValues.vue"
 import licensePicker from "./licensePicker.vue"
 import contributorForm from "./contributorForm.vue"
 import linkForm from './linkForm.vue'
 import migrationText from './migrationText.vue'
 import tagnameText from './tagnameText.vue'
+import descText from './descText.vue'
+import queryValues from './queryValues.vue'
+import headerValues from './headerValues.vue'
+import cookieValues from './cookieValues.vue'
 
 
 export default {
@@ -21,13 +24,14 @@ export default {
     linkForm,
     migrationText,
     tagnameText,
+    descText,
 
     httpMethodPicker,
     httpPathField,
     HttpMimePicker,
     httpStatusPicker,
 
-    // table values
-    queryField,
-
+    queryValues,
+    headerValues,
+    cookieValues,
 }

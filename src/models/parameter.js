@@ -183,7 +183,7 @@ export default class Parameter {
     set description(value) { this._desc = value; }
 
     get samples() { return this._samples || []; }
-    set samples(value) { this.samples = this.samples.concat([value]) ; }
+    set samples(value) { this._samples = this.samples.concat([value]) ; }
 
     get is_collective() {
         return this.is_array || this.is_object;

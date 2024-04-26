@@ -30,7 +30,7 @@ parameter_desc:
   migration:
     is: migration-text
   description:
-    is: v-textarea
+    is: desc-text
     required: false
 items:
   required:
@@ -52,11 +52,14 @@ request:
   path:
     required: true
   query:
+    is: query-values
     required: false
   cookies:
+    is: cookie-values
     required: false
   headers:
-    required: false
+    is: list-values
+    fields:
   body:
     is: parameter-picker
     required: false
@@ -66,14 +69,14 @@ response:
   status:
     required: true
   cookies:
+    is: cookie-values
     required: true
-    is: v-select
   headers:
+    is: header-values
     required: true
-    is: v-select
   body:
+    is: parameter-picker
     required: true
-    is: v-select
 template:
   name:
     required: false
@@ -85,8 +88,9 @@ template:
 query:
   key:
     required: true
-  expect:
+  datatype:
     is: parameter-picker
+    origin: string
     required: true
   required:
     is: v-checkbox

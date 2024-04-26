@@ -15,7 +15,7 @@
 
               </v-col>
               <v-col>
-                <v-textarea v-model="value.description" />
+                <desc-text v-model="value.description" />
 
               </v-col>
             </v-row>
@@ -29,7 +29,7 @@
                 <base-form v-model="value" :fields="fields.request" />
               </v-col>
               <v-col>
-                <v-textarea v-model="value.request.description" />
+                <desc-text v-model="value.request.description" />
               </v-col>
             </v-row>
           </v-expansion-panel-text>
@@ -42,7 +42,7 @@
                 <base-form v-model="value" :fields="fields.response" />
               </v-col>
               <v-col>
-                <v-textarea v-model="value.response.description" />
+                <desc-text v-model="value.response.description" />
               </v-col>
             </v-row>
           </v-expansion-panel-text>
@@ -56,12 +56,14 @@ import Template from '@/models/template';
 import fields from '@/fields'
 
 import baseForm from '@/components/forms/baseForm.vue';
+import descText from '@/components/inputFields/descText.vue';
 // import tableValues from '@/components/inputFields/tableValues.vue';
 
 export default {
   name: 'editTemplate',
   components: {
     baseForm,
+    descText,
     // tableValues,
   },
   props: {
