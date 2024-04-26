@@ -16,8 +16,8 @@ import { useServiceStore } from '@/stores/service';
 export default {
   name: 'parameterPicker',
   props: {
-    modelValue: { type: String, required: false },
-    derived: { type: [String, Array], required: false },
+    modelValue: { type: [String, Array], required: false },
+    origin: { type: [String, Array], required: false },
     expecting: { type: String, required: false, default: ()=>'object'},
   },
   methods: {
@@ -37,11 +37,11 @@ export default {
       set(v) { this.$emit('update:modelValue', v); },
     },
     items() {
-      switch(typeof(this.derived)) {
+      switch(typeof(this.origin)) {
         case 'string':
-          return Parameter[this.derived] || Parameter.children(this.derived);
+          return Parameter[this.origin] || Parameter.children(this.origin);
         case 'array':
-          return this.derived.reduce((ret, d)=>{
+          return this.origin.reduce((ret, d)=>{
             ret.concat(Parameter[d] || Parameter.children(d));
           }, [])
           .filter((v, i, a) => a.indexOf(v) === i);
