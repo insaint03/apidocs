@@ -27,10 +27,8 @@ parameters:
     # is: table-values
     required: false
 parameter_desc:
-  migrate:
-    required: false
-    clarable: true
-    hint: Fill schema name to export migration
+  migration:
+    is: migration-text
   description:
     is: v-textarea
     required: false
@@ -82,6 +80,7 @@ template:
   extend: 
     required: false
   tagname:
+    is: tagname-text
     required: false
 query:
   key:

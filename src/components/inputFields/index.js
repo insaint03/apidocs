@@ -9,6 +9,8 @@ import tableValues from "./tableValues.vue"
 import licensePicker from "./licensePicker.vue"
 import contributorForm from "./contributorForm.vue"
 import linkForm from './linkForm.vue'
+import migrationText from './migrationText.vue'
+import tagnameText from './tagnameText.vue'
 
 
 export default {
@@ -17,6 +19,8 @@ export default {
     licensePicker,
     contributorForm,
     linkForm,
+    migrationText,
+    tagnameText,
 
     httpMethodPicker,
     httpPathField,
