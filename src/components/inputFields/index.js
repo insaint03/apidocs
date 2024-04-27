@@ -36,4 +36,7 @@ export default {
     queryValues,
     headerValues,
     cookieValues,
+    queryValues,
+    headerValues,
+    cookieValues,
 }
