@@ -51,6 +51,7 @@ request:
     is: http-method-picker
   path:
     required: true
+    is: path-text
   query:
     is: query-values
     required: false
