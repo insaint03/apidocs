@@ -14,6 +14,7 @@ import descText from './descText.vue'
 import queryValues from './queryValues.vue'
 import headerValues from './headerValues.vue'
 import cookieValues from './cookieValues.vue'
+import pathText from './pathText.vue'
 
 
 export default {
@@ -25,12 +26,16 @@ export default {
     migrationText,
     tagnameText,
     descText,
+    pathText,
 
     httpMethodPicker,
     httpPathField,
     HttpMimePicker,
     httpStatusPicker,
 
+    queryValues,
+    headerValues,
+    cookieValues,
     queryValues,
     headerValues,
     cookieValues,
