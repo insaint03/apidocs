@@ -4,14 +4,14 @@ import pinia from './pinia.js';
 
 export default {
     libs: {
+        pinia,
         vuetify,
         vuerouter,
-        pinia,
     },
     register(app) {
         return app
-            .use(pinia)
             .use(vuetify)
+            .use(pinia)
             .use(vuerouter)
     }
 }

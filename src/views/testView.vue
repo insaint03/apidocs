@@ -3,47 +3,43 @@
     <v-row>
       <v-col>
         <v-card>
-          <v-card-title>
-            {{ value.name || 'unset' }}
-          </v-card-title>
-          <v-card-subtitle>{{ value.type || 'unset' }}</v-card-subtitle>
+          <v-card-items>
+            <v-card-title> {{ value.name || 'unset' }}</v-card-title>
+            <v-card-subtitle>{{ value.type || 'unset' }}</v-card-subtitle>
+          </v-card-items>
           <v-card-text>
-            <v-list>
-              <v-list-item v-for="(f, fi) in fields" :key="`field-${f.key}.${fi}`">
-                <v-list-item-title>{{ value[f.key] || '-' }}</v-list-item-title>
-                <v-list-item-subtitle>{{ f.key }}</v-list-item-subtitle>
-              </v-list-item>
-            </v-list>
+            <list-selector v-model="value" :fields="fields" v-model:items="items"
+              item-new="new item" item-title="name" item-subtitle="type" />
           </v-card-text>
-          <v-card-actions>
-            <v-btn @click="dialog = true">Open Dialog</v-btn>
-          </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
-    <editor-dialog v-model="value" :fields="fields" v-model:open="dialog" />
   </v-container>
 </template>
 <script>
-import editorDialog from '@/components/editorDialog.vue';
-import Parameter from '@/models/parameter.js';
+import listSelector from '@/components/listSelector.vue';
 
 export default {
   name: 'homeView',
   components: {
-    editorDialog,
+    // editorDialog,
+    listSelector,
   },
   data() {
     return {
       value: {},
-      dialog: false,
-      fields: [
-        { key: 'name', label: 'Name', required: true },
-        { key: 'summary', label: 'Summary', required: false },
-        { key: 'description', label: 'Description', required: false },
-        { key: 'type', label: 'Type', is: 'parameter-picker', items: Parameter.all, itemTitle: 'name', itemValue: 'name' },
+      items: [
+        {name: 'item1', type: 'type1', description: 'description1'},
+        {name: 'item2', type: 'type2', description: 'description2'},
+        {name: 'item3', type: 'type3', description: 'description3'},
       ],
+      fields: [
+        {key: 'name'},
+        {key: 'type'},
+        {key: 'description', is: 'v-textarea'},
+      ]
+
     }
   }
 }
-</script>@/models/parameter.js
+</script>

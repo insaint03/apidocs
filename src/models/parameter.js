@@ -183,9 +183,9 @@ export default class Parameter {
     set description(value) { this._desc = value; }
 
     get samples() { return this._samples || []; }
-    set samples(value) { this.samples = this.samples.concat([value]) ; }
+    set samples(value) { this._samples = this.samples.concat([value]) ; }
 
-    get is_collection() {
+    get is_collective() {
         return this.is_array || this.is_object;
     }
     get is_array() { return this.origintype === 'array'; }
@@ -199,10 +199,17 @@ export default class Parameter {
      */
     get items() {
         // if null, it is array or object but typed "any"
-        return this.is_collection ? this._items : undefined;
+        if(this.is_collective) {
+            this._items = this._items || [];
+            return this._items;
+        } else {
+            // clear out items
+            this._items = null;
+            return undefined;
+        }
     }
     set items(value) {
-        if(this.is_collection) {
+        if(this.is_collective) {
             this._items = value;
         }
         // ignore rests

@@ -1,0 +1,121 @@
+service:
+  name:
+    required: true
+  version:
+    required: true
+  license:
+    required: true
+    is: license-picker
+  contributors:
+    required: false
+    is: contributor-form
+  description:
+    required: true
+  links:
+    required: false
+    is: link-form
+parameters:
+  name:
+    required: true
+  basistype:
+    required: true
+    is: parameter-picker
+  validation:
+    required: false
+    hint: "(v)=>{ return is_v_valid(v) ? true : false; }"
+  items:
+    # is: table-values
+    required: false
+parameter_desc:
+  migration:
+    is: migration-text
+  description:
+    is: desc-text
+    required: false
+items:
+  required:
+    title: "*"
+    cols: 2
+  key:
+    required: true
+    cols: 3
+  datatype:
+    required: true
+    cols: 3
+  description:
+    required: false
+    cols: 4
+request:
+  method:
+    required: true
+    is: http-method-picker
+  path:
+    required: true
+  query:
+    is: query-values
+    required: false
+  cookies:
+    is: cookie-values
+    required: false
+  headers:
+    is: list-values
+    fields:
+  body:
+    is: parameter-picker
+    required: false
+response:
+  mimetype:
+    required: true
+  status:
+    required: true
+  cookies:
+    is: cookie-values
+    required: true
+  headers:
+    is: header-values
+    required: true
+  body:
+    is: parameter-picker
+    required: true
+template:
+  name:
+    required: false
+  extend: 
+    required: false
+  tagname:
+    is: tagname-text
+    required: false
+query:
+  key:
+    required: true
+  datatype:
+    is: parameter-picker
+    origin: string
+    required: true
+  required:
+    is: v-checkbox
+  default: {}
+  inherit:
+    readonly: true
+  misc: {}
+cookies:
+  key: {}
+  expect: {}
+  required: {}
+  inherit: {}
+  misc: {}
+headers:
+  key: {}
+  expect: {}
+  required: {}
+  default: {}
+  inherit: {}
+  misc: {}
+entity:
+  path: {}
+  method: {}
+  request_body: {}
+  response_type: {}
+  response_body: {}
+
+
