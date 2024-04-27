@@ -18,7 +18,7 @@
         <base-form v-model="value" :fields="fields.parameters">
           <template #item-items>
             <v-divider v-if="!value.is_collective" />
-            <table-values v-else-if="value.is_object" v-model="value.items" :fields="fields.items" />
+            <list-values v-else-if="value.is_object" v-model="value.items" :fields="fields.items" />
             <parameter-picker v-else-if="value.is_array" v-model="value.items" />
           </template>
         </base-form>
