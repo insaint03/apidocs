@@ -47,6 +47,7 @@ export default class Parameter {
             
         ].map((opt)=>{
             let dt = new Parameter(opt.name, opt.basis);
+            dt._is_origin = (opt.basis == null);
             dt._is_primitive = true;
             dt.summary = opt.summary;
             dt.description = opt.desc;
@@ -61,6 +62,9 @@ export default class Parameter {
         } 
         return Parameter._store;
     }
+
+    // origin types
+    static get origins() { return Parameter.all.filter((d)=>d.is_origin)}
     // initial primitive types
     static get primitives() { return Parameter.all.filter((d)=>d.is_primitive); }
     // types that has origins
@@ -97,13 +101,14 @@ export default class Parameter {
     }
 
     constructor(name, basistype) {
-        this._name = name;
+        this._name = name || '';
         if(basistype!=undefined) {
             let _basis = Parameter.find(basistype, true);
             this._basistype = _basis.name;
+            this._origintype = _basis.origintype;
         } else {
             this._basistype = name;
-            this._origin = name;
+            this._origintype = name;
         }
         
         Parameter._store.push(this);
@@ -120,8 +125,8 @@ export default class Parameter {
     }
 
     // basis readonly (direct upper type)
-    get basis() { return Parameter.find(this._basistype || this.origin); }
-    set basis(value) { this._basistype = value.name; }
+    get basis() { return Parameter.find(this._basistype || this._origintype); }
+    set basis(value) { this._basistype = value instanceof Parameter ? value.name : value.toString(); }
     get basistype() { return this._basistype; }
     set basistype(value) { this._basistype = value; }
     // origin readonly (originated type, primitive)
@@ -129,16 +134,7 @@ export default class Parameter {
         return Parameter.find(this.origintype || this.name);
     }
     get origintype() { 
-        if(this.name === this.basistype) {
-            return this.name;
-        }
-        // lookup parents
-        let cursor = this.basis;
-        let iterations = 1e3;
-        while(0<iterations-- && cursor._origin == null) {
-            cursor = cursor.basis;
-        }
-        return cursor._origin;
+        return this._origintype || this._name;
     }
     get hierarchy() { 
         if(!this._hierarchy) {
@@ -174,7 +170,9 @@ export default class Parameter {
     }
     
     // readonly primitive
-    get is_primitive() { return this._primitive || false; }
+    get is_primitive() { return this._is_primitive || false; }
+    get is_origin() { return this._is_origin || false; }
+
 
     get summary() { return this._summary; }
     set summary(value) { this._summary = value; }
@@ -217,5 +215,26 @@ export default class Parameter {
     // item row generator for object basis types
     static obj_item_row(key, typename, desc=null, required=false, nullable=true, defaults=null) {
         return {key, type: Parameter.find(typename), desc, required, nullable, defaults};
+    }
+
+    is_descendant_of(origin) {
+        let comparative_name = origin.name || origin;
+        let iterations = 1e3;
+
+        // origin or basis fast check
+        if(this.basistype === comparative_name
+        || this.origintype === comparative_name) {
+            return true;
+        }
+
+        let cursor = this;
+        do {
+            if(cursor.name === comparative_name) {
+                return true;
+            }
+            cursor = cursor.basis;
+        } while(0<--iterations && cursor.name !== comparative_name);
+
+        return false;
     }
 }

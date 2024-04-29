@@ -43,14 +43,14 @@ import fields from '@/fields';
 
 import parameterPicker from '@/components/inputFields/parameterPicker.vue';
 import baseForm from '@/components/forms/baseForm.vue';
-import tableValues from '@/components/inputFields/tableValues.vue';
+// import tableValues from '@/components/inputFields/tableValues.vue';
 import listValues from '@/components/inputFields/listValues.vue';
 
 export default {
   name: 'editDatatype',
   components: {
     baseForm,
-    tableValues,
+    // tableValues,
     listValues,
     parameterPicker,
   },
@@ -58,6 +58,10 @@ export default {
     modelValue: {
       type: Parameter,
       required: true,
+    },
+    disables: {
+      type: Array,
+      required: false,
     }
   },
   data() {

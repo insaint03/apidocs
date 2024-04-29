@@ -4,7 +4,7 @@
       <slot :item="value">
         <v-col class="ma-0 pa-0`" v-for="(f,fi) in fields" :key="`field-${f.key}.${fi}`" :cols="f.cols || 12">
           <slot :name="`item-${f.key}`" :item="value">
-            <component v-model="value[f.key]" v-bind="f" :is="f.is || 'v-text-field'" density="compact" :hide-details="readonly" :disabled="readonly" :variant="readonly?'underlined':'solo'"
+            <component v-model="value[f.key]" v-bind="f" :is="f.is || 'v-text-field'" density="compact" :hide-details="readonly" :disabled="disables.includes(f.key)" :variant="readonly?'underlined':'solo'"
               @update="$emit('update:model-value', value)"/>
           </slot>
         </v-col> 
@@ -36,6 +36,11 @@ export default {
       required: false,
       default: () => false,
     },
+    disables: {
+      type: Array,
+      required: false,
+      default: ()=>[],
+    }
   },
   data() {
     return {

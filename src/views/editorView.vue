@@ -35,7 +35,7 @@
   <!-- main area window controlled by bottom navigation -->
   <v-main app>
   <!-- left navbar area/datatype -->
-    <datatype-tab v-if="show_datatype_tab" v-model="nav_left" />
+    <datatype-tab v-if="show_datatype_tab" v-model="nav_left" @select="on_select_params" />
 
     <v-container fluid>
       <v-window v-model="tab">
@@ -43,7 +43,7 @@
           <edit-info v-model="service" />
         </v-window-item>
         <v-window-item value="datatypes">
-          <edit-datatype v-model="datatype_selected" />
+          <edit-datatype v-model="datatype_selected" :disables="disabled_datatype_props" />
         </v-window-item>
         <v-window-item value="entities">
           <edit-entity v-model="entity_selected" />
@@ -66,12 +66,13 @@
 
 <script>
 // import Service from '@/models/service'
-import Parameter from '@/models/parameter'
-import Template from '@/models/template'
+// import Parameter from '@/models/parameter'
+// import Template from '@/models/template'
 
 import Request from '@/models/request'
 import Response from '@/models/response'
 import editors from './editor'
+import fields from '@/fields'
 
 import { mapWritableState } from 'pinia'
 import { useServiceStore } from '@/stores/service'
@@ -114,6 +115,9 @@ const tabitems = {
 };
 const tab_defaults = 'entities';
 
+const fields_datatype = fields.parameters.map((f)=>f.key)
+  .concat(fields.parameter_desc.map((f)=>f.key));
+
 export default {
   name: 'editorView',
   components: {
@@ -136,6 +140,24 @@ export default {
     add_template() {
       this.templates.push(Object.assign({}, this.template_selected));
     },
+
+    on_select_params(params) {
+      // set selected datatype
+      let disables = [];
+      this.selected_datatype = params.reduce((agg,it)=>{
+        fields_datatype.forEach((fk)=>{
+          if(agg[fk] === undefined) {
+            agg[fk] = it[fk];
+          } else if(agg[fk]!=it[fk]) {
+            agg[fk] = null;
+            disables.push(fk);
+          } 
+          return agg;
+        })
+      }, {});
+      // move to datatype tab
+      this.tab = 'datatypes';
+    }
   },
   computed: {
     show_datatype_tab() {
@@ -146,7 +168,7 @@ export default {
     },
 
     datatype_selected() {
-      return this.selected_datatype || new Parameter();
+      return this.selected_datatype || {};
     },
 
     entity_selected() {
@@ -157,7 +179,7 @@ export default {
     },
 
     template_selected() {
-      return this.selected_template || new Template();
+      return this.selected_template || {};
     },
 
     ...mapWritableState(useServiceStore, [
@@ -187,6 +209,7 @@ export default {
 
       // selected items
       selected_datatype: null,
+      disabled_datatype_props: [],
       selected_entity: null,
       selected_template: null,
     }
