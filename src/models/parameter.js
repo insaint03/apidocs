@@ -83,7 +83,7 @@ export default class Parameter {
 
     static list(filter) { return Parameter.all.filter(filter || (()=>true)); }
     static children(basis) { return Parameter.list((d)=>d.basis === basis);}
-    static create(prefix, basis='string') {
+    static create(prefix, basis) {
         // generate unique name
         let name = prefix || '';
         let unique_counter = 0;
@@ -101,11 +101,14 @@ export default class Parameter {
     }
 
     constructor(name, basistype) {
+        console.log('construct param', name, basistype);
+
         this._name = name || '';
         if(basistype!=undefined) {
-            let _basis = Parameter.find(basistype, true);
-            this._basistype = _basis.name;
-            this._origintype = _basis.origintype;
+            let basis = Parameter.find(basistype);
+            this._basistype = basis.name;
+            this._origintype = basis.origintype;
+            
         } else {
             this._basistype = name;
             this._origintype = name;
@@ -126,12 +129,12 @@ export default class Parameter {
 
     // basis readonly (direct upper type)
     get basis() { return Parameter.find(this._basistype || this._origintype); }
-    set basis(value) { this._basistype = value instanceof Parameter ? value.name : value.toString(); }
+    set basis(value) { this._basistype = value.name || value }
     get basistype() { return this._basistype; }
-    set basistype(value) { this._basistype = value; }
+    set basistype(value) { this.basis = value.name || value; }
     // origin readonly (originated type, primitive)
     get origin() { 
-        return Parameter.find(this.origintype || this.name);
+        return Parameter.find(this.origintype);
     }
     get origintype() { 
         return this._origintype || this._name;

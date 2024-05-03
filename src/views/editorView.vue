@@ -168,7 +168,7 @@ export default {
     },
 
     datatype_selected() {
-      return this.selected_datatype || {};
+      return this.selected_datatype;
     },
 
     entity_selected() {

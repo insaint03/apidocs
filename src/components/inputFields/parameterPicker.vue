@@ -27,7 +27,7 @@ export default {
         // create new if not exists
         let newtype = Parameter.create(name, this.expecting)
         this.parameters.push(newtype);
-        this.value = newtype;
+        this.value = newtype.name;
       }
     }
   },

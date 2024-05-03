@@ -12,5 +12,5 @@ export const useServiceStore = defineStore('service', ()=>({
     service: ref(new Service()),
     parameters: ref([]),
     templates: ref([]),
-    entities: ref([]),
+    entities: ref([]),    
 }));

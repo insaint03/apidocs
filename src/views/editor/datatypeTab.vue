@@ -1,21 +1,19 @@
 <template>
-  <v-navigation-drawer loctaion="left" v-model="value" title="datatypes" permanent>
+  <v-navigation-drawer loctaion="left" :model-value="modelValue" title="datatypes" permanent>
     <v-list>
       <v-list-subheader v-bind="props">Parameters</v-list-subheader>
       <v-divider />
       <v-list-group value="form-area">
         <template #activator="{ props }">
           <v-list-item v-bind="props">
-            <v-icon>mdi-filter</v-icon>
+            <v-text-field v-model="search" label="Name" hide-details 
+              prepend-icon="mdi-filter" 
+              append-inner-icon="mdi-plus" @click:append-inner.stop="append" @click.stop />
             <!-- appending icon -->
           </v-list-item>
           <v-divider />
         </template>
         <!-- search -->
-        <v-list-item>
-          <v-text-field v-model="search" label="Name" hide-details append-icon="mdi-plus" @click:append="append"
-            prepend-inner-icon="mdi-magnify" />
-        </v-list-item>
         <!-- type hierarchy filter -->
         <v-list-item title="descendant">
         </v-list-item>
@@ -80,6 +78,7 @@ export default {
       });
     },
     selects(...items) {
+      console.log('on select', items);
       this.$emit('select', items);
     }
   },
