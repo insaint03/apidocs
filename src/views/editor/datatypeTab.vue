@@ -6,8 +6,7 @@
       <v-list-group value="form-area">
         <template #activator="{ props }">
           <v-list-item v-bind="props">
-            <v-text-field v-model="search" label="Name" hide-details 
-              prepend-icon="mdi-filter" 
+            <v-text-field v-model="search_text" label="Name" hide-details clearable
               append-inner-icon="mdi-plus" @click:append-inner.stop="append" @click.stop />
             <!-- appending icon -->
           </v-list-item>
@@ -28,18 +27,20 @@
       </v-list-group>
       <v-divider />
       <!-- primitive grouping -->
-      <v-list-group v-show="0 < items_count_of(grp)" v-for="grp in origins" :key="`param-grp.${grp}`" :value="grp.name">
+      <v-list-group v-for="grp in groupeds" :key="`param-grp.${grp.name}`" :value="grp.name">
         <template #activator="{ props }">
-          <v-list-item v-bind="props">
+          <v-list-item v-bind="props" v-show="0<grp.items.length">
             <v-list-item-title>
               {{ grp.name }}
               <v-badge inline :content="items_count_of(grp)" />
             </v-list-item-title>
           </v-list-item>
         </template>
-        <v-list-item v-for="it in items_of(grp)" :key="`param-item.${grp.name}.${it.name}`" 
+        <v-list-item v-for="it in grp.items" :key="`param-item.${grp.name}.${it.name}`" 
           :title="it.name" :subtitle="it.basistype"
-          @click="selects(it)">
+          v-show="search(it)"
+          @click="single_select(it)"
+          @click.ctrl="multi_select(it)">
         </v-list-item>
       </v-list-group>
     </v-list>
@@ -48,10 +49,8 @@
 
 <script>
 import Parameter from '@/models/parameter';
-import { mapWritableState } from 'pinia';
-import { useServiceStore } from '@/stores/service';
-
-const sorts = (params) => [...params].sort((l, r) => (l.name || l).localeCompare((r.name || r)));
+import { mapWritableState, mapActions } from 'pinia';
+import { useDatatypeStore } from '@/stores/datatype';
 
 
 export default {
@@ -64,22 +63,20 @@ export default {
       return this.items.filter((it) => it.is_descendant_of(origin));
     },
     append() {
-      let it = Parameter.create(this.search || null);
+      let it = Parameter.create(this.search_text);
       if (it) {
         this.parameters.push(it);
       }
     },
     init() {
-      console.log('params', {
-        origins: Parameter.origins,
-        primitves: Parameter.primitives,
-        items: this.items,
-        all: Parameter.all,
-      });
     },
-    selects(...items) {
-      console.log('on select', items);
-      this.$emit('select', items);
+    ...mapActions(useDatatypeStore, [
+      'search','unselect','single_select','multi_select',
+    ]),
+  },
+  watch: {
+    selection() {
+      this.$emit('select', this.selection);
     }
   },
   props: {
@@ -92,24 +89,33 @@ export default {
 
   },
   computed: {
-    ordereds() { return sorts(this.parameters); },
-    items() {
-      let filter = this.search
-        ? new RegExp(this.search, 'i')
-        : /^.*$/i;
-      return this.ordereds.filter((it) => filter.test(it.name));
+    item_groups() {
+      return Parameter.origins.map((o)=>{
+        return {
+          group: o,
+          name: o.name,
+          items: this.ordereds.filter((it)=>it.origintype == o.name),
+        }
+      }).filter((grp)=>grp.items.length >0);
     },
-    origins() {
-      return Parameter.primitives;
+    search_pattern() {
+      return this.search ? new RegExp(this.search, 'i') : null;
     },
-    ...mapWritableState(useServiceStore, ['parameters']),
+    ...mapWritableState(useDatatypeStore, [
+      'all',
+      'origins',
+      'items',
+      'ordereds',
+      'search_text',
+      'groupeds',
+    ]),
   },
   data() {
     return {
-      search: null,
       value: this.modelValue,
       open_groups: [],
+      selection: null,
     }
   }
 }
-</script>
+</script>@/stores/datatype

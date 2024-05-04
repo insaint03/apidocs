@@ -35,7 +35,9 @@
   <!-- main area window controlled by bottom navigation -->
   <v-main app>
   <!-- left navbar area/datatype -->
-    <datatype-tab v-if="show_datatype_tab" v-model="nav_left" @select="on_select_params" />
+    <datatype-tab v-if="show_datatype_tab" 
+      v-model="nav_left" 
+      @select="on_select_params" />
 
     <v-container fluid>
       <v-window v-model="tab">
@@ -43,7 +45,7 @@
           <edit-info v-model="service" />
         </v-window-item>
         <v-window-item value="datatypes">
-          <edit-datatype v-model="datatype_selected" :disables="disabled_datatype_props" />
+          <edit-datatype v-bind="datatype_editor" :key="`edit-dt.${last_updated}`" />
         </v-window-item>
         <v-window-item value="entities">
           <edit-entity v-model="entity_selected" />
@@ -124,6 +126,9 @@ export default {
     ...editors
   },
   methods: {
+    refresh() {
+      this.last_updated = Date.now();
+    },
     toggle_dataype_tab() {
       this.nav_left = !this.nav_left;
     },
@@ -144,7 +149,7 @@ export default {
     on_select_params(params) {
       // set selected datatype
       let disables = [];
-      this.selected_datatype = params.reduce((agg,it)=>{
+      let selection = params.reduce((agg,it)=>{
         fields_datatype.forEach((fk)=>{
           if(agg[fk] === undefined) {
             agg[fk] = it[fk];
@@ -152,11 +157,19 @@ export default {
             agg[fk] = null;
             disables.push(fk);
           } 
-          return agg;
         })
+        return agg;
       }, {});
-      // move to datatype tab
+
       this.tab = 'datatypes';
+
+      let editor_bind = {
+        modelValue: selection,
+        disables,
+        singular: params.length == 1,
+      };
+      this.refresh();
+      this.datatype_editor = editor_bind;
     }
   },
   computed: {
@@ -165,10 +178,6 @@ export default {
     },
     show_template_tab() {
       return ['templates', 'entities'].includes(this.tab);
-    },
-
-    datatype_selected() {
-      return this.selected_datatype;
     },
 
     entity_selected() {
@@ -199,6 +208,14 @@ export default {
       // side navigation drawers
       nav_left: true,
       nav_right: true,
+
+      datatype_editor: {
+        modelValue: null,
+        disables: [],
+        singular: true,
+      },
+
+      last_updated: Date.now(),
 
       // 
       // info: {},

@@ -1,38 +1,41 @@
 <template>
   <!-- on has selection -->
-  <v-card v-if="has_select">
+  <v-card v-if="singular!=null" :key="`edit.dt-${singular}`">
     <v-toolbar flat density="compact">
       <v-toolbar-title>
-        {{ value.name || '_new_parameter' }}
-        <v-chip>{{ value.origintype || 'unselected' }}</v-chip>
+        <v-chip-group>
+          <v-chip v-for="it in targets" :key="`edit.title-${it.name}`">
+          {{ it.name }}<sub>:{{ it.basistype }}</sub>
+          </v-chip>
+        </v-chip-group>
       </v-toolbar-title>
       <v-spacer />
       <v-toolbar-items>
-        <v-btn icon @click="$emit('save', value)">
-          <v-icon>mdi-plus</v-icon>
+        <v-btn icon @click="unselect()">
+          <v-icon>mdi-close-circle</v-icon>
         </v-btn>
       </v-toolbar-items>
     </v-toolbar>
     <v-row>
       <v-col>
         <!-- parameter form -->
-        <base-form v-model="value" :fields="fields.parameters">
+        <base-form v-model="item" :fields="fields.parameters" :key="`fields-${item.name}.${item.basistype}`">
           <template #item-items>
-            <v-divider v-if="!value.is_collective" />
-            <list-values v-else-if="value.is_object" v-model="value.items" :fields="fields.items" />
-            <parameter-picker v-else-if="value.is_array" v-model="value.items" />
+            <v-divider v-if="!item.is_collective" />
+            <list-values v-else-if="item.is_object" v-model="item.items" :fields="fields.items" />
+            <parameter-picker v-else-if="item.is_array" v-model="item.items" />
           </template>
         </base-form>
       </v-col>
       <v-col>
         <!-- parameter descriptives -->
-        <base-form v-model="value" :fields="fields.parameter_desc">
+        <base-form v-model="item" :fields="fields.parameter_desc">
         </base-form>
       </v-col>
     </v-row>
     <v-row v-if="singular">
       <v-col>
-        <list-values label="samples" v-model="value.samples" :fields="value.items || [{ key: 'key' }]" itemId="key"
+        <list-values label="samples" v-model="item.samples" :fields="item.items || [{ key: 'key' }]" itemId="key"
           itemTitle="key" />
       </v-col>
     </v-row>
@@ -59,7 +62,6 @@
   </v-card>
 </template>
 <script>
-import Parameter from '@/models/parameter';
 import fields from '@/fields';
 
 import parameterPicker from '@/components/inputFields/parameterPicker.vue';
@@ -67,8 +69,8 @@ import baseForm from '@/components/forms/baseForm.vue';
 // import tableValues from '@/components/inputFields/tableValues.vue';
 import listValues from '@/components/inputFields/listValues.vue';
 
-import { mapWritableState} from 'pinia';
-import { useServiceStore } from '@/stores/service';
+import { mapWritableState, mapActions } from 'pinia';
+import { useDatatypeStore } from '@/stores/datatype';
 
 const names_delim = /\s+/;
 
@@ -82,45 +84,47 @@ export default {
   },
   methods: {
     create_bulk() {
-      let generateds = this.names_new
-        .filter((n)=>n.trim().length > 0)
-        .map((name) => Parameter.create(name, this.basis_new));
-      this.parameters = this.parameters.concat(generateds);
-    }
+      this.appends(this.basis_new, ...this.names_new)
+    },
+    ...mapActions(useDatatypeStore, [
+      'unselect',
+      'appends',
+    ]),
   },
   props: {
-    modelValue: {
-      type: Parameter,
-      required: true,
-    },
-    disables: {
-      type: Array,
-      required: false,
-    },
-    singular: {
-      type: Boolean,
-      required: false,
-    }
+    // modelValue: {
+    //   type: Object,
+    //   required: true,
+    // },
+    // disables: {
+    //   type: Array,
+    //   required: false,
+    // },
+    // singular: {
+    //   type: Boolean,
+    //   required: false,
+    // }
   },
   computed: {
-    has_select: function () {
-      return this.modelValue != null
-        && this.modelValue.name != null
-        && this.modelValue.basistype != null;
-    },
     bulk_names: {
       get() { return this.names_new.map((n)=>n.trim()).join('\n'); },
       set(v) { this.names_new = v.split(names_delim).filter((n)=>n.trim()); }
     },
-    ...mapWritableState(useServiceStore, ['parameters']),
+    item() {
+      return this.editor.item;
+    },
+    ...mapWritableState(useDatatypeStore, [
+      'targets',
+      'editor',
+      'singular',
+    ]),
   },
   data() {
     return {
       fields,
-      value: this.modelValue,
       basis_new: 'string',
       names_new: [],
     }
   }
 }
-</script>
+</script>@/stores/datatype
