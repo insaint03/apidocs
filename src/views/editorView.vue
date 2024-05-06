@@ -36,8 +36,7 @@
   <v-main app>
   <!-- left navbar area/datatype -->
     <datatype-tab v-if="show_datatype_tab" 
-      v-model="nav_left" 
-      @select="on_select_params" />
+      v-model="nav_left" />
 
     <v-container fluid>
       <v-window v-model="tab">
@@ -117,9 +116,6 @@ const tabitems = {
 };
 const tab_defaults = 'entities';
 
-const fields_datatype = fields.parameters.map((f)=>f.key)
-  .concat(fields.parameter_desc.map((f)=>f.key));
-
 export default {
   name: 'editorView',
   components: {
@@ -145,32 +141,6 @@ export default {
     add_template() {
       this.templates.push(Object.assign({}, this.template_selected));
     },
-
-    on_select_params(params) {
-      // set selected datatype
-      let disables = [];
-      let selection = params.reduce((agg,it)=>{
-        fields_datatype.forEach((fk)=>{
-          if(agg[fk] === undefined) {
-            agg[fk] = it[fk];
-          } else if(agg[fk]!=it[fk]) {
-            agg[fk] = null;
-            disables.push(fk);
-          } 
-        })
-        return agg;
-      }, {});
-
-      this.tab = 'datatypes';
-
-      let editor_bind = {
-        modelValue: selection,
-        disables,
-        singular: params.length == 1,
-      };
-      this.refresh();
-      this.datatype_editor = editor_bind;
-    }
   },
   computed: {
     show_datatype_tab() {

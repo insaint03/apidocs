@@ -15,6 +15,7 @@ import queryValues from './queryValues.vue'
 import headerValues from './headerValues.vue'
 import cookieValues from './cookieValues.vue'
 import pathText from './pathText.vue'
+import parameterItemsForm from './parameterItemsForm.vue'
 
 
 export default {
@@ -27,15 +28,13 @@ export default {
     tagnameText,
     descText,
     pathText,
+    parameterItemsForm,
 
     httpMethodPicker,
     httpPathField,
     HttpMimePicker,
     httpStatusPicker,
 
-    queryValues,
-    headerValues,
-    cookieValues,
     queryValues,
     headerValues,
     cookieValues,

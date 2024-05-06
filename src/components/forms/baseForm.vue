@@ -4,8 +4,13 @@
       <slot :item="value">
         <v-col class="ma-0 pa-0`" v-for="(f,fi) in fields" :key="`field-${f.key}.${fi}`" :cols="f.cols || 12">
           <slot :name="`item-${f.key}`" :item="value">
-            <component v-model="value[f.key]" v-bind="f" :is="f.is || 'v-text-field'" density="compact" :hide-details="readonly" :disabled="disables.includes(f.key)" :variant="readonly?'underlined':'solo'"
-              @update="$emit('update:model-value', value)"/>
+            <component 
+              v-model="value[f.key]" 
+              v-bind="f" :is="f.is || 'v-text-field'" 
+              density="compact" :hide-details="readonly" 
+              :disabled="disables.includes(f.key)" 
+              :variant="readonly?'underlined':'solo'"
+              @change="update_value(f.key)"/>
           </slot>
         </v-col> 
       </slot>
@@ -19,6 +24,14 @@ export default {
   name: 'baseForm',
   components: {
     ...inputFields,
+  },
+  methods: {
+    update_value(key) {
+      this.$emit('edit', [key, this.value[key]]);
+      // console.log('value updated', arguments);
+      // this.$emit('edit', [key, current_value], old_value);
+      // this.$emit('update:model-value', this.value);
+    }
   },
   props: {
     fields: {

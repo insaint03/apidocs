@@ -7,7 +7,7 @@
         <template #activator="{ props }">
           <v-list-item v-bind="props">
             <v-text-field v-model="search_text" label="Name" hide-details clearable
-              append-inner-icon="mdi-plus" @click:append-inner.stop="append" @click.stop />
+              append-inner-icon="mdi-plus" @click:append-inner.stop="appends('string', search_text)" @click.stop />
             <!-- appending icon -->
           </v-list-item>
           <v-divider />
@@ -62,16 +62,10 @@ export default {
     items_of(origin) {
       return this.items.filter((it) => it.is_descendant_of(origin));
     },
-    append() {
-      let it = Parameter.create(this.search_text);
-      if (it) {
-        this.parameters.push(it);
-      }
-    },
     init() {
     },
     ...mapActions(useDatatypeStore, [
-      'search','unselect','single_select','multi_select',
+      'search','unselect','single_select','multi_select','appends',
     ]),
   },
   watch: {

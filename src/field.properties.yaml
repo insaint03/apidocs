@@ -24,7 +24,7 @@ parameters:
     required: false
     hint: "(v)=>{ return is_v_valid(v) ? true : false; }"
   items:
-    # is: table-values
+    is: table-values
     required: false
 parameter_desc:
   migration:

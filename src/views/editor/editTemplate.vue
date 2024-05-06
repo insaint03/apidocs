@@ -29,7 +29,7 @@
                 <base-form v-model="value" :fields="fields.request" />
               </v-col>
               <v-col>
-                <desc-text v-model="value.request.description" />
+                <desc-text v-model="value.request" />
               </v-col>
             </v-row>
           </v-expansion-panel-text>
@@ -42,7 +42,7 @@
                 <base-form v-model="value" :fields="fields.response" />
               </v-col>
               <v-col>
-                <desc-text v-model="value.response.description" />
+                <desc-text v-model="value.response" />
               </v-col>
             </v-row>
           </v-expansion-panel-text>

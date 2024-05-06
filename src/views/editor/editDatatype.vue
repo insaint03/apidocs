@@ -1,6 +1,6 @@
 <template>
   <!-- on has selection -->
-  <v-card v-if="singular!=null" :key="`edit.dt-${singular}`">
+  <v-card v-if="singular!==null && value!=null" :key="`edit.dt-${singular}`">
     <v-toolbar flat density="compact">
       <v-toolbar-title>
         <v-chip-group>
@@ -19,11 +19,13 @@
     <v-row>
       <v-col>
         <!-- parameter form -->
-        <base-form v-model="item" :fields="fields.parameters" :key="`fields-${item.name}.${item.basistype}`">
-          <template #item-items>
+        <base-form v-model="value" :fields="fields.parameters" :key="`fields-${item.name}.${item.basistype}`"
+          :disables="editor.disables"
+          @edit="on_update">
+          <template #item-items="{ item }">
             <v-divider v-if="!item.is_collective" />
-            <list-values v-else-if="item.is_object" v-model="item.items" :fields="fields.items" />
-            <parameter-picker v-else-if="item.is_array" v-model="item.items" />
+            <list-values v-else-if="value.is_object" v-model="item.items" :fields="fields.items" />
+            <parameter-picker v-else-if="value.is_array" v-model="item.items" />
           </template>
         </base-form>
       </v-col>
@@ -86,10 +88,19 @@ export default {
     create_bulk() {
       this.appends(this.basis_new, ...this.names_new)
     },
+    on_update([key,val]) {
+      this.targets.forEach((p)=>p[key]=val);
+    },
     ...mapActions(useDatatypeStore, [
       'unselect',
       'appends',
     ]),
+  },
+  watch: {
+    editor() {
+      // 
+      this.value = this.editor.item || null;
+    }
   },
   props: {
     // modelValue: {
@@ -124,7 +135,8 @@ export default {
       fields,
       basis_new: 'string',
       names_new: [],
+      value: null,
     }
   }
 }
-</script>@/stores/datatype
+</script>

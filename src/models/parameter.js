@@ -101,8 +101,6 @@ export default class Parameter {
     }
 
     constructor(name, basistype) {
-        console.log('construct param', name, basistype);
-
         this._name = name || '';
         if(basistype!=undefined) {
             let basis = Parameter.find(basistype);
