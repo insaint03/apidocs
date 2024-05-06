@@ -9,8 +9,7 @@
               v-bind="f" :is="f.is || 'v-text-field'" 
               density="compact" :hide-details="readonly" 
               :disabled="disables.includes(f.key)" 
-              :variant="readonly?'underlined':'solo'"
-              @change="update_value(f.key)"/>
+              @change="(ev)=>update_value(f.key, ev.target.value)"/>
           </slot>
         </v-col> 
       </slot>
@@ -26,8 +25,8 @@ export default {
     ...inputFields,
   },
   methods: {
-    update_value(key) {
-      this.$emit('edit', [key, this.value[key]]);
+    update_value(key, val) {
+      this.$emit('edit', [key, val || this.value[key]]);
       // console.log('value updated', arguments);
       // this.$emit('edit', [key, current_value], old_value);
       // this.$emit('update:model-value', this.value);

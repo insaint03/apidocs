@@ -23,15 +23,16 @@
           :disables="editor.disables"
           @edit="on_update">
           <template #item-items="{ item }">
-            <v-divider v-if="!item.is_collective" />
-            <list-values v-else-if="value.is_object" v-model="item.items" :fields="fields.items" />
-            <parameter-picker v-else-if="value.is_array" v-model="item.items" />
+            <v-divider v-if="!is_collective" />
+            <list-values v-else-if="is_object" v-model="item.items" :fields="fields.items" />
+            <parameter-picker v-else-if="is_array" v-model="item.items" />
           </template>
         </base-form>
       </v-col>
       <v-col>
         <!-- parameter descriptives -->
-        <base-form v-model="item" :fields="fields.parameter_desc">
+        <base-form v-model="value" :fields="fields.parameter_desc"
+          @edit="on_update">
         </base-form>
       </v-col>
     </v-row>
@@ -89,6 +90,8 @@ export default {
       this.appends(this.basis_new, ...this.names_new)
     },
     on_update([key,val]) {
+      console.log('updating', key, val);
+      this.value[key] = val;
       this.targets.forEach((p)=>p[key]=val);
     },
     ...mapActions(useDatatypeStore, [
@@ -100,7 +103,7 @@ export default {
     editor() {
       // 
       this.value = this.editor.item || null;
-    }
+    },
   },
   props: {
     // modelValue: {
@@ -123,6 +126,15 @@ export default {
     },
     item() {
       return this.editor.item;
+    },
+    is_collective() {
+      return this.is_array || this.is_object;
+    },
+    is_object() {
+      return this.basistype == 'object';
+    },
+    is_array() {
+      return this.basistype == 'array';
     },
     ...mapWritableState(useDatatypeStore, [
       'targets',

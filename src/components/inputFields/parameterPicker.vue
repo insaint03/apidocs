@@ -3,7 +3,7 @@
     :items="items" item-value="name" item-title="name" 
     auto-select-first close-text
     @keyup.enter="force_update"
-    @blur="force_update"
+    @update:modelValue="on_update"
   />
 </template>
 
@@ -21,6 +21,9 @@ export default {
     expecting: { type: String, required: false, default: ()=>'object'},
   },
   methods: {
+    on_update(v) {
+      this.$emit('change', {target: {value: v}});
+    },
     force_update() {
       let name = this.search;
       if(0<name.trim().length && !Parameter.name_exists(name)) {
