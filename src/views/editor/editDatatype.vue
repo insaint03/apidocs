@@ -25,6 +25,7 @@
           <v-text-field v-model="value.name" v-bind="bindings('name')" @change="updates('name', value.name)" />
           <!-- items -->
           <component :is="items_is"
+            v-model="value.items"
             v-bind="bindings('items')" @change="updates('items', value.items)"
             :fields="item_fields"
             item-title="key" item-value="name" item-subtitle="datatype" multi />
@@ -164,7 +165,7 @@ export default {
       return this.editor.item;
     },
     origintype() {
-      return (Parameter.find(this.value.basistype) || {}).origintype;
+      return this.value.basistype || null;
     },
     items_is() {
       switch(this.origintype) {

@@ -94,7 +94,6 @@ export const useDatatypeStore = defineStore('datatype', {
             this.targets = [it];
         },
         multi_select(it) {
-            console.log('try multi select', this.targets, it);
             this.targets = this.targets.includes(it) 
                 ? this.targets.filter((t)=>t.name != it.name)
                 : this.targets.concat([it]);
