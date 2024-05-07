@@ -18,11 +18,12 @@ export const useDatatypeStore = defineStore('datatype', {
         // all list of parameters
         all: Parameter.all,
         origins: Parameter.origins,
-        items: Parameter.customs,
+        items: [].concat(Parameter.customs),
         // name search pattern
         search_text: '',
         // selected targets
         targets: [],
+        treeshaped: Date.now(),
     }),
     getters: {
         ordereds(){
@@ -93,15 +94,22 @@ export const useDatatypeStore = defineStore('datatype', {
             this.targets = [it];
         },
         multi_select(it) {
+            console.log('try multi select', this.targets, it);
             this.targets = this.targets.includes(it) 
                 ? this.targets.filter((t)=>t.name != it.name)
                 : this.targets.concat([it]);
         },
-        updates() {
-            console.log('updating', this.editor);
+        shake() {
+            // shake the tree: renew the instance signature
+            this.items = [].concat(this.items);
+            this.treeshaped = Date.now();
+        },
+        updates(key, value) {
+            // multiple update
+            this.targets.forEach((it)=>it[key] = value);
         },
         appends(basistype, ...names) {
-            let generates = names.map((n)=>Parameter.create(n, basistype) || null)
+            let generates = names.map((n)=>Parameter.create(n, basistype || 'string') || null)
                 .filter((p)=>p!=null);
             this.items = this.items.concat(generates);
         }

@@ -16,6 +16,8 @@ import headerValues from './headerValues.vue'
 import cookieValues from './cookieValues.vue'
 import pathText from './pathText.vue'
 import parameterItemsForm from './parameterItemsForm.vue'
+import toggleText from "./toggleText.vue"
+ 
 
 
 export default {
@@ -29,6 +31,7 @@ export default {
     descText,
     pathText,
     parameterItemsForm,
+    toggleText,
 
     httpMethodPicker,
     httpPathField,

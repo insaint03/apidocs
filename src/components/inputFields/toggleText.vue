@@ -16,12 +16,12 @@ export default {
   },
   props: {
     modelValue: {
-      type: Boolean,
-      required: true,
+      type: String,
+      required: false,
     },
     label: {
       type: String,
-      required: true,
+      required: false,
     },
     text: {
       type: String,

@@ -103,14 +103,14 @@ export default class Parameter {
     constructor(name, basistype) {
         this._name = name || '';
         if(basistype!=undefined) {
-            let basis = Parameter.find(basistype);
+            let basis = Parameter.find(basistype.name || basistype);
             this._basistype = basis.name;
             this._origintype = basis.origintype;
-            
         } else {
             this._basistype = name;
             this._origintype = name;
         }
+        this._defaults = null;
         
         Parameter._store.push(this);
     }
@@ -127,15 +127,21 @@ export default class Parameter {
 
     // basis readonly (direct upper type)
     get basis() { return Parameter.find(this._basistype || this._origintype); }
-    set basis(value) { this._basistype = value.name || value }
+    set basis(value) { 
+        const _basis = Parameter.find(value);
+        this._basistype = _basis.name;
+        this._origintype = _basis.origintype;
+    }
     get basistype() { return this._basistype; }
-    set basistype(value) { this.basis = value.name || value; }
+    set basistype(value) { 
+        this.basis = value;
+    }
     // origin readonly (originated type, primitive)
     get origin() { 
         return Parameter.find(this.origintype);
     }
     get origintype() { 
-        return this._origintype || this._name;
+        return this._origintype;
     }
     get hierarchy() { 
         if(!this._hierarchy) {
@@ -158,6 +164,9 @@ export default class Parameter {
         // TODO: validation function check
         this._validation = fn;
     }
+
+    get defaults() { return this._defaults; }
+    set defaults(value) { this._defaults = value; }
 
     is_valid(value) {
         // run upstreams
@@ -182,7 +191,11 @@ export default class Parameter {
     set description(value) { this._desc = value; }
 
     get samples() { return this._samples || []; }
-    set samples(value) { this._samples = this.samples.concat([value]) ; }
+    set samples(value) { 
+        this._samples = this.samples.concat([value])
+            // leave unique
+            .filter((v,i,a)=>a.indexOf(v)===i); 
+    }
 
     get is_collective() {
         return this.is_array || this.is_object;

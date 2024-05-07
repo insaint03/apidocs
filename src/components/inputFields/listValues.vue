@@ -1,7 +1,11 @@
 <template>
   <v-list>
     <template v-if="label">
-      <v-list-item-subheader @click="modal">{{ label }}</v-list-item-subheader>
+      <v-list-item append-icon="mdi-plus-circle" @click="modal()">
+        <v-list-subheader @click="modal">
+        {{ label }}
+        </v-list-subheader>
+      </v-list-item>
       <v-divider />
     </template>
     <!-- -->
@@ -10,16 +14,13 @@
       <v-list-item-title>{{ it[itemTitle] }}</v-list-item-title>
       <v-list-item-subtitle>{{ it[itemSubtitle] || '-' }}</v-list-item-subtitle>
     </v-list-item>
-    <v-divider />
-    <v-list-item @click="modal()" subtitle="new" prepend-icon="mdi-plus">
-    </v-list-item>
   </v-list>
-  <v-dialog v-model="dialog_show">
+  <v-dialog v-model="dialog_show" max-width="50vw">
     <v-card v-if="item">
-      <v-card-items @click="cancel">
+      <v-card-item @click="cancel">
         <v-card-title>{{ item[itemTitle] || `new ${label}` }}</v-card-title>
         <v-card-subtitle>{{ item[itemSubtitle] || '' }}</v-card-subtitle>
-      </v-card-items>
+      </v-card-item>
       <v-card-text>
         <v-form>
           <component v-for="(f, fi) in fields" :key="`list-values.dlg.${fi}`" v-model="item[f.key || f]" v-bind="f"
@@ -36,10 +37,11 @@
   </v-dialog>
 </template>
 <script>
-
+import parameterPicker from './parameterPicker.vue';
 export default {
   name: 'list-values',
   components: {
+    parameterPicker,
   },
   methods: {
     modal(v) {

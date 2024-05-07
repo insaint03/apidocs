@@ -19,16 +19,13 @@ export default {
 
   },
   props: {
-    basis: {
-      type: Parameter,
-      required: true,
-    },
     modelValue: {
       type: Object,
       required: true,
     },
   },
   computed: {
+    basis() { return this.basistype ? Parameter.find(this.basistype) : {}; },
     is_array() { return this.basis.origintype == 'array'; },
     is_object() { return this.basis.origintype == 'object'; },
   },

@@ -1,7 +1,7 @@
 <template>
   <v-navigation-drawer loctaion="left" :model-value="modelValue" title="datatypes" permanent>
     <v-list>
-      <v-list-subheader v-bind="props">Parameters</v-list-subheader>
+      <v-list-subheader>Parameters</v-list-subheader>
       <v-divider />
       <v-list-group value="form-area">
         <template #activator="{ props }">
@@ -15,6 +15,7 @@
         <!-- search -->
         <!-- type hierarchy filter -->
         <v-list-item title="descendant">
+
         </v-list-item>
         <!-- show by tagname -->
         <v-list-item title="tagname">
@@ -27,7 +28,7 @@
       </v-list-group>
       <v-divider />
       <!-- primitive grouping -->
-      <v-list-group v-for="grp in groupeds" :key="`param-grp.${grp.name}`" :value="grp.name">
+      <v-list-group v-for="grp in groupeds" :key="`param-grp.${grp.name}.${treeshaped}`" :value="grp.name">
         <template #activator="{ props }">
           <v-list-item v-bind="props" v-show="0<grp.items.length">
             <v-list-item-title>
@@ -39,8 +40,7 @@
         <v-list-item v-for="it in grp.items" :key="`param-item.${grp.name}.${it.name}`" 
           :title="it.name" :subtitle="it.basistype"
           v-show="search(it)"
-          @click="single_select(it)"
-          @click.ctrl="multi_select(it)">
+          @click="(ev)=>selecting(ev,it)">
         </v-list-item>
       </v-list-group>
     </v-list>
@@ -64,8 +64,15 @@ export default {
     },
     init() {
     },
+    selecting(ev, it) {
+      if(ev.ctrlKey) {
+        this.multi_select(it);
+      } else {
+        this.single_select(it);
+      }
+    },
     ...mapActions(useDatatypeStore, [
-      'search','unselect','single_select','multi_select','appends',
+      'search','unselect','single_select','multi_select','appends','tree_shaped'
     ]),
   },
   watch: {
@@ -89,6 +96,7 @@ export default {
           group: o,
           name: o.name,
           items: this.ordereds.filter((it)=>it.origintype == o.name),
+          _tick: this.tree_shaped,
         }
       }).filter((grp)=>grp.items.length >0);
     },
@@ -102,6 +110,7 @@ export default {
       'ordereds',
       'search_text',
       'groupeds',
+      'treeshaped',
     ]),
   },
   data() {
@@ -112,4 +121,4 @@ export default {
     }
   }
 }
-</script>@/stores/datatype
+</script>
