@@ -43,7 +43,7 @@
         </v-col>
       </v-row>
       <v-divider />
-      <v-row>
+      <v-row v-if="singular">
         <v-col>
           <table-values v-model="samples" :fields="value.items || sample_fields" label="samples"
             item-title="value" />
