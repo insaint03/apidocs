@@ -8,14 +8,16 @@
             <v-card-title>Service info</v-card-title>
           </v-card-item>
           <v-card-text>
-            <base-form v-model="value" :fields="fields" />
+            <template v-for="field in fields" :key="`edit-service.${field}`">
+              <input-preset v-model="value[field]" :fieldId="`service.${field}`" :label="field"  />
+            </template>
           </v-card-text>
         </v-card>
       </v-col>
       <!-- right service description -->
       <v-col>
         <v-sheet class="fill-height">
-          <desc-text v-model="value.description" label="description" /> 
+          <input-preset v-model="value.description" fieldId="service.description" label="description" />
         </v-sheet>
       </v-col>
     </v-row>
@@ -23,16 +25,18 @@
 </template>
 
 <script>
-import fields from '@/fields'
+// import fields from '@/fields'
 import Service from '@/models/service'
-import baseForm from '@/components/forms/baseForm.vue'
-import descText from '@/components/inputFields/descText.vue'
+import inputPreset from '@/components/inputFields/inputPreset.vue'
+// import baseForm from '@/components/forms/baseForm.vue'
+// import descText from '@/components/inputFields/descText.vue'
 
 export default {
   name: 'editInfo',
   components: {
-    baseForm,
-    descText,
+    // baseForm,
+    // descText,
+    inputPreset,
   },
   props: {
     modelValue: {
@@ -42,7 +46,13 @@ export default {
   },
   data() {
     return {
-      fields: fields.service.filter((f)=>!/description/i.test(f.key)),
+      fields: [
+        'title',
+        'version',
+        'license',
+        'contributors',
+        'links',
+      ],
       value: this.modelValue,
     }
   }

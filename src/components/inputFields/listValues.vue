@@ -54,16 +54,17 @@ export default {
     remove(item) {
       this.value = this.value.filter((it)=>it !== item);
       this.$emit('update:modelValue', this.value);
+      this.$emit('change', this.value);
       this.item = null;
     },
     cancel() {
       this.item = null;
     },
     save() {
-      console.log('on save', this.item, this.value);
       this.value = this.value.concat([Object.assign({}, this.item)]);
       console.log(this.value);
       this.$emit('update:modelValue', this.value);
+      this.$emit('change', this.value);
       this.item = null;
     },
   },

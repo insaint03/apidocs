@@ -20,27 +20,34 @@
     <v-card-text>
       <v-row>
         <!-- basis property area -->
-        <v-col>
+        <v-col v-for="(cols,ci) in fields" :key="`edit-param.${ci}`">
           <!-- basis name -->
+          <template v-for="field in cols" :key="`edit-param.${ci}-${field}`">
+            <input-preset 
+              v-model="value[field]" 
+              :fieldId="`parameter.${field}`" 
+              @change="updates(field, value[field])" 
+            />
+          </template>
+<!-- LEGACY; 
+          <input-preset v-model="value.name" fieldId="parameter.name" @change="updates('name', value.name)" />
           <v-text-field v-model="value.name" v-bind="bindings('name')" @change="updates('name', value.name)" />
-          <!-- items -->
           <component :is="items_is"
             v-model="value.items"
             v-bind="bindings('items')" @change="updates('items', value.items)"
             :fields="item_fields"
             item-title="key" item-value="name" item-subtitle="datatype" multi />
-          <!-- defaults -->
           <toggle-text v-model="value.defaults" v-bind="bindings('defaults')" @change="updates('defaults', value.defaults)" text="default value" />
-          <!-- validation -->
           <toggle-text v-model="value.validation" v-bind="bindings('validation')" @change="updates('validation', value.validation)" text="validate function (js)" />
         </v-col>
         <v-col>
-          <!-- datatype picker -->
+          
           <parameter-picker v-model="value.basistype" v-bind="bindings('basistype')" @change="(v)=>updates('basistype', v)" shaker />
-          <!-- migration -->
+          
           <toggle-text v-model="value.migration" text="export migration" @v-bind="bindings('migration')" @change="updates('migration')" />
-          <!-- description -->
+          
           <desc-text v-model="value.description" @v-bind="bindings('description')" @change="updates('description', value.description)" />
+-->
         </v-col>
       </v-row>
       <v-divider />
@@ -75,16 +82,17 @@
 </template>
 <script>
 // import fields from '@/fields';
-import Parameter from '@/models/parameter';
+// import Parameter from '@/models/parameter';
+import inputPreset from '@/components/inputFields/inputPreset.vue';
 
-import parameterPicker from '@/components/inputFields/parameterPicker.vue';
+// import parameterPicker from '@/components/inputFields/parameterPicker.vue';
 
-import listValues from '@/components/inputFields/listValues.vue';
-import tableValues from '@/components/inputFields/tableValues.vue';
-import inputFields from '@/components/inputFields'
+// import listValues from '@/components/inputFields/listValues.vue';
+// import tableValues from '@/components/inputFields/tableValues.vue';
+// import inputFields from '@/components/inputFields'
 
 import { mapWritableState, mapActions } from 'pinia';
-import { useDatatypeStore } from '@/stores/datatype';
+import { useParameterStore } from '@/stores/parameter';
 
 const names_delim = /[\s,]+/;
 const item_fields = [
@@ -98,11 +106,12 @@ const sample_fields = [
 export default {
   name: 'editDatatype',
   components: {
-    tableValues,
-    listValues,
-    parameterPicker,
+    // tableValues,
+    // listValues,
+    // parameterPicker,
+    inputPreset,
 
-    ...inputFields,
+    // ...inputFields,
   },
   methods: {
     create_bulk() {
@@ -111,7 +120,7 @@ export default {
     bindings(key) {
       let rets = {
         label: key,
-        disables: this.editor.disables.includes(key),
+        disabled: this.editor.disables.includes(key),
       };
       if(key==='items') {
         rets = {
@@ -125,7 +134,7 @@ export default {
       }
       return rets;
     },
-    ...mapActions(useDatatypeStore, [
+    ...mapActions(useParameterStore, [
       'unselect',
       'appends',
       'updates',
@@ -174,7 +183,7 @@ export default {
         default: return 'v-divider';
       }
     },
-    ...mapWritableState(useDatatypeStore, [
+    ...mapWritableState(useParameterStore, [
       'targets',
       'editor',
       'singular',
@@ -182,7 +191,19 @@ export default {
   },
   data() {
     return {
-      // fields,
+      fields: [
+        [
+          'name',
+          'items',
+          'defaults',
+          'validation',
+        ],
+        [
+          'basistype',
+          'description',
+          'migration',
+        ],
+      ],
       basis_new: 'string',
       names_new: [],
       item_fields,
@@ -191,4 +212,4 @@ export default {
     }
   }
 }
-</script>
+</script>@/stores/parameter

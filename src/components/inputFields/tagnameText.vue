@@ -1,5 +1,7 @@
 <template>
-  <toggle-text v-model="value" text="set category tagname" :fieldProps="fieldProps" />
+  <toggle-text v-model="value" text="set category tagname" :fieldProps="fieldProps"
+    @change="$emit('change', ...arguments)"
+  />
 </template>
 <script>
 import toggleText from '@/components/inputFields/toggleText.vue';

@@ -2,7 +2,8 @@
 <v-input v-bind="inputProps">
   <v-btn @click="value = ''" v-if="!has_value" v-bind="btnProps" >{{  text }}</v-btn>
   <slot v-else name="field" :v="value" :clear>
-    <v-text-field v-model="value" v-bind="fieldProps" prepend-inner-icon="mdi-close" @click:prepend-inner="clear" />
+    <v-text-field v-model="value" v-bind="fieldProps" prepend-inner-icon="mdi-close" @click:prepend-inner="clear"
+      @update:focused="(sets)=>!sets && $emit('change', value)" />
   </slot>
 </v-input>
 </template>
@@ -12,6 +13,7 @@ export default {
   methods: {
     clear() {
       this.value = null;
+      this.$emit('change', null);
     }
   },
   props: {

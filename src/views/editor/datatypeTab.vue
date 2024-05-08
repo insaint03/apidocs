@@ -15,15 +15,9 @@
         <!-- search -->
         <!-- type hierarchy filter -->
         <v-list-item title="descendant">
-
-        </v-list-item>
-        <!-- show by tagname -->
-        <v-list-item title="tagname">
-
         </v-list-item>
         <!-- show migrations only -->
         <v-list-item title="migrations">
-
         </v-list-item>
       </v-list-group>
       <v-divider />
@@ -50,7 +44,7 @@
 <script>
 import Parameter from '@/models/parameter';
 import { mapWritableState, mapActions } from 'pinia';
-import { useDatatypeStore } from '@/stores/datatype';
+import { useParameterStore } from '@/stores/parameter';
 
 
 export default {
@@ -71,7 +65,7 @@ export default {
         this.single_select(it);
       }
     },
-    ...mapActions(useDatatypeStore, [
+    ...mapActions(useParameterStore, [
       'search','unselect','single_select','multi_select','appends','tree_shaped'
     ]),
   },
@@ -103,7 +97,7 @@ export default {
     search_pattern() {
       return this.search ? new RegExp(this.search, 'i') : null;
     },
-    ...mapWritableState(useDatatypeStore, [
+    ...mapWritableState(useParameterStore, [
       'all',
       'origins',
       'items',
@@ -121,4 +115,4 @@ export default {
     }
   }
 }
-</script>
+</script>@/stores/parameter

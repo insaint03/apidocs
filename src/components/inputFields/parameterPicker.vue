@@ -13,7 +13,7 @@
 import Parameter from '@/models/parameter';
 
 import { mapActions, mapWritableState } from 'pinia';
-import { useDatatypeStore } from '@/stores/datatype';
+import { useParameterStore } from '@/stores/parameter';
 
 export default {
   name: 'parameterPicker',
@@ -42,7 +42,7 @@ export default {
         this.$emit('change', this.value)
       }
     },
-    ...mapActions(useDatatypeStore, ['appends', 'shake']),
+    ...mapActions(useParameterStore, ['appends', 'shake']),
   },
   computed: {
     items() {
@@ -59,7 +59,7 @@ export default {
       }
       return this.all.filter(filter);
     },
-    ...mapWritableState(useDatatypeStore, [
+    ...mapWritableState(useParameterStore, [
       'all', 'treeshaped',
     ]),
   },
@@ -70,4 +70,4 @@ export default {
     }
   }
 }
-</script>
+</script>@/stores/parameter

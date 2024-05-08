@@ -4,7 +4,9 @@ import InvalidValue from "@/exceptions/InvalidValue";
 
 export default class Parameter {
     static _type = 'parameter'
+    static _name_convention = /(?<ns>.*)(\.(?<ln>.+))?/;
     static _store = [];
+
     static find(name, must=true) { 
         const ret = Parameter.all.find((d)=>d.name === name);
         if(must && !ret) {
@@ -99,6 +101,17 @@ export default class Parameter {
     static name_exists(name) { 
         return Parameter.find(name, false) != null; 
     }
+    static naming_convention(name) {
+        const match = Parameter._name_convention.exec(name);
+        if(match) {
+            return {
+                namespace: match.groups.ns || '',
+                localname: match.groups.ln,
+            };
+        } else {
+            return {namespace: '', localname: name};
+        }
+    }
 
     constructor(name, basistype) {
         this._name = name || '';
@@ -115,6 +128,10 @@ export default class Parameter {
         Parameter._store.push(this);
     }
 
+    
+
+    get namespace() { return Parameter.naming_convention(this.name).namespace; }
+    get localname() { return Parameter.naming_convention(this.name).localname; }
     get name() { return this._name; }
     set name(value) { 
         // name change validation

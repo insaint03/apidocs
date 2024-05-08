@@ -13,7 +13,7 @@ const keynames = [
     'samples',
 ];
 
-export const useDatatypeStore = defineStore('datatype', {
+export const useParameterStore = defineStore('datatype', {
     state: () =>({
         // all list of parameters
         all: Parameter.all,
