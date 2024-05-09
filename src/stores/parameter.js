@@ -107,9 +107,17 @@ export const useParameterStore = defineStore('datatype', {
             // multiple update
             this.targets.forEach((it)=>it[key] = value);
         },
-        appends(basistype, ...names) {
-            let generates = names.map((n)=>Parameter.create(n, basistype || 'string') || null)
-                .filter((p)=>p!=null);
+        appends(...params) {
+            let generates = [];
+            params.forEach((n)=>{
+                let p = Parameter.create(n.name, n.basistype);
+                if(p) {
+                    Object.entries(n)
+                        .filter(([k])=>!['name', 'basistype'].includes(k))
+                        .forEach(([k,v])=>p[k] = v);
+                    generates.push(p);
+                }
+            });
             this.items = this.items.concat(generates);
         }
 

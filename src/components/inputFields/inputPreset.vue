@@ -3,7 +3,7 @@
     v-model="value"
     :is="component"
     v-bind="binding"
-    @change="change()"
+    @change="change"
     @update:focused="(sets)=>!sets && change()"
   />
 </template>
@@ -19,6 +19,7 @@ export default {
   },
   methods: {
     change() {
+      this.$emit('update:modelValue', this.value);
       this.$emit('change', this.value);
     }
   },
@@ -28,8 +29,7 @@ export default {
       required: true,
     },
     modelValue: {
-      type: Object,
-      required: true,
+      required: false,
     },
     binds: {
       type: Object,
@@ -45,18 +45,21 @@ export default {
       };
     },
     inputProps() {
-      console.log(preset.inputs, this.fieldId);
       return preset.inputs[this.fieldId] || {};
     },
     component() {
-      return this.inputProps.component || 'v-text-field';
+      return (this.binds || {}).component
+        || this.inputProps.component
+        || 'v-text-field';
     },
     binding() {
-      return {
+      let ret = {
+        // ...this.$props,
         ...this.commonProps,
         ...this.inputProps,
-        ...this.$props,
-      }
+        ...this.binds,
+      };
+      return ret;
     },
   },
   data() {

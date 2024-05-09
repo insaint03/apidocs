@@ -25,8 +25,9 @@
           <template v-for="field in cols" :key="`edit-param.${ci}-${field}`">
             <input-preset 
               v-model="value[field]" 
+              :binds="bindings(field)"
               :fieldId="`parameter.${field}`" 
-              @change="updates(field, value[field])" 
+              @change="on_change(field, value[field])" 
             />
           </template>
 <!-- LEGACY; 
@@ -53,8 +54,10 @@
       <v-divider />
       <v-row v-if="singular">
         <v-col>
-          <table-values v-model="samples" :fields="value.items || sample_fields" label="samples"
-            item-title="value" />
+          <input-preset field-id="parameter.samples" v-model="value.samples"
+            :fields="value.items || sample_fields" label="samples" 
+            @change="on_change('samples', value.samples)"
+          />
         </v-col>
       </v-row>
     </v-card-text>
@@ -63,36 +66,50 @@
   <v-card v-else>
     <v-toolbar flat>
       <v-toolbar-title>bulk generator</v-toolbar-title>
+      <v-spacer />
+      <v-toolbar-items>
+      </v-toolbar-items>
+      <v-spacer />
+      <v-toolbar-items>
+        <v-btn text @click="bulk_generation">
+          save
+        </v-btn>
+      </v-toolbar-items>
     </v-toolbar>
     <v-card-text>
-      <v-row>
-        <v-col>
-          <v-textarea v-model="bulk_names" label="names" hint="delimited by space, newlines" />
-        </v-col>
-        <v-col>
-          <parameter-picker v-model="basis_new" label="common_basis" />
-        </v-col>
-      </v-row>
+      <v-table>
+        <thead>
+          <tr>
+            <th><v-checkbox /></th>
+            <th>name</th>
+            <th>datatype</th>
+            <th>summary</th>
+            <th>edit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(g,gi) in generates" :key="`gen-row.${gi}`">
+            <td><v-checkbox :model-value="generate_select.includes(gi)" @click="toggle_generate_select(gi)" /></td>
+            <td><v-text-field v-model="g.name" /></td>
+            <td><parameter-picker v-model="g.basistype" label="datatype" /></td>
+            <td><v-text-field v-model="g.description" label="summary" placeholder="summary description"
+              append-icon="mdi-plus-circle" @click:append="copy_generate(g)" 
+              @keyup.tab="copy_generate(g)"/></td>
+            <td>
+              <v-btn icon @click="generates=generates.filter(g)"><v-icon>mdi-cancel-circle</v-icon></v-btn>
+            </td>
+          </tr>
+        </tbody>
+      </v-table>
     </v-card-text>
-    <v-card-actions>
-      <v-spacer />
-      <v-btn @click="create_bulk">Save</v-btn>
-    </v-card-actions>
   </v-card>
 </template>
 <script>
-// import fields from '@/fields';
-// import Parameter from '@/models/parameter';
-import inputPreset from '@/components/inputFields/inputPreset.vue';
-
-// import parameterPicker from '@/components/inputFields/parameterPicker.vue';
-
-// import listValues from '@/components/inputFields/listValues.vue';
-// import tableValues from '@/components/inputFields/tableValues.vue';
-// import inputFields from '@/components/inputFields'
-
 import { mapWritableState, mapActions } from 'pinia';
 import { useParameterStore } from '@/stores/parameter';
+import inputPreset from '@/components/inputFields/inputPreset.vue';
+import parameterPicker from '@/components/inputFields/parameterPicker.vue';
+import Parameter from '@/models/parameter';
 
 const names_delim = /[\s,]+/;
 const item_fields = [
@@ -103,36 +120,68 @@ const sample_fields = [
   { key: 'value', label: 'value', required: true,},
 ];
 
+const item_fields_on_object = [
+  { key: 'key', label: 'key', required: true },
+  { key: 'datatype', label: 'datatype', required: true, is: 'parameter-picker' },
+  { key: 'required', label: 'required', required: false, is: 'v-checkbox' },
+]
+
+
 export default {
   name: 'editDatatype',
   components: {
-    // tableValues,
-    // listValues,
-    // parameterPicker,
     inputPreset,
-
-    // ...inputFields,
+    parameterPicker,
+  },
+  watch: {
+    editor() {
+      // 
+      this.value = this.editor.item || null;
+    },
   },
   methods: {
-    create_bulk() {
-      this.appends(this.basis_new, ...this.names_new)
+    on_change(key, val) {
+      this.value[key] = val;
+      this.updates(key, val);
+      this.last_updated = Date.now();
     },
     bindings(key) {
-      let rets = {
-        label: key,
-        disabled: this.editor.disables.includes(key),
-      };
-      if(key==='items') {
-        rets = {
-          ...rets,
-          shaker: false,
-          itemTitle: this.origintype === 'array' ? 'name' : 'key',
-          itemSubtitle: this.origintype === 'object' ? 'datatype' : null, 
-          itemValue: this.origintype === 'array' ? 'name' : 'key',
-          multi: true,
-        };
+      let ret = null;
+      if(key === 'items') {
+        if(this.origintype === 'object') {
+          ret = {
+            component: 'list-values',
+            fields: item_fields_on_object,
+            label: 'items',
+          };
+        } else if(this.origintype === 'array') {
+          ret = {
+            component: 'parameter-picker',
+            multi: true,
+          };
+        } else {
+          ret = { component: 'v-divider' };
+        }
       }
-      return rets;
+      return ret;
+    },
+    copy_generate(g) {
+      this.generates.push({
+        ...g,
+        name: null,
+      });
+    },
+    toggle_generate_select(gi) {
+      if(this.generate_select.includes(gi)) {
+        this.generate_select = this.generate_select.filter((g)=>g !== gi);
+      } else {
+        this.generate_select = this.generate_select.concat([gi]);
+      }
+    },
+    bulk_generation() {
+      this.appends(...this.generates);
+      this.shake();
+      this.generates = [{}];
     },
     ...mapActions(useParameterStore, [
       'unselect',
@@ -140,12 +189,6 @@ export default {
       'updates',
       'shake',
     ]),
-  },
-  watch: {
-    editor() {
-      // 
-      this.value = this.editor.item || null;
-    },
   },
   props: {
     // modelValue: {
@@ -204,12 +247,15 @@ export default {
           'migration',
         ],
       ],
-      basis_new: 'string',
-      names_new: [],
+      generates: [{}],
+      generate_select: [],
+      // basis_new: 'string',
+      // names_new: [],
       item_fields,
       sample_fields,
       value: null,
+      last_updated: Date.now(),
     }
   }
 }
-</script>@/stores/parameter
+</script>

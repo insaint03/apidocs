@@ -166,6 +166,8 @@ inputs:
   parameter.migration:
     component: toggle-text
     text: will export to migration
+  parameter.samples:
+    component: table-values
 
 
 
