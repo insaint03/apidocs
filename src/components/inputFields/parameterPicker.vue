@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import Parameter from '@/models/parameter';
+import Datatype from '@/models/datatype';
 
 import { mapActions, mapWritableState } from 'pinia';
 import { useParameterStore } from '@/stores/parameter';
@@ -35,7 +35,7 @@ export default {
     },
     async force_update() {
       let name = this.search;
-      if(0<name.trim().length && !Parameter.name_exists(name)) {
+      if(0<name.trim().length && !Datatype.name_exists(name)) {
         // create new type
         this.appends('string', name);
         // update the value
@@ -70,4 +70,4 @@ export default {
     }
   }
 }
-</script>@/stores/parameter
+</script>

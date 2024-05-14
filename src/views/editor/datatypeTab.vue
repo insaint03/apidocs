@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import Parameter from '@/models/parameter';
+import Datatype from '@/models/datatype';
 import { mapWritableState, mapActions } from 'pinia';
 import { useParameterStore } from '@/stores/parameter';
 
@@ -85,7 +85,7 @@ export default {
   },
   computed: {
     item_groups() {
-      return Parameter.origins.map((o)=>{
+      return Datatype.origins.map((o)=>{
         return {
           group: o,
           name: o.name,
@@ -115,4 +115,4 @@ export default {
     }
   }
 }
-</script>@/stores/parameter
+</script>@/stores/parameter@/models/datatype

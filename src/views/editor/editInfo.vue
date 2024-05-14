@@ -1,24 +1,28 @@
 <template>
-  <v-container fluid>
+  <v-container>
+    <!-- input area -->
     <v-row>
-      <!-- left service info -->
-      <v-col>
+      <v-col cols="9">
         <v-card>
-          <v-card-item>
-            <v-card-title>Service info</v-card-title>
-          </v-card-item>
-          <v-card-text>
-            <template v-for="field in fields" :key="`edit-service.${field}`">
-              <input-preset v-model="value[field]" :fieldId="`service.${field}`" :label="field"  />
+          <table-form :fields="fields" v-model="value">
+            <template #header>
+              <thead>
+                <tr>
+                  <th>Service info</th>
+                </tr>
+              </thead>
             </template>
-          </v-card-text>
+          </table-form>
         </v-card>
       </v-col>
-      <!-- right service description -->
-      <v-col>
-        <v-sheet class="fill-height">
-          <input-preset v-model="value.description" fieldId="service.description" label="description" />
-        </v-sheet>
+      <v-col cols="3">
+        <v-card>
+          <v-card-title>APIDoc Editor</v-card-title>
+          <v-card-text>
+            Lorem Ipsum
+            Enjoy!
+          </v-card-text>
+        </v-card>
       </v-col>
     </v-row>
   </v-container>
@@ -27,16 +31,23 @@
 <script>
 // import fields from '@/fields'
 import Service from '@/models/service'
-import inputPreset from '@/components/inputFields/inputPreset.vue'
-// import baseForm from '@/components/forms/baseForm.vue'
-// import descText from '@/components/inputFields/descText.vue'
+import tableForm from '@/components/forms/tableForm.vue'
+
+const fields = [
+  {key: 'title', label: 'title', desc: 'title' },
+  {key: 'version', label: 'version', desc: 'version' },
+  {key: 'license', label: 'license', desc: 'license' },
+  {key: 'contributors', label: 'contributors', desc: 'contributors', multi: true, },
+  {key: 'links', label: 'links', desc: 'links', multi: true },
+]
 
 export default {
   name: 'editInfo',
   components: {
     // baseForm,
     // descText,
-    inputPreset,
+    // inputPreset,
+    tableForm,
   },
   props: {
     modelValue: {
@@ -46,13 +57,7 @@ export default {
   },
   data() {
     return {
-      fields: [
-        'title',
-        'version',
-        'license',
-        'contributors',
-        'links',
-      ],
+      fields,
       value: this.modelValue,
     }
   }

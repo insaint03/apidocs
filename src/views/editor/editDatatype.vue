@@ -1,74 +1,8 @@
 <template>
-  <!-- on has selection -->
-  <v-card v-if="singular !== null && value != null" :key="`edit.dt-${singular}`">
-    <v-toolbar flat density="compact">
-      <v-toolbar-title>
-        <v-chip-group>
-          <v-chip v-for="it in targets" :key="`edit.title-${it.name}`">
-            {{ it.name }}<sub>:{{ it.basistype }}</sub>
-          </v-chip>
-        </v-chip-group>
-      </v-toolbar-title>
-      <v-spacer />
-      <v-toolbar-items>
-        <v-btn icon @click="unselect()">
-          <v-icon>mdi-close-circle</v-icon>
-        </v-btn>
-      </v-toolbar-items>
-    </v-toolbar>
-    <!-- parameter form -->
-    <v-card-text>
-      <v-row>
-        <!-- basis property area -->
-        <v-col v-for="(cols,ci) in fields" :key="`edit-param.${ci}`">
-          <!-- basis name -->
-          <template v-for="field in cols" :key="`edit-param.${ci}-${field}`">
-            <input-preset 
-              v-model="value[field]" 
-              :binds="bindings(field)"
-              :fieldId="`parameter.${field}`" 
-              @change="on_change(field, value[field])" 
-            />
-          </template>
-<!-- LEGACY; 
-          <input-preset v-model="value.name" fieldId="parameter.name" @change="updates('name', value.name)" />
-          <v-text-field v-model="value.name" v-bind="bindings('name')" @change="updates('name', value.name)" />
-          <component :is="items_is"
-            v-model="value.items"
-            v-bind="bindings('items')" @change="updates('items', value.items)"
-            :fields="item_fields"
-            item-title="key" item-value="name" item-subtitle="datatype" multi />
-          <toggle-text v-model="value.defaults" v-bind="bindings('defaults')" @change="updates('defaults', value.defaults)" text="default value" />
-          <toggle-text v-model="value.validation" v-bind="bindings('validation')" @change="updates('validation', value.validation)" text="validate function (js)" />
-        </v-col>
-        <v-col>
-          
-          <parameter-picker v-model="value.basistype" v-bind="bindings('basistype')" @change="(v)=>updates('basistype', v)" shaker />
-          
-          <toggle-text v-model="value.migration" text="export migration" @v-bind="bindings('migration')" @change="updates('migration')" />
-          
-          <desc-text v-model="value.description" @v-bind="bindings('description')" @change="updates('description', value.description)" />
--->
-        </v-col>
-      </v-row>
-      <v-divider />
-      <v-row v-if="singular">
-        <v-col>
-          <input-preset field-id="parameter.samples" v-model="value.samples"
-            :fields="value.items || sample_fields" label="samples" 
-            @change="on_change('samples', value.samples)"
-          />
-        </v-col>
-      </v-row>
-    </v-card-text>
-  </v-card>
-  <!-- on empty selection, create new -->
-  <v-card v-else>
+  <!-- empty bulk generator form -->
+  <v-card v-if="value==null">
     <v-toolbar flat>
-      <v-toolbar-title>bulk generator</v-toolbar-title>
-      <v-spacer />
-      <v-toolbar-items>
-      </v-toolbar-items>
+      <v-toolbar-title>generator</v-toolbar-title>
       <v-spacer />
       <v-toolbar-items>
         <v-btn text @click="bulk_generation">
@@ -77,39 +11,48 @@
       </v-toolbar-items>
     </v-toolbar>
     <v-card-text>
-      <v-table>
-        <thead>
-          <tr>
-            <th><v-checkbox /></th>
-            <th>name</th>
-            <th>datatype</th>
-            <th>summary</th>
-            <th>edit</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(g,gi) in generates" :key="`gen-row.${gi}`">
-            <td><v-checkbox :model-value="generate_select.includes(gi)" @click="toggle_generate_select(gi)" /></td>
-            <td><v-text-field v-model="g.name" /></td>
-            <td><parameter-picker v-model="g.basistype" label="datatype" /></td>
-            <td><v-text-field v-model="g.description" label="summary" placeholder="summary description"
-              append-icon="mdi-plus-circle" @click:append="copy_generate(g)" 
-              @keyup.tab="copy_generate(g)"/></td>
-            <td>
-              <v-btn icon @click="generates=generates.filter(g)"><v-icon>mdi-cancel-circle</v-icon></v-btn>
-            </td>
-          </tr>
-        </tbody>
-      </v-table>
+      <v-row v-for="g,gi in generates" :key="`edit-g.${gi}`">
+        <v-col cols="1">
+          <v-checkbox :model-value="generate_select.includes(gi)" @click="toggle_generate_select(gi)" />
+        </v-col>
+        <v-col cols="3">
+          <v-text-field v-model="g.name" label="name" />
+        </v-col>
+        <v-col cols="3">
+        <v-text-field v-model="g.basistype" label="datatype" />
+        </v-col>
+        <v-col cols="3">
+          <v-text-field v-model="g.description" label="misc" />
+        </v-col>
+        <v-col cols="1">
+          <v-btn icon><v-icon>mdi-plus</v-icon></v-btn>
+        </v-col>
+      </v-row>
+    </v-card-text>
+  </v-card>
+  <v-card v-else>
+    <v-card-title>
+    </v-card-title>
+    <v-card-text>
+      <table-form :fields="fields" v-model="value" />
     </v-card-text>
   </v-card>
 </template>
 <script>
 import { mapWritableState, mapActions } from 'pinia';
 import { useParameterStore } from '@/stores/parameter';
-import inputPreset from '@/components/inputFields/inputPreset.vue';
-import parameterPicker from '@/components/inputFields/parameterPicker.vue';
-import Parameter from '@/models/parameter';
+import tableForm from '@/components/forms/tableForm.vue';
+const fields = [
+  { key: 'name', label: 'name', desc: 'name' },
+  { key: 'basistype', label: 'basistype', desc: 'basistype' },
+  { key: 'description', label: 'description', desc: 'description', multi: true, },
+  { key: 'defaults', label: 'defaults', desc: 'defaults' },
+  { key: 'items', label: 'items', desc: 'items', multi: true },
+  { key: 'migration', label: 'migration', desc: 'migration' },
+  { key: 'validation', label: 'validation', desc: 'validation', multi: true },
+  { key: 'samples', label: 'samples', desc: 'samples', multi: true },
+
+]
 
 const names_delim = /[\s,]+/;
 const item_fields = [
@@ -130,8 +73,7 @@ const item_fields_on_object = [
 export default {
   name: 'editDatatype',
   components: {
-    inputPreset,
-    parameterPicker,
+    tableForm,
   },
   watch: {
     editor() {
@@ -234,19 +176,7 @@ export default {
   },
   data() {
     return {
-      fields: [
-        [
-          'name',
-          'items',
-          'defaults',
-          'validation',
-        ],
-        [
-          'basistype',
-          'description',
-          'migration',
-        ],
-      ],
+      fields,
       generates: [{}],
       generate_select: [],
       // basis_new: 'string',

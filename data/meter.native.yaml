@@ -12,7 +12,7 @@ externalDocs:
   description: Documentation
   url: https://openmeter.io/docs
 
-parameters:
+datatypes:
   datetime:
     basistype: string
     validation: "(s)=>/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/i.test(s)"

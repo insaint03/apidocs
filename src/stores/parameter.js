@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 // import fields from '@/fields'
 
-import Parameter  from '@/models/parameter'
+import Parameter  from '@/models/datatype'
 
 const keynames = [
     'name',

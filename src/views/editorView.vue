@@ -66,14 +66,9 @@
 </template>
 
 <script>
-// import Service from '@/models/service'
-// import Parameter from '@/models/parameter'
-// import Template from '@/models/template'
-
 import Request from '@/models/request'
 import Response from '@/models/response'
 import editors from './editor'
-import fields from '@/fields'
 
 import { mapWritableState } from 'pinia'
 import { useServiceStore } from '@/stores/service'
