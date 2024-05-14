@@ -163,8 +163,8 @@ export default class Datatype {
 
     
 
-    get namespace() { return Datatype.naming_convention(this.name).namespace; }
-    get localname() { return Datatype.naming_convention(this.name).localname; }
+    get namespace() { return Datatype.naming_convention(this.name).namespace || ''; }
+    get localname() { return Datatype.naming_convention(this.name).localname || ''; }
     get name() { return this._name; }
     set name(value) { 
         // name change validation
