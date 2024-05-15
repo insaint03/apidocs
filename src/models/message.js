@@ -1,16 +1,21 @@
-export default class Message {
-    // static http = 'HTTP/1.1';
+import Patterns from "./patterns";
 
-    constructor() {
-        this._headers = [];
-        this._cookies = {};
-        this._body = null;
+export default class Message {
+    static http = 'HTTP/1.1';
+
+    constructor({headers, cookies, body}) {
+        this._headers = headers || [];
+        this._cookies = cookies || {};
+        this._body = body || null;
     }
 
     get headers() {
-        return this._headers.concat(
-            Object.entries(this.cookies).map(([key, v])=>({key: 'cookie', cookie: key, ...v}))
-        );
+        return (this._headers || []).map(Patterns.item_serialize);
+    }
+
+    set headers(value) {
+        // TODO: assert array
+        this._headers = Patterns.map_items(value);
     }
 
     add_header(key, datatype, defaults, required) {
@@ -25,10 +30,18 @@ export default class Message {
     count_headers(key) {
         return this.headers_of(key).length;
     }
+
+    remove_header(key, orindex) {
+        this._headers = this.headers.filter((k,i)=> k !== key && i !== orindex);
+    }
     
 
     get cookies() {
-        return this._cookies;
+        return (this._cookies || []).map(Patterns.item_serialize);
+    }
+
+    set cookies(value) {
+        this._cookies = Patterns.map_items(value);
     }
 
     put_cookie(key, datatype, defaults, required) {
@@ -37,5 +50,13 @@ export default class Message {
 
     remove_cookie(key) {
         delete this._cookies[key];
+    }
+
+    get body() {
+        return this._body;
+    }
+
+    set body(value) {
+        this._body = value;
     }
 }

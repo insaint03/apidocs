@@ -1,4 +1,4 @@
-import Datatype from './datatype'
+import Patterns from './patterns'
 
 export default class Template {
     static _store = {};
@@ -55,11 +55,11 @@ export default class Template {
     }
 
     get namespace() {
-        return Datatype.naming_convention(this._name).namespace;
+        return Patterns.naming_parse(this._name).namespace || '';
     }
 
     get localname() {
-        return Datatype.naming_convention(this._name).localname;
+        return Patterns.naming_parse(this._name).localname || '';
     }
 
     get extend() {

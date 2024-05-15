@@ -2,13 +2,12 @@ import NameDuplication from "@/exceptions/NameDuplication";
 import ValueNotFound from "@/exceptions/ValueNotFound";
 import InvalidValue from "@/exceptions/InvalidValue";
 
+import Patterns from "./patterns";
+
 export default class Datatype {
     static default_basis = 'string';
     static _type = 'Datatype'
     // naming convention of: name.space.localname
-    static _name_convention = /^\s*((?<ns>.*)\.)?(?<ln>.+)\s*$/;
-    // object item convention of: !key:datatype(=defaults)
-    static _item_convention = /^(?<required>!)?(?<key>[^:]+):(?<type>[^=]+)(=(?<defaults>.+?))?$/;
     // 
     static _store = [];
 
@@ -109,31 +108,25 @@ export default class Datatype {
         return Datatype.all.filter((p)=>p.name === name).length > 0; 
     }
     static naming_convention(name) {
-        const match = Datatype._name_convention.exec(name);
-        if(match) {
-            return {
-                namespace: match.groups.ns || '',
-                localname: match.groups.ln,
-            };
-        } else {
-            return {namespace: '', localname: name};
-        }
+        const parsed = Patterns.naming_parse(name);
+        return {
+            namespace: '',
+            localname: name,
+            ...parsed,
+        };
     }
-    static item_convention(name) {
-        const match = Datatype._item_convention.exec(name.replace(/\s/g, ''));
-        if(match) {
-            return {
-                required: (!!match.groups.required) || false,
-                key: match.groups.key,
-                datatype: match.groups.type,
-                defaults: match.groups.defaults,
-            };
-        } else {
-            return {key: name};
+    static item_convention(token) {
+        const parsed = Patterns.item_parse(token);
+        return {
+            required: false,
+            key: null, 
+            defaults: null,
+            datatype: Datatype.default_basis,
+            ...parsed,
         }
     }
     static item_object_stringify(item) {
-        return `${item.required?'!':''}${item.key}:${item.datatype}${item.defaults?`=${item.defaults}`:''}`;
+        return Patterns.item_serialize(item);
     }
 
     constructor(name, basistype) {
@@ -163,8 +156,8 @@ export default class Datatype {
 
     
 
-    get namespace() { return Datatype.naming_convention(this.name).namespace || ''; }
-    get localname() { return Datatype.naming_convention(this.name).localname || ''; }
+    get namespace() { return Patterns.naming_parse(this.name).namespace || ''; }
+    get localname() { return Patterns.naming_parse(this.name).localname || ''; }
     get name() { return this._name; }
     set name(value) { 
         // name change validation
@@ -268,7 +261,7 @@ export default class Datatype {
     get items() {
         // if null, it is array or object but typed "any"
         if(this.is_object) {
-            return (this._items||[]).map(Datatype.item_object_stringify);
+            return (this._items||[]).map(Patterns.item_serialize);
         } else if(this.is_array) {
             return this._items || [];
         } else {
@@ -294,7 +287,7 @@ export default class Datatype {
 
         // clear non-collectives
         if(this.is_object) {
-            tokens = tokens.map(Datatype.item_convention)
+            tokens = tokens.map(Patterns.item_parse)
             auto_generates = tokens
                 .map((t)=>t.datatype);
         } else if(this.is_array) {
