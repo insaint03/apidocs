@@ -36,6 +36,7 @@ export default class Datatype {
             {name: 'boolean', basis: null, summary: 'Boolean', validation: (v)=>{ return typeof v === 'boolean'; }},
             {name: 'array', basis: null, summary: 'Array', validation: (v)=>{ return Array.isArray(v); }},
             {name: 'object', basis: null, summary: 'Object', validation: (v)=>{ return typeof v === 'object'; }},
+            {name: 'enum', basis: null, summary: 'Enumeration', },
             
             // advanced basis
             {name: 'integer', basis: 'number', summary: 'Integer', validation: (v)=>{ return Number.isInteger(v); }},
@@ -247,10 +248,11 @@ export default class Datatype {
     }
 
     get is_collective() {
-        return this.is_array || this.is_object;
+        return this.is_array || this.is_enum || this.is_object;
     }
     get is_array() { return this.origintype === 'array'; }
     get is_object() { return this.origintype === 'object'; }
+    get is_enum() { return this.origintype === 'enum'; }
 
     /**
      * items should be array.
@@ -264,7 +266,10 @@ export default class Datatype {
             return (this._items||[]).map(Patterns.item_serialize);
         } else if(this.is_array) {
             return this._items || [];
-        } else {
+        } else if(this.is_enum) {
+            return this._items || [];
+        }
+        else {
             return null;
         }
 

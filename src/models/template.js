@@ -10,6 +10,7 @@ export default class Template {
         this._name = name;
         // extending parent template name
         this._extends = parent;
+        this._tagname = null;
         const base = Template._store[parent] || {};
 
 
@@ -18,8 +19,8 @@ export default class Template {
         this._desc = base._desc || '';
         // request data
         this._request = {
-            // path fragment list
-            path: [],
+            // path function
+            path: null,
             // stringtype http request methods. enum
             method: null,
             // query parameter map
@@ -30,7 +31,7 @@ export default class Template {
             headers: [],
             // body datatype enum
             body: null,
-            ...(base.request || {})
+            ...(base.request || {}),
         }
         // response data
         this._response = {
@@ -44,7 +45,7 @@ export default class Template {
             headers: [],
             // body datatype enum
             body: null,
-            ...(base.response || {})
+            ...(base.response || {}),
         }
 
         Template._store[name] = this;
@@ -62,6 +63,14 @@ export default class Template {
         return Patterns.naming_parse(this._name).localname || '';
     }
 
+    get tagname() {
+        return this._tagname;
+    }
+
+    set tagname(value) {
+        this._tagname = value;
+    }
+
     get extend() {
         return this._extends;
     }
@@ -70,7 +79,6 @@ export default class Template {
         // TODO: map template
         this._extends = v;
     }
-
     get description() {
         return [this._summary, this._desc].join('\n').trim();
     }
@@ -93,11 +101,13 @@ export default class Template {
         return this._request;
     }
 
+
     get response() {
         return this._response
     }
 
     static find(name) {
-        return Template._store[name];
+        return Template._store[name] || null;
     }
+
 }
