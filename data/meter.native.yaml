@@ -1,102 +1,138 @@
 title: OpenMeter API
 version: 1.0.0
-description: |
+description: |-
     OpenMeter is a cloud native usage metering service.
     The OpenMeter API allows you to ingest events, query meter usage, and manage resources.
     ---
     *Operations with the ☁ (cloud) notation are only available in OpenMeter Cloud.*
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-externalDocs:
-  description: Documentation
-  url: https://openmeter.io/docs
+  license: (Apache 2.0)<http://www.apache.org/licenses/LICENSE-2.0.html>
+  links:
+    - (Documentation)<https://openmeter.io/docs>
 
 datatypes:
   datetime:
     basistype: string
     validation: "(s)=>/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/i.test(s)"
-    description: |
+    description: |-
       The date and time in ISO 8601 format.
       Example: `2021-01-01T00:00:00Z`
-  event_data:
-    basistype: object
-    items:
-      - key: tokens
-        type: decimal
-        required: true
-      - key: model
-        type: string
-        required: true
-      - key: type
-        type: string
-        required: true
-    samples:
-      - tokens: 1234
-        model: model1
-        type: type1
-      - tokens: 3456
-        model: model2
-        type: type2
-      - tokens: 5678
-        model: model3
-        type: type3
   event:
     basistype: object
     items:
-      id:
-        type: uuid
-        required: true
-      source:
-        type: string
-        required: true
-      specversion:
-        type: string
-        required: true
-      type:
-        type: string
-        required: true
-      subject:
-        type: string
-        required: true
-      time:
-        type: datetime
-      data:
-        type: event_data
-    samples:
-      - id: 123e4567-e89b-12d3-a456-426614174000
-        source: /api/v1/events
-        specversion: 1.0
-        type: event
-        subject: /api/v1/events
-        time: 2021-01-01T00:00:00Z
-      - id: 123e4567-e89b-12d3-a456-426614174001
-        source: /api/v1/events
-        specversion: 1.0
-        type: event
-        subject: /api/v1/events
-        time: 2021-01-01T00:00:01Z
-      - id: 123e4567-e89b-12d3-a456-426614174002
-        source: /api/v1/events
-        specversion: 1.0
-        type: event
-        subject: /api/v1/events
-        time: 2021-01-01T00:00:02Z  
+      !id: event.id
+      !source: event.source
+      !specversion: event.specversion
+      !type: event.type
+      datacontenttype: event.datacontenttype
+      !subject: event.subject
+      time: event.time
+      data: event.data
+  event.id:
+    basistype: uuid
+    description: Identifies the event
+    examples: 
+      - f81d4fae-7dec-11d0-a765-00a0c91e6bf6
+      - 5c10fade-1c9e-4d6c-8275-c52c36731d3c
+  event.source:
+    basistype: url
+    description: Identifies the context in which an event happened.
+    examples:
+      - service-name
+  event.specversion:
+    basistype: string
+    description: The version of the CloudEvents specification which the event uses.
+    examples:
+      - "1.0"
+  event.type:
+    basistype: enum
+    description: Describes the type of event related to the originating occurrence.
+    examples:
+      - prompt
+  event.datacontenttype:
+    basistype: string
+    description: Content type of the data value. Must adhere to RFC 2046 format.
+    examples:
+      - application/json
+  event.dataschema:
+    basistype: uri
+    description: Identifies the schema that data adheres to.
+    examples:
+      - http://example.com/schema.json
+  event.subject:
+    basistype: enum
+    description: Describes the subject of the event in the context of the event producer (identified by source).
+  event.time:
+    basistype: datetime
+    description: event time
+  event.data:
+      basistype: object
+      items:
+        - key: tokens
+          type: decimal
+          required: true
+        - key: model
+          type: string
+          required: true
+        - key: type
+          type: string
+          required: true
   events:
     bsistype: array
-    items: event
+    items: 
+      - event
   meter:
     basistype: object
     items:
-      id:
-        type: string
-        required: true
-      slug:
-        type: string
-        required: true
-      description:
-        type: string
-        required: true
+      - "!id:meter.id"
+      - "!slug:meter.slug"
+      - "!description:meter.description"
+  meter.id:
+    basistype: string
+    description: meter id
+  meter.slug:
+    basistype: string
+    description: meter slug
+  meter.description:
+    basistype: string
+    description: meter description multiline
+  problem:
+    basistype: object
+    items:
+      !type: problem.type
+      !title: problem.title
+      !status: problem.status
+      !detail: problem.detail
+      instance: problem.instance
+  problem.type:
+    basistype: enum
+    description: Type contains a URI that identifies the problem type
+    examples:
+      - "urn:problem-type:bad-request"
+      - "urn:problem-type:internal-server-error"
+  problem.title:
+    basistype: string
+    description: A short, human-readable summary of the problem type
+    examples:
+      - Bad Request
+  problem.status:
+    basistype: integer
+    description: |-
+      The HTTP status code generated by the origin server for this occurrence of the problem
+      min. - max. = 400 - 599
+    examples:
+      - 400
+      - 599
+  problem.detail:
+    basistype: string
+    description: A human-readable explanation specific to this occurrence of the problem
+    examples:
+      - "The 'name' parameter is required"
+  problem.instance:
+    basistype: string
+    description: A URI reference that identifies the specific occurrence of the problem
+    examples:
+      - "urn:request:local/JMOlctsKV8-000001"
+
 entities:
   - template:
       - get_events
