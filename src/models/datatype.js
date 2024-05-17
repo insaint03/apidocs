@@ -146,6 +146,7 @@ export default class Datatype {
         }
         this._defaults = null;
         this._items = null;
+        this._migration = null;
         
         // name validation
         if(Datatype._store.filter((p)=>p.name === name).length > 0) {
@@ -219,6 +220,9 @@ export default class Datatype {
 
     get defaults() { return this._defaults; }
     set defaults(value) { this._defaults = eval(value); }
+
+    get migration() { return this._migration; }
+    set migration(value) { this._migration = value; }
 
     is_valid(value) {
         // run upstreams

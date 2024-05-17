@@ -1,16 +1,16 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
-import Service from '@/models/service';
+import Project from '@/models/project';
 // import Parameter from "@/models/parameter";
 // import Template from "@/models/template";
 // import Request from "@/models/request";
 // import Response from "@/models/response";
 
 
-export const useServiceStore = defineStore('service', ()=>({
-    service: ref(new Service()),
-    parameters: ref([]),
-    templates: ref([]),
-    entities: ref([]),    
+export const useProjectStore = defineStore('project', ()=>({
+    // project: ref(new Project()),
+    // parameters: ref([]),
+    // templates: ref([]),
+    // entities: ref([]),    
 }));

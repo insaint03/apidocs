@@ -1,4 +1,4 @@
-export default class Service {    
+export default class Project {    
     constructor() {
         this._name = null;
         this._description = null;
@@ -6,6 +6,7 @@ export default class Service {
         this._links = [];
         this._license = {};
         this._contributors = [];
+        this._keywords = [];
     }
 
     get name() { return this._name; }
@@ -22,4 +23,12 @@ export default class Service {
     get license() { return this._license; }
 
     get contributors() { return this._contributors; }
+
+    get keywords() { return this._keywords; }
+    set keywords(value) { 
+        if(!Array.isArray(value)) {
+            value = value.split(/[\s,]+/g);
+        }
+        this._keywords = value;
+    }
 }
