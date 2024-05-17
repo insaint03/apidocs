@@ -56,4 +56,4 @@ export default {
     };
   },
 }
-</script>
+</script>@/stores/project

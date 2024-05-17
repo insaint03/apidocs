@@ -1,12 +1,12 @@
 export default class Project {    
-    constructor() {
-        this._name = null;
-        this._description = null;
-        this._version = null;
-        this._links = [];
-        this._license = {};
-        this._contributors = [];
-        this._keywords = [];
+    constructor({name, description, version, links, license, contributors, keywords}) {
+        this._name = name;
+        this._description = description;
+        this._version = version;
+        this._links = links || [];
+        this._license = license || '';
+        this._contributors = contributors || [];
+        this._keywords = keywords || [];
     }
 
     get name() { return this._name; }

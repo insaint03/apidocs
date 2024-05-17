@@ -9,8 +9,13 @@ import Project from '@/models/project';
 
 
 export const useProjectStore = defineStore('project', ()=>({
-    // project: ref(new Project()),
-    // parameters: ref([]),
-    // templates: ref([]),
-    // entities: ref([]),    
+    state: ()=>({
+        name: '',
+        description: '',
+        version: '',
+        links: [],
+        license: '',
+        contributors: [],
+        keywords: [],
+    }),
 }));

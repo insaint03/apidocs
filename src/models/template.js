@@ -110,4 +110,14 @@ export default class Template {
         return Template._store[name] || null;
     }
 
+    static setup({name, extend, tagname, description, request, response}) {
+        const tmpl = new Template(name, extend);
+        tmpl.tagname = tagname;
+        tmpl.description = description;
+        tmpl.request = request;
+        tmpl.response = response;
+    }
+    static clear() {
+        Template._store = {};
+    }
 }

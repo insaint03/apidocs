@@ -25,8 +25,13 @@ export default class Datatype {
         return 0<Datatype._store.length;
     }
 
+    static clear() {
+        // clear off
+        Datatype._store = [];
+    }
+
     static _initiate(){
-        if(0<Datatype._has_initiated) {
+        if(Datatype._has_initiated) {
             return;
         }
         Datatype._store = [
@@ -128,6 +133,14 @@ export default class Datatype {
     }
     static item_object_stringify(item) {
         return Patterns.item_serialize(item);
+    }
+    static setup({name, basistype, description, validation, items, examples}) { 
+        let dt = Datatype.create(name, basistype);
+        dt.description = description;
+        dt.validation = validation;
+        dt.items = items;
+        dt.examples = examples;
+        return dt;
     }
 
     constructor(name, basistype) {
