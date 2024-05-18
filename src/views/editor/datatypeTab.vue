@@ -1,57 +1,118 @@
 <template>
   <v-navigation-drawer loctaion="left" :model-value="modelValue" title="datatypes" permanent>
-    <v-list-subheader>Parameters</v-list-subheader>
-    <!-- search -->
-    <v-text-field v-model="search" label="Search" outlined append-icon="mdi-magnify" />
-    <v-divider />
-    <!-- primitive grouping -->
-    <v-list-group v-for="grp in primitives" :key="`datatype-grp-${grp.name}`" :value="grp.name">
-      <template v-slot:activator="{ props }">
-        <v-list-item v-bind="props"
-          v-for="item in items.filter((it)=>it.origintype===grp.name)" 
-          :key="`datatype-it-${grp.name}x${item.name}`"
-          :title="item.name"
-          :subtitle="item.basistype"
-          @click="$emit('select', item)">
+    <v-list>
+      <v-list-subheader>Parameters</v-list-subheader>
+      <v-divider />
+      <v-list-group value="form-area">
+        <template #activator="{ props }">
+          <v-list-item v-bind="props">
+            <v-text-field v-model="search_text" label="Name" hide-details clearable
+              append-inner-icon="mdi-plus" @click:append-inner.stop="appends('string', search_text)" @click.stop />
+            <!-- appending icon -->
+          </v-list-item>
+          <v-divider />
+        </template>
+        <!-- search -->
+        <!-- type hierarchy filter -->
+        <v-list-item title="descendant">
         </v-list-item>
-      </template>
-    </v-list-group>
+        <!-- show migrations only -->
+        <v-list-item title="migrations">
+        </v-list-item>
+      </v-list-group>
+      <v-divider />
+      <!-- primitive grouping -->
+      <v-list-group v-for="grp in groupeds" :key="`param-grp.${grp.name}.${treeshaped}`" :value="grp.name">
+        <template #activator="{ props }">
+          <v-list-item v-bind="props" v-show="0<grp.items.length">
+            <v-list-item-title>
+              {{ grp.name }}
+              <v-badge inline :content="items_count_of(grp)" />
+            </v-list-item-title>
+          </v-list-item>
+        </template>
+        <v-list-item v-for="it in grp.items" :key="`param-item.${grp.name}.${it.name}`" 
+          :title="it.name" :subtitle="it.basistype"
+          v-show="search(it)"
+          @click="(ev)=>selecting(ev,it)">
+        </v-list-item>
+      </v-list-group>
+    </v-list>
   </v-navigation-drawer>
 </template>
 
 <script>
-import Parameter from '@/models/parameter';
-import { mapWritableState } from 'pinia';
-import { useServiceStore } from '@/stores/service';
+import Datatype from '@/models/datatype';
+import { mapWritableState, mapActions } from 'pinia';
+import { useParameterStore } from '@/stores/parameter';
+
 
 export default {
   name: 'datatypeTab',
+  methods: {
+    items_count_of(origin) {
+      return this.items_of(origin).length;
+    },
+    items_of(origin) {
+      return this.items.filter((it) => it.is_descendant_of(origin));
+    },
+    init() {
+    },
+    selecting(ev, it) {
+      if(ev.ctrlKey) {
+        this.multi_select(it);
+      } else {
+        this.single_select(it);
+      }
+    },
+    ...mapActions(useParameterStore, [
+      'search','unselect','single_select','multi_select','appends','tree_shaped'
+    ]),
+  },
+  watch: {
+    selection() {
+      this.$emit('select', this.selection);
+    }
+  },
   props: {
     modelValue: {
       type: Boolean,
       required: true,
     }
   },
+  onUpdated() {
+
+  },
   computed: {
-    ordereds() {  
-      return [...this.parameters]
-        .sort((a,b)=>a.name.localeCompare(b.name));
+    item_groups() {
+      return Datatype.origins.map((o)=>{
+        return {
+          group: o,
+          name: o.name,
+          items: this.ordereds.filter((it)=>it.origintype == o.name),
+          _tick: this.tree_shaped,
+        }
+      }).filter((grp)=>grp.items.length >0);
     },
-    items() {
-      let filter = this.search 
-        ? new RegExp(this.search, 'i') 
-        : /^.*$/i;
-      return this.ordereds.filter((it)=>filter.test(it.name));
+    search_pattern() {
+      return this.search ? new RegExp(this.search, 'i') : null;
     },
-    ...mapWritableState(useServiceStore, ['parameters']),
+    ...mapWritableState(useParameterStore, [
+      'all',
+      'origins',
+      'items',
+      'ordereds',
+      'search_text',
+      'groupeds',
+      'treeshaped',
+    ]),
   },
   data() {
     return {
-      search: null,
-      primitives: Parameter.primitives,
       value: this.modelValue,
-
+      open_groups: [],
+      selection: null,
     }
   }
 }
-</script>
+</script>@/stores/parameter@/models/datatype

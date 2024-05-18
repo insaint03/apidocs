@@ -35,7 +35,8 @@
   <!-- main area window controlled by bottom navigation -->
   <v-main app>
   <!-- left navbar area/datatype -->
-    <datatype-tab v-if="show_datatype_tab" v-model="nav_left" />
+    <datatype-tab v-if="show_datatype_tab" 
+      v-model="nav_left" />
 
     <v-container fluid>
       <v-window v-model="tab">
@@ -43,7 +44,7 @@
           <edit-info v-model="service" />
         </v-window-item>
         <v-window-item value="datatypes">
-          <edit-datatype v-model="datatype_selected" />
+          <edit-datatype v-bind="datatype_editor" :key="`edit-dt.${last_updated}`" />
         </v-window-item>
         <v-window-item value="entities">
           <edit-entity v-model="entity_selected" />
@@ -65,16 +66,12 @@
 </template>
 
 <script>
-// import Service from '@/models/service'
-import Parameter from '@/models/parameter'
-import Template from '@/models/template'
-
 import Request from '@/models/request'
 import Response from '@/models/response'
 import editors from './editor'
 
-import { mapWritableState } from 'pinia'
-import { useServiceStore } from '@/stores/service'
+// import { mapWritableState } from 'pinia'
+// import { useProjectStore } from '@/stores/project'
 
 
 const tabs = [
@@ -120,6 +117,9 @@ export default {
     ...editors
   },
   methods: {
+    refresh() {
+      this.last_updated = Date.now();
+    },
     toggle_dataype_tab() {
       this.nav_left = !this.nav_left;
     },
@@ -145,10 +145,6 @@ export default {
       return ['templates', 'entities'].includes(this.tab);
     },
 
-    datatype_selected() {
-      return this.selected_datatype || new Parameter();
-    },
-
     entity_selected() {
       return this.selected_entity || {
         request: new Request(),
@@ -157,15 +153,15 @@ export default {
     },
 
     template_selected() {
-      return this.selected_template || new Template();
+      return this.selected_template || {};
     },
 
-    ...mapWritableState(useServiceStore, [
-      'service',
-      'parameters',
-      'templates',
-      'entities',
-    ]),
+    // ...mapWritableState(useProjectStore, [
+    //   'project',
+    //   'parameters',
+    //   'templates',
+    //   'entities',
+    // ]),
   },
   data() {
     return {
@@ -178,6 +174,14 @@ export default {
       nav_left: true,
       nav_right: true,
 
+      datatype_editor: {
+        modelValue: null,
+        disables: [],
+        singular: true,
+      },
+
+      last_updated: Date.now(),
+
       // 
       // info: {},
       // service: new Service(),
@@ -187,9 +191,10 @@ export default {
 
       // selected items
       selected_datatype: null,
+      disabled_datatype_props: [],
       selected_entity: null,
       selected_template: null,
     }
   },
 }
-</script>
+</script>@/stores/project

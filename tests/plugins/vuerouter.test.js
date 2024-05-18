@@ -1,5 +1,6 @@
 import views from '@/views'
 import router from '@/plugins/vuerouter'
+import { describe, assert, it } from "vitest";
 
 describe('test routings', ()=>{
     it('routing table', ()=>{

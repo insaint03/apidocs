@@ -18,9 +18,10 @@
   </v-sheet>
 </template>
 <script>
-import Parameter from '@/models/parameter';
+import Datatype from '@/models/datatype';
 
-const has_type = (v)=>Parameter.name_exists(v);
+const has_type = (v)=>Datatype.name_exists(v);
+
 const modes = {
   exact: 'mdi-format-text',
   paatern: 'mdi-format-regex',

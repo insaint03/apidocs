@@ -2,6 +2,7 @@
   <list-selector 
     v-model="value"
     v-bind="binds"
+    @change="$emit('change', ...arguments)"
   />
 </template>
 
