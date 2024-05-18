@@ -13,7 +13,7 @@
 
 <script>
 import { mapWritableState } from 'pinia';
-import { useServiceStore } from '@/stores/service';
+import { useProjectStore } from '@/stores/project';
 
 // import Template from '@/models/template';
 
@@ -36,7 +36,7 @@ export default {
         : /^.*$/i;
       return this.ordereds.filter((it) => filter.test(it.name));
     },
-    ...mapWritableState(useServiceStore, ['templates']),
+    ...mapWritableState(useProjectStore, ['templates']),
   },
   data() {
     return {

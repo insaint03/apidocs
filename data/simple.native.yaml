@@ -23,8 +23,8 @@ datatypes:
         - name
         - price
     items:
-      !id: item.id
-      !sku: item.sku
+      "!id": item.id
+      "!sku": item.sku
       name: item.name
       price: item.price
   item.id:
@@ -55,7 +55,7 @@ datatypes:
     description: |-
       item array
     items:
-      !item: item
+      "!item": item
   access_token:
     basistype: string
     description: access token
@@ -76,7 +76,7 @@ templates:
       Common authenticated packets
     request:
       headers:
-        - !Authorization:access_token
+        - "!Authorization:access_token"
   _foundation.list:
     extend: _foundation.root
     description: |-

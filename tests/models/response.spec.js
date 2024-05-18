@@ -1,5 +1,5 @@
 import Response from '@/models/response'
-import { describe } from 'vitest'
+import { describe, expect, test } from "vitest";
 
 describe('response model specifications', ()=>{
     test('property: status setup', ()=>{

@@ -34,7 +34,7 @@
 
 <script>
 import { mapState } from 'pinia';
-import { useServiceStore } from '@/stores/service';
+import { useProjectStore } from '@/stores/project';
 
 export default {
   name: 'viewer',
@@ -44,7 +44,7 @@ export default {
         return agg.concat(en.templates.filter((tmpl)=>agg.includes(tmpl.name)));
       }, []).concat(['unspecified']);
     },
-    ...mapState(useServiceStore, [
+    ...mapState(useProjectStore, [
       'service',
       'parameters',
       'templates',
@@ -56,4 +56,4 @@ export default {
     };
   },
 }
-</script>@/stores/project
+</script>

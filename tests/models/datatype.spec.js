@@ -1,8 +1,7 @@
 import NameDuplication from "@/exceptions/NameDuplication";
 import ValueNotFound from "@/exceptions/ValueNotFound";
 import Datatype from "@/models/datatype";
-import { expect, test } from "vitest";
-// import { assert } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe('datatype model specifications', ()=>{
 
@@ -298,7 +297,7 @@ describe('datatype model specifications', ()=>{
             const thename = rname('test');
             const dt = new Datatype(thename, 'string');
             const mname = `${thename}_migration`;
-            expect(dt.migration).toBe(undefined);
+            expect(dt.migration).to.equal(null);
 
             dt.migration = mname;
             expect(dt.migration).toBe(mname);

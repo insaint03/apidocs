@@ -296,11 +296,17 @@ export default class Datatype {
         if(this.is_collective) {
             // clear previous items
             this._items = [];
-
+            
+            // when items gets object
+            if(!Array.isArray(value) && typeof value === 'object') {
+                value = Object.entries(value)
+                    .map(([k,v])=>`${k}:${v}}`);
+            }
             // add new items
             this.parse_add_item(...value);
         }
     }
+
     parse_add_item(...tokens) {
         // assert tokens to be string
         tokens = tokens.filter((t)=>typeof t === 'string')

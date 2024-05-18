@@ -70,8 +70,8 @@ import Request from '@/models/request'
 import Response from '@/models/response'
 import editors from './editor'
 
-import { mapWritableState } from 'pinia'
-import { useServiceStore } from '@/stores/service'
+// import { mapWritableState } from 'pinia'
+// import { useProjectStore } from '@/stores/project'
 
 
 const tabs = [
@@ -156,12 +156,12 @@ export default {
       return this.selected_template || {};
     },
 
-    ...mapWritableState(useServiceStore, [
-      'service',
-      'parameters',
-      'templates',
-      'entities',
-    ]),
+    // ...mapWritableState(useProjectStore, [
+    //   'project',
+    //   'parameters',
+    //   'templates',
+    //   'entities',
+    // ]),
   },
   data() {
     return {

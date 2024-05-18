@@ -25,7 +25,7 @@
 </template>
 <script>
 import { mapWritableState } from 'pinia';
-import { useServiceStore } from '@/stores/service';
+import { useProjectStore } from '@/stores/project';
 import fields from '@/fields';
 
 import baseForm from '@/components/forms/baseForm.vue';
@@ -47,7 +47,7 @@ export default {
     }
   },
   computed: {
-    ...mapWritableState(useServiceStore, [
+    ...mapWritableState(useProjectStore, [
       'parameters',
       'entities',
       'templates'
@@ -63,4 +63,4 @@ export default {
     }
   }
 }
-</script>@/stores/project
+</script>

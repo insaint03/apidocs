@@ -19,10 +19,13 @@ export default class Project {
     set version(value) { this._version = value; }
 
     get links() { return this._links; }
+    set links(value) { this._links = value; }
 
     get license() { return this._license; }
+    set license(value) { this._license = value; }
 
     get contributors() { return this._contributors; }
+    set contributors(value) { this._contributors = value; }
 
     get keywords() { return this._keywords; }
     set keywords(value) { 

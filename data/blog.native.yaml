@@ -20,16 +20,16 @@ datatypes:
   user_profile:
     basistype: object
     items:
-      !id: user.id
+      "!id": user.id
       name: user.name
       email: user.email
   user: 
     basistype: object
     migration: user
     items:
-      !id: user.id
+      "!id": user.id
       name: user.name
-      !email: user.email
+      "!email": user.email
       profile: user.profile
       password: user.password
     description: user instance
@@ -56,7 +56,7 @@ datatypes:
   user.profile:
     basistype: object
     items:
-      !id: user.profile.id
+      "!id": user.profile.id
       bio: user.profile.bio
       avatar: user.profile.avatar
     description: user profile extract
@@ -69,10 +69,10 @@ datatypes:
     basistype: object
     migration: blog
     items:
-      !id: blog.id
+      "!id": blog.id
       title: blog.title
-      !threads: blog.threads
-      !posts: blog.posts
+      "!threads": blog.threads
+      "!posts": blog.posts
       owner: user_profile
     description: main blog instance
   blog.id:
@@ -89,11 +89,11 @@ datatypes:
   blog.post:
     basistype: object
     items:
-      !id: blog.post.id
+      "!id": blog.post.id
       title: blog.post.title
-      !author: user.profile
-      !content: blog.post.content
-      !assets: blog.post.assets
+      "!author": user.profile
+      "!content": blog.post.content
+      "!assets": blog.post.assets
       keywords: blog.post.keywords
       interactions: blog.post.interactions
       threads: blog.post.threads
@@ -123,9 +123,9 @@ datatypes:
   blog.post.asset:
     basistype: object
     items:
-      !id: blog.post.asset.key
-      !type: blog.post.asset.type
-      !url: blog.post.asset.url
+      "!id": blog.post.asset.key
+      "!type": blog.post.asset.type
+      "!url": blog.post.asset.url
     description: post asset
   blog.post.asset.key:
     basistype: string
@@ -154,9 +154,9 @@ datatypes:
   blog.post.interactions:
     basistype: object
     items:
-      !likes: blog.post.interactions.likes
-      !comments: blog.post.interactions.comments
-      !author: user.profile
+      "!likes": blog.post.interactions.likes
+      "!comments": blog.post.interactions.comments
+      "!author": user.profile
     description: post interactions
   blog.post.interactions.likes:
     basistype: arrey
@@ -186,9 +186,9 @@ datatypes:
   blog.thread:
     basistype: object
     items:
-      !id: blog.thread.id
+      "!id": blog.thread.id
       title: blog.thread.title
-      !posts: blog.thread.posts
+      "!posts": blog.thread.posts
     description: blog thread
   blog.thread.id:
     basistype: uuid

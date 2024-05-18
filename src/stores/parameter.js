@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-// import fields from '@/fields'
+import { useProjectStore } from './project'
 
 import Parameter  from '@/models/datatype'
 
@@ -18,7 +18,7 @@ export const useParameterStore = defineStore('datatype', {
         // all list of parameters
         all: Parameter.all,
         origins: Parameter.origins,
-        items: [].concat(Parameter.customs),
+        // items: [].concat(Parameter.customs),
         // name search pattern
         search_text: '',
         // selected targets
@@ -26,6 +26,9 @@ export const useParameterStore = defineStore('datatype', {
         treeshaped: Date.now(),
     }),
     getters: {
+        items() {
+            return Object.values(useProjectStore().state.datatypes);
+        },
         ordereds(){
             return this.items
                 .filter(this.search)

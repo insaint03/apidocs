@@ -30,7 +30,7 @@
 
 <script>
 // import fields from '@/fields'
-import Service from '@/models/service'
+import Project from '@/models/project'
 import tableForm from '@/components/forms/tableForm.vue'
 
 const fields = [
@@ -51,7 +51,7 @@ export default {
   },
   props: {
     modelValue: {
-      type: Service,
+      type: Project,
       required: true,
     }
   },

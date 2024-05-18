@@ -45,13 +45,12 @@ export default class Entity {
             ...this._request,
         });
     }
+    set request(value) {
+        this._request = value;
+    }
 
     get request_raw() {
         return this._request;
-    }
-
-    set request(value) {
-        this._request = {...this._request, ...value};
     }
 
     get response() {
@@ -69,5 +68,9 @@ export default class Entity {
 
     set response(value) {
         this._response = {...this._response, ...value};
+    }
+
+    static setup({templates, description, request, response}) {
+        return new Entity({templates, description, request, response});
     }
 }

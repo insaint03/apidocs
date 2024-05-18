@@ -101,9 +101,17 @@ export default class Template {
         return this._request;
     }
 
+    set request(value) {
+        this._request = Object.assign(this._request, value);
+    }
+
 
     get response() {
         return this._response
+    }
+
+    set response(value) {
+        this._response = Object.assign(this._response, value);
     }
 
     static find(name) {

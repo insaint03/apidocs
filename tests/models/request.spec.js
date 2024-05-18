@@ -1,7 +1,4 @@
-// request model unit test
-// import Patterns from '@/models/patterns';
 import Request from '@/models/request'
-
 import { describe, test, expect } from 'vitest';
 
 describe('request model specifications', ()=>{

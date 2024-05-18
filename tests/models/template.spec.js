@@ -1,5 +1,5 @@
 import Template from '@/models/template'
-import { expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe('template model specifications', ()=>{
     // template class testcase

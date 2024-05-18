@@ -1,15 +1,15 @@
 <template>
-  
+  <h1>Template</h1>
 </template>
 <script>
-import { mapWritableState, mapActions } from 'pinia';
-import 
+import Template from '@/models/template';
+import fields from '@/fields';
 
 export default {
   name: 'editTemplate',
   components: {
-    baseForm,
-    descText,
+    // baseForm,
+    // descText,
     // tableValues,
   },
   props: {
