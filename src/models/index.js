@@ -10,8 +10,8 @@ const yaml_stringify = YAML.dump;
 export default {
     location: null,
     project: null,
-    datatypes: [],
-    templates: [],
+    datatypes: {},
+    templates: {},
     entities: [],
     timestamp: Date.now(),
 

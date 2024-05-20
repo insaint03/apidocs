@@ -1,8 +1,9 @@
 export default class Project {    
-    constructor({name, description, version, links, license, contributors, keywords}) {
+    constructor({name, description, version, history, links, license, contributors, keywords}) {
         this._name = name;
         this._description = description;
         this._version = version;
+        this._history = history || [];
         this._links = links || [];
         this._license = license || '';
         this._contributors = contributors || [];
@@ -26,6 +27,11 @@ export default class Project {
 
     get contributors() { return this._contributors; }
     set contributors(value) { this._contributors = value; }
+
+    // history contains: version, date, items (single-liner)
+    get history() { return this._history; }
+    // history only appends
+    set history(value) { this._history = this._history.concat(value); }
 
     get keywords() { return this._keywords; }
     set keywords(value) { 
