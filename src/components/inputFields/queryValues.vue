@@ -1,6 +1,8 @@
 <template>
   <list-values v-model="value" :fields="fields" label="query"
-    itemId="key" itemTitle="key" itemSubtitle="datatype" />
+    itemId="key" itemTitle="key" itemSubtitle="datatype" 
+    @change="$emit('change', ...arguments)"
+  />
 </template>
 <script>
 import listValues from '@/components/inputFields/listValues.vue';

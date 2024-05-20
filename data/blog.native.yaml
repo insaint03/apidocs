@@ -1,0 +1,210 @@
+project:
+  name: sample blog system
+  version: 1.0.0
+  description: |-
+    # A Sample blog api documentation
+    This is a sample blog api documentation. 
+    It is a simple blog system demo that allows users to create, read, update and delete blog posts.
+  license: (MIT) MIT License <https://opensource.org/licenses/MIT>
+  links:
+    - (github) Repository <...>
+    - (issues) Issues <...>
+    - (wiki) QuickStart  <...>
+  contributors:
+    - (owner) John Doe <john.doe@anywhere.com>
+  keywords:
+    - sample
+    - blog
+
+datatypes:
+  user_profile:
+    basistype: object
+    items:
+      "!id": user.id
+      name: user.name
+      email: user.email
+  user: 
+    basistype: object
+    migration: user
+    items:
+      "!id": user.id
+      name: user.name
+      "!email": user.email
+      profile: user.profile
+      password: user.password
+    description: user instance
+  user.id:
+    basistype: uuid
+    description: unique identifier for a target user
+    examples:
+      - 5c10fade-1c9e-4d6c-8275-c52c36731d3c
+  user.name:
+    basistype: string
+    description: name of the user
+    examples:
+      - John Doe
+      - Jane Doe
+  user.email:
+    basistype: string
+    description: email of the user
+    examples:
+  user.password:
+    basistype: string
+    description: password of the user
+    examples:
+      - password
+  user.profile:
+    basistype: object
+    items:
+      "!id": user.profile.id
+      bio: user.profile.bio
+      avatar: user.profile.avatar
+    description: user profile extract
+  user.profile.id:
+    basistype: uuid
+    description: unique identifier for a target user profile
+    examples:
+      - 5c10fade-1c9e-4d6c-8275-c52c36731d3c
+  blog:
+    basistype: object
+    migration: blog
+    items:
+      "!id": blog.id
+      title: blog.title
+      "!threads": blog.threads
+      "!posts": blog.posts
+      owner: user_profile
+    description: main blog instance
+  blog.id:
+    basistype: uuid
+    description: unique identifier for a target blog
+    examples:
+      - 5c10fade-1c9e-4d6c-8275-c52c36731d3c
+  blog.title:
+    basistype: string
+    description: title of the blog
+    examples:
+      - My first blog
+      - My second blog
+  blog.post:
+    basistype: object
+    items:
+      "!id": blog.post.id
+      title: blog.post.title
+      "!author": user.profile
+      "!content": blog.post.content
+      "!assets": blog.post.assets
+      keywords: blog.post.keywords
+      interactions: blog.post.interactions
+      threads: blog.post.threads
+    description: blog post
+  blog.post.id:
+    basistype: uuid
+    description: unique identifier for a target post
+    examples:
+      - 5c10fade-1c9e-4d6c-8275-c52c36731d3c
+  blog.post.title:
+    basistype: string
+    description: title of the post
+    examples:
+      - My first post
+      - My second post
+  blog.post.content:
+    basistype: string
+    description: content of the post
+    examples:
+      - This is my first post
+      - This is my second post
+  blog.post.assets:
+    basistype: array
+    items:
+      - blog.post.asset
+    description: post assets
+  blog.post.asset:
+    basistype: object
+    items:
+      "!id": blog.post.asset.key
+      "!type": blog.post.asset.type
+      "!url": blog.post.asset.url
+    description: post asset
+  blog.post.asset.key:
+    basistype: string
+    description: asset key
+    examples:
+      - hex1234
+      - hex1134
+  blog.post.asset.type:
+    basistype: enum
+    description: asset type
+    items:
+      - image
+      - video
+      - audio
+  blog.post.asset.url:
+    basistype: url
+    description: asset url
+    examples:
+      - http://example.com/image.jpg
+      - http://example.com/video.mp4
+  blog.post.keywords:
+    basistype: array
+    items:
+      - string
+    description: post keywords
+  blog.post.interactions:
+    basistype: object
+    items:
+      "!likes": blog.post.interactions.likes
+      "!comments": blog.post.interactions.comments
+      "!author": user.profile
+    description: post interactions
+  blog.post.interactions.likes:
+    basistype: arrey
+    description: post liked users
+    items:
+      - user.profile
+  blog.post.interactions.comments:
+    basistype: arrey
+    description: post comments
+    items:
+      - blog.post.interactions.comment
+  blog.post.interactions.comment:
+    basistype: object
+    items:
+      author: user.profile
+      content: string
+  blog.posts:
+    basistype: array
+    items:
+      - blog.post
+    description: blog post list
+  blog.threads:
+    basistype: array
+    items:
+      - blog.thread
+    description: blog thread list
+  blog.thread:
+    basistype: object
+    items:
+      "!id": blog.thread.id
+      title: blog.thread.title
+      "!posts": blog.thread.posts
+    description: blog thread
+  blog.thread.id:
+    basistype: uuid
+    description: unique identifier for a target thread
+    examples:
+      - 5c10fade-1c9e-4d6c-8275-c52c36731d3c
+  blog.thread.title:
+    basistype: string
+    description: title of the thread
+    examples:
+      - My first thread
+      - My second thread
+  blog.thread.posts:
+    basistype: array
+    items:
+      - blog.post
+    description: thread post list
+# TODO from here
+templates: 

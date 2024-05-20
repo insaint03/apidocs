@@ -1,9 +1,11 @@
 <template>
   <toggle-text v-model="value" text="export migration">
-    <template #field="{v, clear}">
-      <v-text-field :model-value="v" @update:model-value="(v)=>value=v"
+    <template #field="{clear}">
+      <v-text-field v-model="value"
         prepend-inner-icon="mdi-close" @click:prepend-inner="clear" 
-        append-icon="mdi-export" @click:append="exports" />
+        append-icon="mdi-export" @click:append="exports"
+        @change="()=>$emit('change', ...arugments)" 
+      />
     </template>
   </toggle-text>
 </template>

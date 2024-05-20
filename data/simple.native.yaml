@@ -1,0 +1,192 @@
+project:
+  name: The simplest example
+  description: |-
+    This project is a simple example of a api documentation.
+  version: 1.0.0
+  links:
+    - (github) Repository <>
+    - (issues) Issues <>
+    - (wiki) QuickStart <>
+  license: (MIT) MIT License <https://opensource.org/licenses/MIT>
+  contributors:
+    - (owner) John Doe <>
+  keywords:
+    - example
+datatypes:
+  item:
+    basistype: object
+    description: |-
+      The item instance
+      contains:
+        - id
+        - sku
+        - name
+        - price
+    items:
+      "!id": item.id
+      "!sku": item.sku
+      name: item.name
+      price: item.price
+  item.id:
+    basistype: uuid
+    description: unique identifier for a target item
+    examples:
+      - 5c10fade-1c9e-4d6c-8275-c52c36731d3c
+  item.sku:
+    basistype: string
+    description: stock keeping unit
+    examples:
+      - XC11111
+      - XC22222
+  item.name:
+    basistype: string
+    description: name of the item
+    examples:
+      - Item 1
+      - Item 2
+  item.price:
+    basistype: number
+    description: price of the item in KRW
+    examples:
+      - 1000
+      - 2000
+  items:
+    basistype: array
+    description: |-
+      item array
+    items:
+      "!item": item
+  access_token:
+    basistype: string
+    description: access token
+    examples:
+      - 5c10fade-1c9e-4d6c-8275-c52c36731d3c
+templates:
+  _foundation.root:
+    description: |-
+      The root of the api
+      determines request path prefix, and response serializer
+    request:
+      path: /api/v1
+    response:
+      serializer: json
+  _foundation.auth:
+    extend: _foundation.root
+    description: |-
+      Common authenticated packets
+    request:
+      headers:
+        - "!Authorization:access_token"
+  _foundation.list:
+    extend: _foundation.root
+    description: |-
+      Common listing template
+    request:
+      method: GET
+    response:
+      body:
+        - origin:items
+  _foundation.get:
+    extend: _foundation.root
+    description: |-
+      Common get template
+    request:
+      method: GET
+    response:
+      body:
+        - origin:object
+  _foundation.create:
+    extend: _foundation.auth
+    description: |-
+      Common create template
+    request:
+      method: POST
+    response:
+      body:
+        - origin:object
+  _foundation.update:
+    extend: _foundation.auth
+    description: |-
+      Common update template
+    request:
+      method: PUT
+    response:
+      body:
+        - origin:object
+  _foundation.delete:
+    extend: _foundation.auth
+    description: |-
+      Common delete template
+    request:
+      method: DELETE
+    response:
+      body:
+        - origin:object
+  item:
+    tagname: Item
+    description: |-
+      Item relavant apis
+    datatype: item
+    request:
+      path: /api/v1/items
+
+entities:
+  - templates:
+    - _foundation.list
+    - item
+    description: |-
+      List items
+      It will list item instances
+    request:
+      path: /api/v1/items
+      queries:
+        name: item.name
+    response:
+      body: items
+  - templates:
+    - _foundation.get
+    - item
+    description: |-
+      Get item
+      It will get item instance
+    request:
+      path: /api/v1/items/<item.id>
+    response:
+      body: item
+  - templates:
+    - _foundation.create
+    - item
+    description: |-
+      Create item
+      It will create item instance.
+      access token required
+    request:
+      path: /api/v1/items
+      body: item
+    response:
+      body: item
+  - templates:
+    - _foundation.update
+    - item
+    description: |-
+      Update item
+      It will update item instance.
+      access token required
+    request:
+      path: /api/v1/items/<item.id>
+      body: item
+    response:
+      body: item
+  - templates:
+    - _foundation.delete
+    - item
+    description: |-
+      Delete item
+      It will delete item instance.
+      access token required
+    request:
+      path: /api/v1/items/<item.id>
+    response:
+      body: item
+
+    
