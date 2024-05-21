@@ -101,20 +101,37 @@ export default class Patterns {
 
     // singleliner
     // (keytype) title <links|option_title,links> looooong description (singleine)
-    static singleliner = /(\((?<keytype>[^)]+)\))?(?<title>[^<]+)(<(?<links>[^><]+)>)?(?<desc>[^><]+)?/;
-    static singleliner_links = /^(?<href>[^|]+)(\|(?<title>[^,]+))?$/;
+    static liner_spliter = /(\([^)]*\)|<[^><]*>)/g;
+    static liner_keytype = /\((?<keytype>[^)]*)\)/;
+    static liner_links = /<(?<links>[^><]*)>/;
+    // static singleliner = /(\((?<keytype>[^)]+)\))?(?<title>[^<]+)(<(?<links>[^><]+)>)?(?<desc>[^><]+)?/;
+    // static singleliner_links = /^(?<href>[^|]+)(\|(?<title>[^,]+))?$/;
     static liner_parse(line) {
-        const unmatched = {keytype: null, title: '', links: '', desc: ''};
-        const match = (line.match(Patterns.singleliner) || {groups:unmatched}).groups;
-        return {
-            keytype: (match.keytype || '').trim(),
-            title: match.title.trim(),
-            links: (match.links || '').split(/,/g).map((ln)=>ln.trim())
-                .map((ln)=>Patterns.singleliner_links.exec(ln))
-                .filter((ln)=>ln!==null)
-                .map((ln)=>ln.groups)
-                .map(({href, title})=>({href, title:(title || href)})),
-            description: (match.desc||'').trim(),
-        }
+        return line.split(Patterns.liner_spliter).reduce((agg, token)=>{
+            token = token.trim();
+            if(token.length<=0) { return agg; }
+            const keymatch = Patterns.liner_keytype.exec(token);
+            const linkmatch = Patterns.liner_links.exec(token);
+
+            if(keymatch && agg.keytype==null) {
+                agg.keytype = keymatch.groups.keytype;
+            }
+            else if(linkmatch) {
+                const links = linkmatch.groups.links.split(/[,\s*]+/g)
+                    .map((ln)=>ln.trim().split(/\|/))
+                    .map(([href,title])=>({href, title: title || href}));
+                agg.links = (agg.links || []).concat(links);
+            } else if(agg.title.length<=0) {
+                agg.title = token;
+            } else {
+                agg.description += token;
+            }
+            return agg;
+        }, {
+            keytype: null,
+            title: '',
+            links: [],
+            description: '',
+        });
     }
 }

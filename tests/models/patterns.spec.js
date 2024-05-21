@@ -81,7 +81,6 @@ describe('Test patterns model', () => {
                 .to.contain({keytype: 'key', title: 'title', description: 'description'});
             expect(Patterns.liner_parse('(key) title <url> description'), '#3')
                 .to.contain({keytype: 'key', title: 'title', description: 'description'});
-
         });
     });
 
