@@ -118,8 +118,8 @@ export default class Patterns {
             }
             else if(linkmatch) {
                 const links = linkmatch.groups.links.split(/[,\s*]+/g)
-                    .map((ln)=>ln.trim().split(/\|/))
-                    .map(([href,title])=>({href, title: title || href}));
+                    .map((ln)=>ln.split(/\|/).map((t)=>t.trim()).filter((t)=>t))
+                    .map(([href,anchor,])=>({href, anchor: anchor || href}));
                 agg.links = (agg.links || []).concat(links);
             } else if(agg.title.length<=0) {
                 agg.title = token;

@@ -314,4 +314,28 @@ describe('datatype model specifications', ()=>{
         });
     });
 
+    describe('test sophisticated hierarchies', ()=>{
+        // test children
+        test('children', ()=>{
+            const parent = new Datatype(rname('parent'), 'object');
+            const children = new Array(10)
+                .fill(null)
+                .map(()=>new Datatype(rname('child'), parent.name));
+            expect(parent.children).toBeInstanceOf(Array);
+            expect(parent.children.length).toBe(children.length);
+            children.forEach((child)=>{
+                expect(parent.children).toContain(child);
+            });
+        });
+
+        // TODO: test upstream go over
+
+        // TODO: test hierarhy
+
+        // TODO: list descendants
+
+        // TODO: list containers
+
+        // TODO: list relatives
+    })
 });

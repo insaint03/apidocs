@@ -93,8 +93,7 @@ templates:
     request:
       method: GET
     response:
-      body:
-        - origin:object
+      body: object
   _foundation.create:
     extend: _foundation.auth
     description: |-
@@ -102,8 +101,7 @@ templates:
     request:
       method: POST
     response:
-      body:
-        - origin:object
+      body: object
   _foundation.update:
     extend: _foundation.auth
     description: |-
@@ -111,8 +109,7 @@ templates:
     request:
       method: PUT
     response:
-      body:
-        - origin:object
+      body: object
   _foundation.delete:
     extend: _foundation.auth
     description: |-
@@ -120,8 +117,7 @@ templates:
     request:
       method: DELETE
     response:
-      body:
-        - origin:object
+      body: object
   item:
     tagname: Item
     description: |-
@@ -129,7 +125,6 @@ templates:
     datatype: item
     request:
       path: /api/v1/items
-
 entities:
   - templates:
     - _foundation.list
