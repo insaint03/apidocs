@@ -1,7 +1,7 @@
 import NameDuplication from "@/exceptions/NameDuplication";
 import ValueNotFound from "@/exceptions/ValueNotFound";
 import Datatype from "@/models/datatype";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, assert } from "vitest";
 
 describe('datatype model specifications', ()=>{
 
@@ -328,7 +328,32 @@ describe('datatype model specifications', ()=>{
             });
         });
 
-        // TODO: test upstream go over
+        // test upstream go over
+        test('upstream', ()=>{
+            const grandparent = new Datatype(rname('grandparent'), 'object');
+            const parent = new Datatype(rname('parent'), grandparent.name);
+            const child = new Datatype(rname('child'), parent.name);
+
+            // run full upstream lists
+            const ancestors = [grandparent, parent, child, Datatype.find('object')]
+                .map((n)=>n.name);
+            const ret = child.upstreams((d)=>{
+                expect(d.origintype).toBe('object');
+                expect(ancestors).to.contain(d.name);
+            });
+            // nully output
+            assert(ret == null);
+
+            // early test completion
+            const ret2 = child.upstreams((d)=>d.name === parent.name,
+                (d)=>{
+                    expect(d).not.toBe(grandparent);
+                    expect(d.name).not.toBe('object');
+                    expect(ancestors).to.contain(d.name);
+                    return true;
+                });
+            expect(ret2).toBe(true); 
+        });
 
         // TODO: test hierarhy
 
