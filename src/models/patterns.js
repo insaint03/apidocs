@@ -134,4 +134,12 @@ export default class Patterns {
             description: '',
         });
     }
+    static liner_serialize({keytype, title, links, description}) {
+        return [
+            keytype?`(${keytype})`:'',
+            title,
+            links?`<${links.map((ln)=>`${ln.href}${ln.anchor!==ln.href?'|'+ln.anchor:''}`).join(',')}>`:'',
+            description,
+        ].join(' ');
+    }
 }
