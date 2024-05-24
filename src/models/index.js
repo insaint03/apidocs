@@ -58,7 +58,7 @@ export default {
             location: loads.location,
             data: {
                 project: loads.project,
-                datatype: loads.datatype,
+                datatypes: loads.datatypes,
                 templates: loads.templates,
                 entities: loads.entities,
             },
@@ -86,7 +86,7 @@ export default {
             location: loads.location,
             data: {
                 project: loads.project,
-                datatype: loads.datatype,
+                datatypes: loads.datatypes,
                 templates: loads.templates,
                 entities: loads.entities,
             },
@@ -132,16 +132,29 @@ export default {
 
     // load data from a given location
     async loads(location) {
-        // TODO: clear current data
+        // clear current data
         this.clear();
 
         // try import file content from the path
         this.location = location;
-        const content = (await import(location)).default;
-        
+        let raw = null;
+        let content = null;
+        // load by location uri
+        if(/^\w+:/i.test(location)) {
+            raw = await (await fetch(location)).text();
+            if(/.json$/i.test(location)) {
+                content = await JSON.parse(raw);
+            } else {
+                content = await yaml_parse(raw);
+            }
+        } else {
+            raw = await import(location);
+            content = raw.default || raw;
+        }
         
         return {
             location,
+            raw,
             // timestamp: content.timestamp || Date.now(),
             ...content,
         };
