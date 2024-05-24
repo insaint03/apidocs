@@ -2,6 +2,8 @@ import Request from "./request";
 import Response from "./response";
 import Template from "./template";
 
+//TODO: ? Entity should be - more thoughly data container, 
+// limited computing properties
 export default class Entity {
     constructor({templates, description, request, response}) {
         this._tmpls = templates || [];

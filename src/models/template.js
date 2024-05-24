@@ -1,4 +1,5 @@
 import Patterns from './patterns'
+import Entity from './entity';
 
 export default class Template {
     static _store = {};
@@ -114,6 +115,7 @@ export default class Template {
         this._response = Object.assign(this._response, value);
     }
 
+
     static find(name) {
         return Template._store[name] || null;
     }
@@ -125,7 +127,51 @@ export default class Template {
         tmpl.request = request;
         tmpl.response = response;
     }
+
     static clear() {
         Template._store = {};
+    }
+
+    static merge_request_option(fore, next) {
+        return {
+            method: next.method || fore.method,
+            path: next.path || fore.path,
+            queries: Object.assign(fore.queries || {}, next.queries || {}),
+            cookies: (fore.cookies || []).concat(next.cookies || []),
+            headers: (fore.headers || []).concat(next.headers || []),
+            // TODO: think about datatype constraint
+            // body: next.body || fore.body,
+        };
+    }
+
+    static merge_response_option(fore, next) {
+        return {
+            status: next.status || fore.status || 200,
+            mimetype: next.mimetype || fore.mimetype,
+            cookies: (fore.cookies || []).concat(next.cookies || []),
+            headers: (fore.headers || []).concat(next.headers || []),
+            // TODO: think about datatype constraint
+            // body: next.body || fore.body,
+        };
+    }
+
+    // build an entity via chaning template names
+    static produce(...names) {
+        const option = names.map((n)=>Template.find(n))
+            .filter((tmpl)=>tmpl!==null)
+            .reduce((agg,tmpl)=>{
+                // concatenate template list
+                agg.templates = (agg.templates || []).concat(tmpl);
+                // overwrite description
+                agg.description = agg.description || tmpl.description;
+
+                // request properties
+                agg.request = Template.merge_request_option(agg.request, tmpl.request);
+
+                // response properties
+                agg.response = Template.merge_response_option(agg.response, tmpl.response);
+
+            }, {});
+        return new Entity(option);
     }
 }
