@@ -5,7 +5,7 @@ export default class Descriptable {
     }
 
     get summary() {
-        return this._summary;
+        return this._summary || '';
     }
 
     set summary(value) {
@@ -13,7 +13,7 @@ export default class Descriptable {
     }
 
     get desc() {
-        return this._desc;
+        return this._desc || '';
     }
 
     get description() {

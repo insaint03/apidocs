@@ -2,6 +2,7 @@ import Patterns from './patterns'
 import Descriptable from './descriptable';
 import Request from './request';
 import Response from './response';
+import Entity from './entity';
 
 export default class Template extends Descriptable {
     static _store = {};
@@ -24,35 +25,16 @@ export default class Template extends Descriptable {
         this._desc = base._desc || '';
         // request data
         this._request = {
-            // path function
-            path: null,
-            // stringtype http request methods. enum
-            method: null,
-            // query parameter map
-            queries: {},
-            // cookies [[key, datatype], ...]
-            cookies: [],
-            // headers [[key, datatype], ...]
-            headers: [],
-            // body datatype enum
-            body: null,
+            ...Request.option(),
             ...(base.request || {}),
         }
         // response data
         this._response = {
-            // int type http status code enum
-            status: null,
-            // stringtype mimetype enum
-            mimetype: null,
-            // cookies [[key, datatype], ...]
-            cookies: [],
-            // headers [[key, datatype], ...]
-            headers: [],
-            // body datatype enum
-            body: null,
+            ...Response.option(),
             ...(base.response || {}),
         }
 
+        // write on store
         Template._store[name] = this;
     }
 
@@ -84,29 +66,7 @@ export default class Template extends Descriptable {
         // TODO: map template
         this._extends = v;
     }
-    get description() {
-        return [this._summary, this._desc].join('\n').trim();
-    }
-
-    set description(value) {
-        if(value==null) {
-            this._summary = null;
-            this._desc = null;
-        } else {
-            const lines = value.split('\n');
-            this._summary = lines.shift();
-            this._desc = lines.join('\n').trim();
-        }
-    }
-
-    get summary() {
-        return this._summary || '';
-    }
-
-    get desc() {
-        return this._desc || '';
-    }
-
+    
     get request() {
         return this._request;
     }
@@ -126,7 +86,13 @@ export default class Template extends Descriptable {
 
 
     static find(name) {
-        return (name instanceof Template ? name : Template._store[name]) || null;
+        if(name instanceof Template) {
+            return name;
+        } else if(name instanceof Object) {
+            return Template.setup(name);
+        } else {
+            return Template._store[name] || null;
+        }
     }
 
     static finds(...names) {
@@ -135,7 +101,7 @@ export default class Template extends Descriptable {
     }
 
     static names(...tmpls) {
-        return tmpls.map((t)=>t instanceof Template?t.name:t);
+        return tmpls.map((t)=>t.name || t);
     }
 
     static setup({name, extend, tagname, description, request, response}) {
@@ -151,18 +117,29 @@ export default class Template extends Descriptable {
         Template._store = {};
     }
 
-    static build(...tmpls) {
-        const init = {
-            templates: Template.names(...tmpls),
-            description: null,
-            request: Request.option(),
-            response: Response.option(),
+    static merge(prev, next) {
+        return Object.entries(next || {}).reduce((agg,[k,v])=>{
+            // overwrites only for truthy values || 0, false.
+            if(v || v===0 || v===false) {
+                agg[k] = v;
+            }
+            return agg;
+        }, prev);
+    }
+
+    static build(...names) {
+        // const init = {
+        //     templates: Template.names(...tmpls),
+        //     description: null,
+        //     request: Request.option(),
+        //     response: Response.option(),
+        // };
+        const tmpls = Template.finds(...names);
+        return {
+            templates: Template.names(...names),
+            description: tmpls.reduce((agg,tmpl)=>`${agg}\n${tmpl.description}`.trim(), ''),
+            request: Request.merge(...tmpls.map((tmpl)=>tmpl.request)),
+            response: Response.merge(...tmpls.map((tmpl)=>tmpl.response)),
         };
-        return Template.finds(tmpls).reduce((agg,tmpl)=>{
-                agg.description = agg.description || tmpl.description;
-                agg.request = Object.assign(agg.request, tmpl.request);
-                agg.response = Object.assign(agg.response, tmpl.response);
-                return agg;
-            }, init);
     }
 }

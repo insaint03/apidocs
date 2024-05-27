@@ -86,8 +86,8 @@ export default class Response extends Message {
 
     constructor({mimetype, status, headers, cookies, body}) {
         super({headers, cookies, body});
-        this._mtype = mimetype || '';
-        this.status = status || '200';
+        this._mtype = mimetype;
+        this.status = status;
     }
 
     get definition() {
@@ -107,7 +107,7 @@ export default class Response extends Message {
         return this._status.desc;
     }
     set status(value) {
-        value = value.toString();
+        value = (value || '').toString();
         // code first
         this._status = Response.statuses[value];
         if(this._status == null) {
@@ -129,11 +129,24 @@ export default class Response extends Message {
 
     static option() {
         return {
-            mimetype: 'application/json',
-            status: '200',
+            mimetype: null,
+            status: null,
             headers: [],
             cookies: {},
             body: null,
         };
+    }
+
+    static merge(...resps) {
+        return resps.reduce((agg, resp)=>{
+            return {
+                mimetype: agg.mimetype || resp.mimetype,
+                status: agg.status || resp.status,
+                headers: (agg.headers || []).concat(resp.headers || [])
+                    .filter((h,i,a)=>a.indexOf(h)===i), // unique
+                cookies: {...agg.cookies, ...resp.cookies},
+                body: agg.body || resp.body,
+            }
+        }, Response.option());
     }
 }

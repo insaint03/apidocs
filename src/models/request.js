@@ -161,12 +161,30 @@ export default class Request extends Message {
 
     static option() {
         return {
-            method: 'GET',
-            path: '/',
+            method: null,
+            path: null,
             queries: {},
-            cookies: {},
+            cookies: [],
             headers: [],
             body: null,
         }
+    }
+
+    static merge(...reqs) {
+        return reqs.reduce((agg, req)=>{
+            return {
+                method: agg.method || req.method,
+                path: agg.path || req.path,
+                queries: {
+                    ...agg.queries, 
+                    ...req.queries
+                },
+                cookies: (agg.cookies || []).concat(req.cookies || [])
+                    .filter((c,i,a)=>a.indexOf(c)===i), // unique
+                headers: (agg.headers || []).concat(req.headers || [])
+                    .filter((h,i,a)=>a.indexOf(h)===i), // unique
+                body: agg.body || req.body,
+            }
+        }, Request.option());
     }
 }

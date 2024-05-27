@@ -91,7 +91,7 @@ describe('models', ()=>{
     test('simplest building a single entity', ()=>{
         const get_tmpl = Template.setup({name: 'req_get'});
         get_tmpl.description = 'Get Request';
-        const json_tmpl = new Template({name: 'resp_json', response: {status: 200, mimetype: 'application/json'}}); 
+        const json_tmpl = Template.setup({name: 'resp_json', response: {status: 200, mimetype: 'application/json'}}); 
         const entity = models.build(get_tmpl, json_tmpl);
 
         // expect(entity).toBeInstanceOf(Entity);
@@ -99,4 +99,26 @@ describe('models', ()=>{
         expect(entity.request.method).toBe('GET');
         expect(entity.response.mimetype).toBe('application/json');
     });
+
+    test('combinatorial building', ()=>{
+        const reqs = [
+            {method: 'GET', name: 'req_get'},
+            {method: 'POST', name: 'req_post'},
+            {method: 'PUT', name: 'req_put'},
+            {method: 'DELETE', name: 'req_delete'},
+        ].map((r)=>Template.setup({request:r}));
+        const resps = [
+            {status: 200, mimetype: 'application/json', name: 'resp_json'},
+            {status: 200, mimetype: 'application/xml', name: 'resp_xml'},
+        ].map((r)=>Template.setup({response:r}));
+
+        const entities = models.combinatorial(reqs, resps);
+        expect(entities.length).toBe(reqs.length * resps.length);
+        entities.forEach((entity)=>{
+            expect(entity.templates.length).toBe(2);
+            expect(entity.response.status).toBe(200);
+            expect(entity.request.method).not.toBe(null);
+            expect(entity.response.mimetype).not.toBe(null);
+        });
+    })
 })
