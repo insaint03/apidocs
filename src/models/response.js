@@ -126,4 +126,14 @@ export default class Response extends Message {
     set mimetype(value) {
         this._mtype = value;
     }
+
+    static option() {
+        return {
+            mimetype: 'application/json',
+            status: '200',
+            headers: [],
+            cookies: {},
+            body: null,
+        };
+    }
 }

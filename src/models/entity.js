@@ -1,13 +1,14 @@
+import Descriptable from "./descriptable";
 import Request from "./request";
 import Response from "./response";
 import Template from "./template";
 
 //TODO: ? Entity should be - more thoughly data container, 
 // limited computing properties
-export default class Entity {
+export default class Entity extends Descriptable {
     constructor({templates, description, request, response}) {
+        super({desc: description});
         this._tmpls = templates || [];
-        this._desc = description || '';
         
         this._templates = null;
         this._trails = null;

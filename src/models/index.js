@@ -159,4 +159,18 @@ export default {
             ...content,
         };
     },
+
+    // build a new entity by mixing templates
+    build(...templates) {
+        return new Entity(Template.build(...templates));
+    },
+
+    // from arrays of templates, build combinatorial entities
+    combinatorial(...tmplss) {
+        // build combination products
+        return tmplss.reduce(
+            (agg,tmpls)=>agg.map((ln)=>tmpls.map((tmpl)=>ln.concat([tmpl]))).flat()
+        , [[]])
+            .map((ln)=>new Entity(Template.build(...ln)));
+    }
 }

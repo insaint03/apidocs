@@ -1,10 +1,14 @@
 import Patterns from './patterns'
-import Entity from './entity';
+import Descriptable from './descriptable';
+import Request from './request';
+import Response from './response';
 
-export default class Template {
+export default class Template extends Descriptable {
     static _store = {};
 
     constructor(name, parent) {
+        super({});
+
         // if(Template._store[name]) {
         //     throw new Error('Template already exists');
         // }
@@ -85,9 +89,14 @@ export default class Template {
     }
 
     set description(value) {
-        const lines = value.split('\n');
-        this._summary = lines.shift();
-        this._desc = lines.join('\n').trim();
+        if(value==null) {
+            this._summary = null;
+            this._desc = null;
+        } else {
+            const lines = value.split('\n');
+            this._summary = lines.shift();
+            this._desc = lines.join('\n').trim();
+        }
     }
 
     get summary() {
@@ -117,61 +126,43 @@ export default class Template {
 
 
     static find(name) {
-        return Template._store[name] || null;
+        return (name instanceof Template ? name : Template._store[name]) || null;
+    }
+
+    static finds(...names) {
+        return names.map((n)=>Template.find(n))
+            .filter((v)=>v!==null);
+    }
+
+    static names(...tmpls) {
+        return tmpls.map((t)=>t instanceof Template?t.name:t);
     }
 
     static setup({name, extend, tagname, description, request, response}) {
         const tmpl = new Template(name, extend);
-        tmpl.tagname = tagname;
-        tmpl.description = description;
-        tmpl.request = request;
-        tmpl.response = response;
+        tmpl.tagname = tagname || null;
+        tmpl.description = description || null;
+        tmpl.request = request || {};
+        tmpl.response = response || {};
+        return tmpl;
     }
 
     static clear() {
         Template._store = {};
     }
 
-    static merge_request_option(fore, next) {
-        return {
-            method: next.method || fore.method,
-            path: next.path || fore.path,
-            queries: Object.assign(fore.queries || {}, next.queries || {}),
-            cookies: (fore.cookies || []).concat(next.cookies || []),
-            headers: (fore.headers || []).concat(next.headers || []),
-            // TODO: think about datatype constraint
-            // body: next.body || fore.body,
+    static build(...tmpls) {
+        const init = {
+            templates: Template.names(...tmpls),
+            description: null,
+            request: Request.option(),
+            response: Response.option(),
         };
-    }
-
-    static merge_response_option(fore, next) {
-        return {
-            status: next.status || fore.status || 200,
-            mimetype: next.mimetype || fore.mimetype,
-            cookies: (fore.cookies || []).concat(next.cookies || []),
-            headers: (fore.headers || []).concat(next.headers || []),
-            // TODO: think about datatype constraint
-            // body: next.body || fore.body,
-        };
-    }
-
-    // build an entity via chaning template names
-    static produce(...names) {
-        const option = names.map((n)=>Template.find(n))
-            .filter((tmpl)=>tmpl!==null)
-            .reduce((agg,tmpl)=>{
-                // concatenate template list
-                agg.templates = (agg.templates || []).concat(tmpl);
-                // overwrite description
+        return Template.finds(tmpls).reduce((agg,tmpl)=>{
                 agg.description = agg.description || tmpl.description;
-
-                // request properties
-                agg.request = Template.merge_request_option(agg.request, tmpl.request);
-
-                // response properties
-                agg.response = Template.merge_response_option(agg.response, tmpl.response);
-
-            }, {});
-        return new Entity(option);
+                agg.request = Object.assign(agg.request, tmpl.request);
+                agg.response = Object.assign(agg.response, tmpl.response);
+                return agg;
+            }, init);
     }
 }

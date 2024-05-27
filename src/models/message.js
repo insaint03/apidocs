@@ -1,9 +1,11 @@
+import Descriptable from "./descriptable";
 import Patterns from "./patterns";
 
-export default class Message {
+export default class Message extends Descriptable {
     static http = 'HTTP/1.1';
 
     constructor({headers, cookies, body}) {
+        super({});
         this._headers = headers || [];
         this._cookies = cookies || {};
         this._body = body || null;

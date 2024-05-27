@@ -1,9 +1,11 @@
+import Descriptable from './descriptable';
 import Patterns from './patterns'
 
-export default class Project {    
+export default class Project extends Descriptable {    
     constructor({name, description, version, history, links, license, contributors, keywords}) {
+        super({desc: description});
+
         this._name = name;
-        this._description = description;
         this._version = version;
         this._history = history || [];
         this._links = links || [];
@@ -14,9 +16,6 @@ export default class Project {
 
     get name() { return this._name; }
     set name(value) { this._name = value; }
-
-    get description() { return this._description; }
-    set description(value) { this._description = value; }
 
     get version() { return this._version; }
     set version(value) { this._version = value; }

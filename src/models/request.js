@@ -158,4 +158,15 @@ export default class Request extends Message {
     query_fragment(key) {
         return this._queries[key] || {};
     }
+
+    static option() {
+        return {
+            method: 'GET',
+            path: '/',
+            queries: {},
+            cookies: {},
+            headers: [],
+            body: null,
+        }
+    }
 }

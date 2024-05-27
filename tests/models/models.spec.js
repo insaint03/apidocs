@@ -1,6 +1,7 @@
 import models from '@/models';
 import { describe, test, expect } from 'vitest';
 import fs from 'fs';
+import Template from '@/models/template';
 
 describe('models', ()=>{
     const internal_url = '../data/simple.native.yaml';
@@ -75,7 +76,7 @@ describe('models', ()=>{
         const reyaml = await models.serialize_yaml(reloaded);
 
         expect(yaml).toEqual(reyaml);
-    })
+    });
 
     test('serialization json', async ()=>{ 
         const loaded = await models.loads(internal_url);
@@ -85,5 +86,17 @@ describe('models', ()=>{
         const rejson = await models.serialize_json(reloaded);
 
         expect(json).toEqual(rejson);
-    })
+    });
+
+    test('simplest building a single entity', ()=>{
+        const get_tmpl = Template.setup({name: 'req_get'});
+        get_tmpl.description = 'Get Request';
+        const json_tmpl = new Template({name: 'resp_json', response: {status: 200, mimetype: 'application/json'}}); 
+        const entity = models.build(get_tmpl, json_tmpl);
+
+        // expect(entity).toBeInstanceOf(Entity);
+        expect(entity.templates.length).toBe(2);
+        expect(entity.request.method).toBe('GET');
+        expect(entity.response.mimetype).toBe('application/json');
+    });
 })

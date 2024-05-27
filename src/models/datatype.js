@@ -3,11 +3,12 @@ import ValueNotFound from "@/exceptions/ValueNotFound";
 import InvalidValue from "@/exceptions/InvalidValue";
 
 import Patterns from "./patterns";
+import Descriptable from "./descriptable";
 
-export default class Datatype {
+export default class Datatype extends Descriptable {
 
     constructor(name, basistype) {
-        
+        super({});
         this._name = name || '';
         // except for origin generation
         if(name === basistype) {
@@ -107,13 +108,6 @@ export default class Datatype {
     // readonly primitive
     get is_primitive() { return this._is_primitive || false; }
     get is_origin() { return this._is_origin || false; }
-
-
-    get summary() { return this._summary; }
-    set summary(value) { this._summary = value; }
-
-    get description() { return this._desc; }
-    set description(value) { this._desc = value; }
 
     get examples() { return this._examples || []; }
     set examples(value) { 
