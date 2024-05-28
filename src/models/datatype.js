@@ -268,6 +268,16 @@ export default class Datatype extends Descriptable {
         }
         return ret || null;
     }
+    static finds(...names) {
+        return names.map((n)=>Datatype.find(n))
+            .filter((t)=>t);
+    }
+
+    static names(...types) {
+        return types.map((t)=>t.name || t);
+    }
+
+
 
     static get _has_initiated(){
         return 0<Datatype._store.length;

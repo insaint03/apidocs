@@ -122,7 +122,8 @@ templates:
     tagname: Item
     description: |-
       Item relavant apis
-    datatype: item
+    datatypes: 
+      - item
     request:
       path: /api/v1/items
 entities:

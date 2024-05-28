@@ -4,32 +4,51 @@ import { defineStore } from "pinia";
 import models from '@/models';
 const storage_key = 'apidocs';
 
-export const useProjectStore = defineStore('project', ()=>({
+export const useProjectStore = defineStore('project', {
     state: ()=>(models.state),
     getters: {
         project_ready() {
-            return this.state.project && this.state.project.name;
+            return this.project && this.project.name;
         },
         has_datatypes() {
-            return this.state.datatypes && Object.entries(this.state.datatypes).length > 0;
+            return this.datatypes && Object.entries(this.datatypes).length > 0;
         },
         has_entities() {
-            return this.state.entities && this.state.entities.length > 0;
+            return this.entities && this.entities.length > 0;
         },
 
-        migrations() {
-            return this.state.datatypes.filter((d)=>d.migration);
-        },
+        // tagnames
         tagnames() {
-            return this.state.entities.map((e)=>e.name);
-        }
+            return this.templates
+                .filter((tmpl)=>tmpl.tagname!==null)
+                .map((tmpl)=>({tagname: tmpl.tagname, title: tmpl.name, _template: tmpl}));
+        },
+        tagtypes() {
+            return this.templates
+                .filter((tmpl)=>tmpl.tagname!==null && 0<tmpl.datatypes.length)
+                .map((tmpl)=>({tag: tmpl.tagname, scheme: tmpl.datatypes}));
+        },
+        tagapis() {
+            return this.tagnames
+                .map((t)=>({
+                    _apis: this.entities.filter((e)=>e.templates.includes(t.title)),
+                    ...t,
+                }));
+        },
+        migrations() {
+            return this.datatypes.filter((d)=>d.migration);
+        },
     },
     actions: {
-        loads(location) {
+        async loads(location) {
             // load data
-            const content = models.loads(location);
+            const content = await models.loads(location);
             // setup concurrent states
             models.state = content;
+            // announce state change
+            this.$state = {
+                ...models.state,
+            };
             // cache it
             this.caches();
             // announce state change
@@ -57,4 +76,4 @@ export const useProjectStore = defineStore('project', ()=>({
             this.revoke();
         }
     }
-}));
+});

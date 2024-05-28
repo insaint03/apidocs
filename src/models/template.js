@@ -2,7 +2,7 @@ import Patterns from './patterns'
 import Descriptable from './descriptable';
 import Request from './request';
 import Response from './response';
-import Entity from './entity';
+import Datatype from './datatype';
 
 export default class Template extends Descriptable {
     static _store = {};
@@ -17,6 +17,7 @@ export default class Template extends Descriptable {
         // extending parent template name
         this._extends = parent;
         this._tagname = null;
+        this._datatypes = null;
         const base = Template._store[parent] || {};
 
 
@@ -82,6 +83,14 @@ export default class Template extends Descriptable {
 
     set response(value) {
         this._response = Object.assign(this._response, value);
+    }
+
+    get datatypes() {
+        return this._datatypes || [];
+    }
+
+    set datatypes(values) {
+        this._datatypes = Datatype.names(...values);
     }
 
 

@@ -1,5 +1,6 @@
 <template>
   <v-container class="fill-height">
+    <v-spacer />
     <v-card>
       <v-card-item>
         <v-card-title>Need to load the document</v-card-title>
@@ -13,6 +14,7 @@
         </v-form>
       </v-card-text>
     </v-card>
+    <v-spacer />
   </v-container>
 </template>
 
@@ -27,7 +29,7 @@ export default {
   },
   data() {
     return {
-      file: './data/simple.native.yaml',
+      file: '../../data/simple.native.yaml',
     };
   },
 };
