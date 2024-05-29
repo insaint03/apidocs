@@ -93,6 +93,9 @@ export default class Template extends Descriptable {
         this._datatypes = Datatype.names(...values);
     }
 
+    static get all() {
+        return Object.values(Template._store);
+    }
 
     static find(name) {
         if(name instanceof Template) {

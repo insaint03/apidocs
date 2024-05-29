@@ -35,18 +35,45 @@ export default {
         }
     },
 
+    _hierarchical_loads(puts, setup, find_parent, presets) {
+        const entries = Object.entries(puts);
+        const to_loads = [].concat(entries);
+        let iterations = (entries.length+1)*2;
+        const rets = [];
+        while(--iterations>0 && to_loads.length>0) {
+            const [key, value] = to_loads.shift();
+            if(!presets.includes(find_parent(key, value))) {
+                to_loads.push([key, value]);
+                continue;
+            } 
+            rets.push(setup(key, value));
+            presets.push(key);
+        }
+        return rets;
+    },
+
     set state(values) {
         this.location = values.location;
         // build project info
-        this.project = new Project({...(values.project || values.data.project)});
+        this.project = new Project({...(values.project)});
         // and load datatypes
-        this.datatypes = Object.entries(values.datatypes||values.data.datatypes)
-                .map(([k,v])=>Datatype.setup({name: k, ...v}));
+        this.datatypes = 
+            this._hierarchical_loads(values.datatypes || {},
+                (k,v)=>Datatype.setup({name: k, ...v}),
+                (k,v)=>v.basistype,
+                Datatype.names(...Datatype.all),
+            );
         // then templates next,
-        this.templates = Object.entries(values.templates || values.data.templates)
-                .map(([k,v])=>Template.setup({name: k, ...v}));
+        this.templates = 
+            this._hierarchical_loads(values.templates || {},
+                (k,v)=>Template.setup({name: k, ...v}),
+                (k,v)=>v.extend,
+                Template.names(...Template.all),
+            );
         // finally, load entities
-        this.entities = (values.entities || values.data.entities).map((e)=>new Entity(e));
+        this.entities = (values.entities || values.data.entities)
+            .filter((e)=>e!=null)
+            .map((e)=>new Entity(e));
         // setup timestamped
         this.timestamp = values.timestamp || Date.now();
     },

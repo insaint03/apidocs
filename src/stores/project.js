@@ -21,7 +21,13 @@ export const useProjectStore = defineStore('project', {
         tagnames() {
             return this.templates
                 .filter((tmpl)=>tmpl.tagname!==null)
-                .map((tmpl)=>({tagname: tmpl.tagname, title: tmpl.name, _template: tmpl}));
+                .map((tmpl)=>({
+                    tagname: tmpl.tagname, 
+                    title: tmpl.name, 
+                    _template: tmpl, 
+                    datatypes: tmpl.datatypes,
+                    apis: this.entities.filter((e)=>e.templates.includes(tmpl.name)),
+                }));
         },
         tagtypes() {
             return this.templates

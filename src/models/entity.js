@@ -23,7 +23,8 @@ export default class Entity extends Descriptable {
     }
 
     get templates() {
-        return this._tmpls.map(Template.find);
+        return this._tmpls.map(Template.find)
+            .filter((t)=>t!=null);
     }
 
 
