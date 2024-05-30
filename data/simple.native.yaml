@@ -15,6 +15,7 @@ project:
 datatypes:
   item:
     basistype: object
+    migration: items
     description: |-
       The item instance
       contains:

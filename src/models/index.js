@@ -9,7 +9,7 @@ const yaml_stringify = YAML.dump;
 
 export default {
     location: null,
-    project: null,
+    project: new Project({}),
     datatypes: {},
     templates: {},
     entities: [],
@@ -17,8 +17,8 @@ export default {
 
     // clear current setups
     clear(){
-        this.location = null;
-        this.project = null;
+        this.location = new Project({});
+        this.project = {};
         this.datatypes = [];
         this.templates = [];
         this.entities = [];

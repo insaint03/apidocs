@@ -1,47 +1,57 @@
 <template>
-  <emptyView v-if="!project_ready" />
-  <template v-else>
-    <v-navigation-drawer app location="right" permanent>
-      <tocView :open="opentabs" :scrollspy="scrollspy" />
-    </v-navigation-drawer>
-    <v-main>
-      <v-expansion-panels>
-        <!-- about project -->
-        <v-expansion-panel title="about project">
-          <v-expansion-panel-text>
-            <info-view tab="summary" />
-          </v-expansion-panel-text>
-        </v-expansion-panel>
-        <!-- by template tagnames -->
-        <v-expansion-panel v-for="tag in tagnames" :key="`tag-${tag.tagname}`" :title="tag.tagname">
-          <v-expansion-panel-text>
-            <tag-view v-bind="tag" />
-          </v-expansion-panel-text>
-        </v-expansion-panel>
-        <v-divider />
+  <!-- app bar -->
+  <app-bar />
+  <v-navigation-drawer app location="right" permanent>
+    <tocView :open="opentabs" :scrollspy="scrollspy" />
+  </v-navigation-drawer>
+  <v-main app v-scroll="scrolls">
+    <v-expansion-panels elevation="0" ripple multiple>
+      <!-- about project -->
+      <v-expansion-panel title="about project" elevation="0">
+        <v-expansion-panel-text>
+          <info-view tab="summary" />
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+      <!-- migration scheme -->
+      <v-expansion-panel title="migration" elevation="0">
+        <v-expansion-panel-text>
+          <migrations-view />
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+      <!-- by template tagnames -->
+      <v-container fluid>
+        <v-row v-for="tag in tagnames" :key="`tag-${tag.tagname}`">
+          <v-col>
+            <v-card flat>
+              <v-card-title :id="`tag-${tag.tagname}`">{{ tag.tagname }}</v-card-title>
+            </v-card>
+          </v-col>
+        </v-row>
         <!-- datatype view -->
-        <v-expansion-panel title="datatypes">
-          <v-expansion-panel-text>
-            
-          </v-expansion-panel-text>
-        </v-expansion-panel>
-        <v-expansion-panel title="endpoints">
-          <v-expansion-panel-text>
-            
-          </v-expansion-panel-text>
-        </v-expansion-panel>
-      </v-expansion-panels>
-    </v-main>
-  </template>
+        <datatype-view v-for="tp in datatype_list" :key="`type-${tp.name}`"
+          :datatype="tp" />
+        <v-row>&nbsp;</v-row>
+
+        <!-- full api references -->
+        <endpoint-view v-for="ep, ei in entities" :key="`endpoint-${ei}`"
+          :endpoint="ep" />
+        <v-row>&nbsp;</v-row>
+      </v-container>
+    </v-expansion-panels>
+  </v-main>
 </template>
 <script>
-import models from '@/models'
+// import models from '@/models'
 // on empty
-import emptyView from './empty.vue';
+
 // navigation tab
+import appBar from './appbar.vue';
+import migrationsView from './migrations.vue';
 import tocView from './toc.vue';
 import infoView from './info.vue';
-import tagView from './tags.vue';
+import datatypeView from './datatype.vue';
+import endpointView from './endpoint.vue';
+// import tagView from './tags.vue';
 
 
 import { mapWritableState } from 'pinia';
@@ -50,25 +60,31 @@ import { useProjectStore } from '@/stores/project';
 export default {
   name: 'viewerPage',
   components: {
-    emptyView,
+    appBar,
+    migrationsView,
+    datatypeView,
+    endpointView,
+    // emptyView,
     tocView,
     infoView,
-    tagView,
+    // tagView,
+  },
+  async onCreated() {
+    await this.load('../../data/simple.native.yaml');
   },
   methods: {
-    async load(path) {
-      const content = await models.loads(path);
-      this.project = content.project;
-      this.datatypes = content.datatypes;
-      this.templates = content.templates;
-      this.entities = content.entities;
+    scrolls() {
+
     },
   },
   computed: {
     ...mapWritableState(useProjectStore, [
-      'project_ready',
+      // 'project_ready',
+      'project',
       'tagnames',
+      'migrations',
       'datatypes',
+      'datatype_list',
       'entities',
     ]),
   },
@@ -76,10 +92,6 @@ export default {
     return {
       opentabs: [],
       scrollspy: {},
-      project: {},
-      datatypes: {},
-      templates: {},
-      entities: [],
     }
   }
 }

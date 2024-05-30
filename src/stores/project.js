@@ -5,7 +5,7 @@ import models from '@/models';
 const storage_key = 'apidocs';
 
 export const useProjectStore = defineStore('project', {
-    state: ()=>(models.state),
+    state: ()=>models.state,
     getters: {
         project_ready() {
             return this.project && this.project.name;
@@ -17,9 +17,13 @@ export const useProjectStore = defineStore('project', {
             return this.entities && this.entities.length > 0;
         },
 
+        datatype_list() {
+            return [].concat(this.datatypes).filter((d)=>['object','enum'].includes(d.origintype));
+        },
+
         // tagnames
         tagnames() {
-            return this.templates
+            return [].concat(this.templates)
                 .filter((tmpl)=>tmpl.tagname!==null)
                 .map((tmpl)=>({
                     tagname: tmpl.tagname, 
@@ -29,20 +33,8 @@ export const useProjectStore = defineStore('project', {
                     apis: this.entities.filter((e)=>e.templates.includes(tmpl.name)),
                 }));
         },
-        tagtypes() {
-            return this.templates
-                .filter((tmpl)=>tmpl.tagname!==null && 0<tmpl.datatypes.length)
-                .map((tmpl)=>({tag: tmpl.tagname, scheme: tmpl.datatypes}));
-        },
-        tagapis() {
-            return this.tagnames
-                .map((t)=>({
-                    _apis: this.entities.filter((e)=>e.templates.includes(t.title)),
-                    ...t,
-                }));
-        },
         migrations() {
-            return this.datatypes.filter((d)=>d.migration);
+            return [].concat(this.datatypes).filter((d)=>d.migration);
         },
     },
     actions: {
@@ -60,7 +52,7 @@ export const useProjectStore = defineStore('project', {
             // announce state change
             return models.state;
         },
-        clear: models.clear,
+        clears: models.clear,
         // cache current state into sessionStorage
         caches() {
             models.save_storage('session');

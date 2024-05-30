@@ -1,7 +1,6 @@
 <template>
-  <v-container class="fill-height">
-    <v-spacer />
-    <v-card>
+  <v-dialog :modelValue="modelValue" @update:modelValue="(v)=>$emit('update:modelValue', v)">
+    <v-card :loading="loading">
       <v-card-item>
         <v-card-title>Need to load the document</v-card-title>
         <v-card-subtitle>Empty project</v-card-subtitle>
@@ -16,8 +15,7 @@
         </v-form>
       </v-card-text>
     </v-card>
-    <v-spacer />
-  </v-container>
+  </v-dialog>
 </template>
 
 <script>
@@ -26,15 +24,16 @@ import { useProjectStore } from '@/stores/project';
 const recent_key = '_recents';
 
 export default {
-  name: 'emptyViewer',
+  name: 'openDialog',
   methods: {
-    load_current() {
-      const the_file = this.search || this.file;
-      this.recents = [the_file]
-        .concat(this.recents.filter((r) => r !== the_file))
-        .filter((v) => v && 0 < v.trim().length);
-      this.save_recents();
-      this.loads(the_file);
+    async load_current() {
+      this.loading = true;
+      const the_file = this.file || this.search;
+      const ret = await this.loads(the_file);
+      this.$emit('load', ret);
+      this.loading = false;
+      this.$emit('update:modelValue', false);
+      
     },
     load_recents() {
       return JSON.parse(localStorage.getItem(recent_key) || '[]');
@@ -43,6 +42,9 @@ export default {
       localStorage.setItem(recent_key, JSON.stringify(this.recents));
     },
     ...mapActions(useProjectStore, ['loads']),
+  },
+  props: {
+    modelValue: Boolean,
   },
   computed: {
     items() {
@@ -54,8 +56,9 @@ export default {
   },
   data() {
     const recents = this.load_recents();
-    console.log('rec', recents);
     return {
+      value: this.modelValue,
+      loading: false,
       recents,
       file: null,
       search: '../../data/simple.native.yaml',
