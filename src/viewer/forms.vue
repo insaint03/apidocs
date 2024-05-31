@@ -11,8 +11,16 @@
 </template>
 
 <script>
+import viewItems from './items.vue';
 export default {
   name: 'viewForms',
+  components: {
+    viewItems,
+  },
+  methods: {
+    //
+    
+  },
   props: {
     modelValue: Object,
     fields: Array,

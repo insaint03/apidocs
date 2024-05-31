@@ -18,6 +18,28 @@
 import { mapState } from 'pinia';
 import { useProjectStore } from '@/stores/project';
 import viewForms from './forms.vue';
+import models from '@/models';
+
+const liner_items = {
+  itemTitle: 'title',
+  itemSubtitle: 'keytype',
+  itemLinks: 'links',
+  itemDesc: 'description',
+}
+const link_icons = {
+  github: 'mdi-github',
+  repository: 'mdi-source-repository',
+  wiki: 'mdi-wikipedia',
+  issue: 'mdi-ticket-outline',
+  issues: 'mdi-ticket-outline',
+  docs: 'mdi-file-document',
+  document: 'mdi-file-document',
+  guideline: 'mdi-file-document',
+  license: 'mdi-file-certificate',
+  terms: 'mdi-file-document-outline',
+  privacy: 'mdi-file-document-outline',
+  other: 'mdi-file-document-outline',
+}
 
 // const tabs = ['summary', 'legal', 'history'];
 const fields = [
@@ -25,19 +47,19 @@ const fields = [
     { key: 'name', label: 'project name' },
     { key: 'version', label: 'version' },
     { key: 'summary', label: 'summary' },
-    { key: 'links', label: 'links', is: 'v-textarea' },
-    { key: 'license', label: 'license' },
+    { key: 'links', label: 'links', is: 'view-items', iconMap: link_icons, itemIcon: 'keytype', ...liner_items,  },
+    { key: 'license', label: 'license', is: 'view-items', ...liner_items, },
   ],
   [
-    { key: 'desc', label: 'description', is: 'v-textarea' },
+    { key: 'desc', label: 'description', is: 'v-textarea', },
 
   ], 
   [
 
-    { key: 'contributors', label: 'contributors', is: 'v-textarea' },
-    { key: 'terms', label: 'terms of use', is: 'v-textarea' },
-    { key: 'privacy', label: 'privacy policy', is: 'v-textarea' },
-    { key: 'history', label: 'history', is: 'v-textarea' },
+    { key: 'contributors', label: 'contributors', is: 'view-items', ...models.items.liner, },
+    // { key: 'terms', label: 'terms of use', items: {}, },
+    // { key: 'privacy', label: 'privacy policy', items: {}, },
+    { key: 'history', label: 'history', items: {}, },
   ],
 ]
 export default {

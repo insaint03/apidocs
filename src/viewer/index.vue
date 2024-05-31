@@ -12,18 +12,19 @@
           <info-view tab="summary" />
         </v-expansion-panel-text>
       </v-expansion-panel>
-      <!-- migration scheme -->
+      <!-- TODO: migration scheme 
       <v-expansion-panel title="migration" elevation="0">
         <v-expansion-panel-text>
           <migrations-view />
         </v-expansion-panel-text>
       </v-expansion-panel>
+      -->
       <!-- by template tagnames -->
       <v-container fluid>
-        <v-row v-for="tag in tagnames" :key="`tag-${tag.tagname}`">
+        <v-row v-for="tag in tags" :key="`tag-${tag}`">
           <v-col>
             <v-card flat>
-              <v-card-title :id="`tag-${tag.tagname}`">{{ tag.tagname }}</v-card-title>
+              <v-card-title :id="`tag-${tag}`">{{ tag }}</v-card-title>
             </v-card>
           </v-col>
         </v-row>
@@ -54,7 +55,7 @@ import endpointView from './endpoint.vue';
 // import tagView from './tags.vue';
 
 
-import { mapWritableState } from 'pinia';
+import { mapActions, mapState } from 'pinia';
 import { useProjectStore } from '@/stores/project';
 
 export default {
@@ -69,24 +70,32 @@ export default {
     infoView,
     // tagView,
   },
-  async onCreated() {
-    await this.load('../../data/simple.native.yaml');
+  onMounted() {
+    console.log('try to revoke');
+    this.revoke();
   },
   methods: {
     scrolls() {
 
     },
+    ...mapActions(useProjectStore, [
+      'caches',
+      'revoke',
+      'saves',
+      'recovers',
+    ]),
   },
   computed: {
-    ...mapWritableState(useProjectStore, [
-      // 'project_ready',
-      'project',
-      'tagnames',
-      'migrations',
-      'datatypes',
-      'datatype_list',
-      'entities',
-    ]),
+    ...mapState(useProjectStore, {
+      'project': 'project',
+      'datatype_list': 'datatypes',
+      'entities': 'entities',
+      'tags': 'tags',
+      'tag_datatypes': 'tag_datatypes',
+      'tag_entries': 'tag_entries',
+      'migrations': 'migrations',
+      'timestamp': 'timestamp',
+    }),
   },
   data() {
     return {

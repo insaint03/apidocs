@@ -3,6 +3,7 @@ import Project from '@/models/project';
 import Datatype from '@/models/datatype';
 import Template from '@/models/template';
 import Entity from '@/models/entity';
+import Patterns from '@/models/patterns';
 
 const yaml_parse = YAML.load;
 const yaml_stringify = YAML.dump;
@@ -14,14 +15,26 @@ export default {
     templates: {},
     entities: [],
     timestamp: Date.now(),
+    items: {
+        item: Patterns.item_items,
+        liner: Patterns.liner_items,
+    },
 
     // clear current setups
     clear(){
         this.location = new Project({});
         this.project = {};
-        this.datatypes = [];
-        this.templates = [];
+        this.datatypes = {};
+        this.templates = {};
         this.entities = [];
+    },
+
+    get dtypes() {
+        return Object.values(this.datatypes);
+    },
+
+    get tmpls() {
+        return Object.values(this.templates);
     },
 
     get state() {
@@ -32,21 +45,47 @@ export default {
             templates: this.templates,
             entities: this.entities,
             timestamp: this.timestamp,
+            // tags: this.tags,
         }
+    },
+
+    get tags() {
+        return this.tmpls
+            .filter((tmpl)=>tmpl.tagname);
+    },
+
+    get tag_datatypes() {
+        return Object.fromEntries(this.tags.map((tmpl)=>[
+            tmpl.tagname, 
+            Datatype.finds(...tmpl.datatypes)
+        ]));
+    },
+
+    get tag_entities() {
+        return Object.fromEntries(this.tags.map((tmpl)=>[
+            tmpl.tagname, 
+            this.entities.filter((e)=>e.templates.includes(tmpl.name))
+        ]));
+    },
+
+    get migrations() {
+        return this.dtypes.filter((d)=>d.migration);
     },
 
     _hierarchical_loads(puts, setup, find_parent, presets) {
         const entries = Object.entries(puts);
         const to_loads = [].concat(entries);
         let iterations = (entries.length+1)*2;
-        const rets = [];
+        const rets = {};
         while(--iterations>0 && to_loads.length>0) {
             const [key, value] = to_loads.shift();
-            if(!presets.includes(find_parent(key, value))) {
+            const prerequisit = find_parent(key, value);
+            if(prerequisit && !presets.includes(prerequisit)) {
                 to_loads.push([key, value]);
                 continue;
             } 
-            rets.push(setup(key, value));
+            rets[key] = setup(key, value);
+            // rets.push(setup(key, value));
             presets.push(key);
         }
         return rets;
@@ -178,6 +217,7 @@ export default {
             raw = await import(location);
             content = raw.default || raw;
         }
+
         
         return {
             location,

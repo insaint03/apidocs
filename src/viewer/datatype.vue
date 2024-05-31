@@ -19,21 +19,29 @@
 </template>
 <script>
 import viewForms from './forms.vue';
+const _items = {
+  itemId: 'key',
+  itemTitle: 'key',
+  itemSubtitle: 'datatype',
+  itemDesc: 'description',
+};
 const fields = [
   // 
   [
     { key: 'name', label: 'name'},
     { key: 'summary', label: 'summary' },
-    { key: 'basistype', label: 'basistype'},
-    { key: 'origintype', label: 'origintype'},
-    { key: 'defaults', label: 'defaults'},
-    { key: 'validation', label: 'validation'},
+    // { key: 'items', label: 'items', is: 'view-items' },
   ], 
   [
     { key: 'migration', label: 'migration'},
     { key: 'desc', label: 'description', is: 'v-textarea' },
-    { key: 'items', label: 'items', is: 'v-textarea' },
+  ],
+  [
+    { key: 'basistype', label: 'basistype'},
+    { key: 'origintype', label: 'origintype'},
+    { key: 'defaults', label: 'defaults'},
     { key: 'examples', label: 'examples'},
+    { key: 'validation', label: 'validation'},
   ]
 ]
 export default {

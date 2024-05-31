@@ -18,24 +18,29 @@ export const useProjectStore = defineStore('project', {
         },
 
         datatype_list() {
-            return [].concat(this.datatypes).filter((d)=>['object','enum'].includes(d.origintype));
+            return Object.values(this.datatypes)
+                .filter((dt)=>true 
+                    ||dt.origintype==='object'
+                    ||dt.origintype==='enum');
         },
-
-        // tagnames
-        tagnames() {
-            return [].concat(this.templates)
-                .filter((tmpl)=>tmpl.tagname!==null)
-                .map((tmpl)=>({
-                    tagname: tmpl.tagname, 
-                    title: tmpl.name, 
-                    _template: tmpl, 
-                    datatypes: tmpl.datatypes,
-                    apis: this.entities.filter((e)=>e.templates.includes(tmpl.name)),
-                }));
+        template_list() {
+            return Object.values(this.templates);
+        },
+        tags() {
+            return Object.values(this.templates)
+                .map((tmpl)=>tmpl.tagname)
+                .filter((t)=>t!=null);
+        },
+        tag_datatypes() {
+            return models.tag_datatypes;
+        },
+        tag_entities() {
+            return models.tag_entities;
         },
         migrations() {
-            return [].concat(this.datatypes).filter((d)=>d.migration);
-        },
+            return Object.values(this.datatypes)
+                .filter((dt)=>dt.migration);
+        }
     },
     actions: {
         async loads(location) {
@@ -43,6 +48,7 @@ export const useProjectStore = defineStore('project', {
             const content = await models.loads(location);
             // setup concurrent states
             models.state = content;
+            console.log('loaded', models.state);
             // announce state change
             this.$state = {
                 ...models.state,
@@ -58,7 +64,8 @@ export const useProjectStore = defineStore('project', {
             models.save_storage('session');
         },
         revoke() {
-            models.state = models.load_storage('session');
+            models.load_storage('session');
+            // this.$state = { ...models.state};
         },
         // save current state into localStorage
         saves() {

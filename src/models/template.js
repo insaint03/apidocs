@@ -51,13 +51,9 @@ export default class Template extends Descriptable {
         return Patterns.naming_parse(this._name).localname || '';
     }
 
-    get tagname() {
-        return this._tagname;
-    }
+    get tagname() { return this._tagname; }
 
-    set tagname(value) {
-        this._tagname = value;
-    }
+    set tagname(value) { this._tagname = value;}
 
     get extend() {
         return this._extends;

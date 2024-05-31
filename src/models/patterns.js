@@ -25,6 +25,8 @@ export default class Patterns {
             required: !!match.required,
         }
     }
+    // item key mapping
+    static item_items = {itemId: 'key', itemTitle: 'key', itemSubtitle: 'datatype' };
 
     static item_serialize({key, datatype, defaults, required}) {
         return `${required?'!':''}${key}:${datatype}${defaults?`=${defaults}`:''}`;
@@ -142,4 +144,5 @@ export default class Patterns {
             description,
         ].join(' ');
     }
+    static liner_items = {itemTitle: 'title', itemSubtitle: 'keytype', itemLinks: 'links', itemDesc: 'description', };
 }

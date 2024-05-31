@@ -2,16 +2,16 @@ import Descriptable from './descriptable';
 import Patterns from './patterns'
 
 export default class Project extends Descriptable {    
-    constructor({name, description, version, history, links, license, contributors, keywords}) {
+    constructor({name, description, version, history, links, license, contributors, keywords}={}) {
         super({desc: description});
 
-        this._name = name;
-        this._version = version;
-        this._history = history || [];
-        this._links = links || [];
-        this._license = license || '';
-        this._contributors = contributors || [];
-        this._keywords = keywords || [];
+        this.name = name || '';
+        this.version = version;
+        this.history = history;
+        this.links = links || [];
+        this.license = license || '';
+        this.contributors = contributors || [];
+        this.keywords = keywords || [];
     }
 
     get name() { return this._name; }
@@ -22,24 +22,37 @@ export default class Project extends Descriptable {
 
     get links() { return this._links }
     get links_string() { return this._links.map(Patterns.liner_serialize).join('\n'); }
-    set links(value) { this._links = value.split('\n').map(Patterns.liner_parse); }
+    set links(value) { 
+        const stringify = Array.isArray(value)? value.join('\n'): (value || '');
+        this._links = stringify.split('\n').map(Patterns.liner_parse); 
+    }
 
     get license() { return this._license; }
     get license_string() { return Patterns.liner_serialize(this._license); }
     set license(value) { this._license = Patterns.liner_parse(value.trim()); }
 
     get contributors() { return this._contributors; }
-    get contributors_string() { return this._contributors.map(Patterns.liner_serialize).join('\n'); }
-    set contributors(value) { this._contributors = value.trim().split('\n').map(Patterns.liner_parse); }
+    get contributors_string() { 
+        return this._contributors.map(Patterns.liner_serialize).join('\n'); }
+    
+    set contributors(value) { 
+        const stringify = Array.isArray(value)? value.join('\n'): (value || '');
+        this._contributors = stringify.split('\n').map(Patterns.liner_parse); 
+    }
 
     // history contains: version, date, items (single-liner)
     get history() { return this._history || []; }
+    set history(value) { 
+        if(value) {
+            this.history_log(value); 
+        }
+    }
     // history only appends
     history_log({version, date, items}) { 
         // single_history: {version:str, date:str(ISO Format), items:array(liners)}
         version = version || this._version;
         // find the version item from concurrent history
-        let it = this._history.find((h)=>h.version===version);
+        let it = this.history.find((h)=>h.version===version);
         let created = false;
         // create a new history if not found
         if(!it) {
@@ -50,11 +63,11 @@ export default class Project extends Descriptable {
         // overwrite the date if needed
         it.date = date || new Date().toISOString();
         it.items = (it.items || [])
-            .concat((items instanceof Array?items:items.split('\n'))
+            .concat((items instanceof Array?items:(items||'').split('\n'))
                 .map((ln)=>ln instanceof String?Patterns.liner_parse(ln):ln));
         // 
         if(created) {
-            this._history.push(it);
+            this._history = this.history.concat([it]);
         }
     }
 

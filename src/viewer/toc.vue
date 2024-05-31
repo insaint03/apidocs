@@ -5,28 +5,29 @@
     <v-list-item :title="project.name" :subtitle="project.version" />
     <v-divider />
     <!-- by tag definition -->
-    <template v-for="tag in tagnames" :key="`toc.tag-${tag.tagname}`">
-      <v-list-group :value="tag.tagname">
+    <v-list-subheader>by tag</v-list-subheader>
+    <template v-for="tag in tags" :key="`toc.tag-${tag}`">
+      <v-list-group :value="tag">
         <template #activator="{ props }">
-          <v-list-item :title="tag.tagname" v-bind="props" />
+          <v-list-item :title="tag" v-bind="props" />
         </template>
         <v-list-subheader>datatypes</v-list-subheader>
-        <v-list-item v-for="tp in tag.datatypes" :key="`toc.tag-${tag.tagname}-${tp}`">
-          <v-list-item-title>{{ tp.title }}</v-list-item-title>
+        <v-list-item v-for="tp in tag_datatypes[tag]" :key="`toc.tag-${tag}-${tp}`">
+          <v-list-item-title>{{ tp.name }}</v-list-item-title>
         </v-list-item>
         <v-list-subheader>endpoints</v-list-subheader>
-        <v-list-item v-for="tp in tag.apis" :key="`toc.tag-${tag.tagname}-${tp}`"></v-list-item>
+        <v-list-item v-for="tp in tag_entities" :key="`toc.tag-${tag}-${tp}`"></v-list-item>
       </v-list-group>
     </template>
     <v-divider />
-    <!-- migration -->
+    <!-- TODO::migration 
     <v-list-group value="migrations">
       <template #activator="{ props }">
         <v-list-item v-bind="props" title="migrations" />
       </template>
       <v-list-item v-for="m in migrations" :key="`toc.mig-${m.migration}`" :title="m.name" :subtitle="m.migration" />
     </v-list-group>
-
+    -->
     <v-divider />
     <!-- datatypes -->
     <v-list-group value="datatypes">
@@ -67,7 +68,9 @@ export default {
       'entities', 
       'migrations',
 
-      'tagnames',
+      'tags',
+      'tag_datatypes',
+      'tag_entities',
       'has_datatypes',
       'has_entities',
     ]),
