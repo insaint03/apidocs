@@ -51,20 +51,20 @@ export default {
 
     get tags() {
         return this.tmpls
-            .filter((tmpl)=>tmpl.tagname);
+            .filter((tmpl)=>tmpl.tagname!=null);
     },
 
     get tag_datatypes() {
         return Object.fromEntries(this.tags.map((tmpl)=>[
             tmpl.tagname, 
-            Datatype.finds(...tmpl.datatypes)
+            tmpl.datatypes,
         ]));
     },
 
     get tag_entities() {
         return Object.fromEntries(this.tags.map((tmpl)=>[
             tmpl.tagname, 
-            this.entities.filter((e)=>e.templates.includes(tmpl.name))
+            this.entities.filter((e)=>e.templates.includes(tmpl.name)),
         ]));
     },
 

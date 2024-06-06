@@ -22,6 +22,7 @@
 import { mapActions } from 'pinia';
 import { useProjectStore } from '@/stores/project';
 const recent_key = '_recents';
+const sample = '../../data/simple.native.yaml';
 
 export default {
   name: 'openDialog',
@@ -60,8 +61,8 @@ export default {
       value: this.modelValue,
       loading: false,
       recents,
-      file: null,
-      search: '../../data/simple.native.yaml',
+      file: sample,
+      search: sample,
     };
   },
 };

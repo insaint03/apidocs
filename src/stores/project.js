@@ -19,7 +19,7 @@ export const useProjectStore = defineStore('project', {
 
         datatype_list() {
             return Object.values(this.datatypes)
-                .filter((dt)=>true 
+                .filter((dt)=>false
                     ||dt.origintype==='object'
                     ||dt.origintype==='enum');
         },
@@ -28,8 +28,7 @@ export const useProjectStore = defineStore('project', {
         },
         tags() {
             return Object.values(this.templates)
-                .map((tmpl)=>tmpl.tagname)
-                .filter((t)=>t!=null);
+                .filter((t)=>t.tagname!=null);
         },
         tag_datatypes() {
             return models.tag_datatypes;
@@ -48,7 +47,6 @@ export const useProjectStore = defineStore('project', {
             const content = await models.loads(location);
             // setup concurrent states
             models.state = content;
-            console.log('loaded', models.state);
             // announce state change
             this.$state = {
                 ...models.state,
@@ -58,7 +56,13 @@ export const useProjectStore = defineStore('project', {
             // announce state change
             return models.state;
         },
-        clears: models.clear,
+        clears() {
+            models.clear();
+            this.$state = {
+                ...models.state,
+            }
+            return models.state;
+        },
         // cache current state into sessionStorage
         caches() {
             models.save_storage('session');

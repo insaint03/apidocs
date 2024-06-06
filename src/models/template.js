@@ -39,6 +39,10 @@ export default class Template extends Descriptable {
         Template._store[name] = this;
     }
 
+    get el() {
+        return `tmpl-${this.name}`;
+    }
+
     get name() {
         return this._name;
     }

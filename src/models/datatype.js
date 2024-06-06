@@ -33,6 +33,10 @@ export default class Datatype extends Descriptable {
         }
     }
 
+    get el() {
+        return `dt-${this.name}`;
+    }
+
     get namespace() { return Patterns.naming_parse(this.name).namespace || ''; }
     get localname() { return Patterns.naming_parse(this.name).localname || ''; }
     get name() { return this._name; }

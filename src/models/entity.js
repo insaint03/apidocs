@@ -17,6 +17,14 @@ export default class Entity extends Descriptable {
         this._response = response || {};
     }
 
+    get ep() {
+        return `[${this.request.method}] ${this.request.path}   `
+    }
+
+    get el() {
+        return `ep-${encodeURI(this.ep)}`;
+    }
+
     // tmpls only holds template names(string)
     get template_names() {
         return this._tmpls;

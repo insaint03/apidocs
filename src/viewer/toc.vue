@@ -2,23 +2,14 @@
   <v-list v-model:opened="opentabs" v-if="project!=null">
     <!-- project info -->
     <v-list-subheader>about the project</v-list-subheader>
-    <v-list-item :title="project.name" :subtitle="project.version" />
+    <v-list-item :title="project.name" :subtitle="project.version" @click="hash('about')" />
     <v-divider />
     <!-- by tag definition -->
     <v-list-subheader>by tag</v-list-subheader>
-    <template v-for="tag in tags" :key="`toc.tag-${tag}`">
-      <v-list-group :value="tag">
-        <template #activator="{ props }">
-          <v-list-item :title="tag" v-bind="props" />
-        </template>
-        <v-list-subheader>datatypes</v-list-subheader>
-        <v-list-item v-for="tp in tag_datatypes[tag]" :key="`toc.tag-${tag}-${tp}`">
-          <v-list-item-title>{{ tp.name }}</v-list-item-title>
-        </v-list-item>
-        <v-list-subheader>endpoints</v-list-subheader>
-        <v-list-item v-for="tp in tag_entities" :key="`toc.tag-${tag}-${tp}`"></v-list-item>
-      </v-list-group>
-    </template>
+    <v-list-item v-for="tmpl in tags" :key="`toc.tag-${tmpl.tagname}`"
+      :title="tmpl.tagname" :subtitle="tmpl.summary"
+      @click="move(tmpl)" 
+    />
     <v-divider />
     <!-- TODO::migration 
     <v-list-group value="migrations">
@@ -35,6 +26,7 @@
         <v-list-item v-bind="props" title="datatypes" />
       </template>
       <v-list-item v-for="tp in datatype_list" :key="`toc.datatypes-${tp.name}`"
+        @click="move(tp)"
         :title="tp.name" :subtitle="tp.basistype"></v-list-item>
     </v-list-group>
     <v-divider />
@@ -43,7 +35,8 @@
       <template #activator="{ props }">
         <v-list-item v-bind="props" title="apis"></v-list-item>
       </template>
-      <v-list-item v-for="(e,ei) in entities" :key="`toc.apis-${ei}`">
+      <v-list-item v-for="(e,ei) in entities" :key="`toc.apis-${ei}`"
+        @click="move(e)">
         <v-list-item-title>[{{ e.request.method }}] {{ e.request.path }}</v-list-item-title>
       </v-list-item>
     </v-list-group>
@@ -59,6 +52,18 @@ export default {
   props: {
     open: Array,
     scrollspy: Object,
+  },
+  methods: {
+    hash(ref) {
+      window.location.hash = `#${ref}`;
+    },
+    move(ref) {
+      this.hash(ref.el || ref);
+      // const el = document.getElementById(id);
+      // if (el) {
+      //   el.scrollIntoView({ behavior: 'smooth' });
+      // }
+    }
   },
   computed: {
     ...mapState(useProjectStore, [
