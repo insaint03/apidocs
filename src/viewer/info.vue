@@ -1,17 +1,66 @@
 <template>
-  <v-card elevation="0" color="default">
-    <v-toolbar flat rounded density="compact">
-      <v-toolbar-title>
-        {{ project.name }} <v-chip>{{ project.version }}</v-chip>
-      </v-toolbar-title>
-    </v-toolbar>
+  <v-card elevation="0" color="info">
+    <v-card-item>
+      <v-card-title>{{ project.name }}</v-card-title>
+      <v-card-subtitle>{{ project.version }}</v-card-subtitle>
+    </v-card-item>
     <v-card-text>
       <v-row>
-        <v-col cols="12" xl="4" lg="6" v-for="fs,fi in fields" :key="`info-form.${fi}`">
-          <view-forms v-model="project" :fields="fs" />
+        <!-- form links -->
+        <v-col cols="12" md="6">
+            <view-forms v-model="project" :fields="fields.summary" />
+        </v-col>
+        <v-col cols="12" md="6">
+            <view-forms v-model="project" :fields="fields.desc" />
         </v-col>
       </v-row>
     </v-card-text>
+    <v-card-actions>
+      <!-- open document history view -->
+      <v-btn text disabled>History</v-btn>
+      <!-- show license & contributors -->
+      <v-btn text disabled>License & Contributors</v-btn>
+      <!-- open links menu -->
+      <v-menu>
+        <template #activator="{ props }">
+          <v-btn text v-bind="props">Links</v-btn>
+        </template>
+        <v-list>
+          <template v-for="ln in project.links" :key="`link-${ln.title}.${ln.keytype}`">
+            <!-- case with ln.links.length <=1 -->
+            <template v-if="ln.links.length<=1">
+              <v-list-item  :title="ln.title" :subtitle="ln.keytype">
+                <template #prepend>
+                  <v-icon>{{ link_icons[ln.keytype] }}</v-icon>
+                </template>
+                <template #append v-if="0<ln.links.length">
+                  <v-btn icon flat @click="()=>window.open(ln.links[0].href, '_blank')">
+                    <v-icon>mdi-chevron-right</v-icon>
+                  </v-btn>
+                </template>
+              </v-list-item>
+            </template>
+            <template v-else>
+              <v-list-group>
+                <template #activator="{ props }">
+                  <v-list-item v-bind="props" :title="ln.title" :subtitle="ln.keytype">
+                    <template #prepend>
+                      <v-icon>{{ link_icons[ln.keytype] }}</v-icon>
+                    </template>
+                  </v-list-item>
+                </template>
+                <v-list-item v-for="ll in ln.links" :key="`link-${ln.title}-${ll.href}`"
+                  :title="ll.anchor" :subtitle="ll.href">
+                  <template #prepend>
+                    <v-icon>{{ link_icons[ll.keytype] }}</v-icon>
+                  </template>
+                </v-list-item>
+              </v-list-group>
+            </template>
+          </template>
+        </v-list>
+      </v-menu>
+    </v-card-actions>
   </v-card>
 </template>
 <script>
@@ -42,26 +91,25 @@ const link_icons = {
 }
 
 // const tabs = ['summary', 'legal', 'history'];
-const fields = [
-  [
+const fields = {
+  summary: [
     { key: 'name', label: 'project name' },
     { key: 'version', label: 'version' },
     { key: 'summary', label: 'summary' },
-    { key: 'links', label: 'links', is: 'view-items', iconMap: link_icons, itemIcon: 'keytype', ...liner_items,  },
-    { key: 'license', label: 'license', is: 'view-items', ...liner_items, },
+    // { key: 'links', label: 'links', is: 'view-items', iconMap: link_icons, itemIcon: 'keytype', ...liner_items,  },
+    // { key: 'license', label: 'license', is: 'view-items', ...liner_items, },
   ],
-  [
+  desc: [
     { key: 'desc', label: 'description', is: 'v-textarea', },
-
-  ], 
-  [
-
-    { key: 'contributors', label: 'contributors', is: 'view-items', ...models.items.liner, },
-    // { key: 'terms', label: 'terms of use', items: {}, },
-    // { key: 'privacy', label: 'privacy policy', items: {}, },
-    { key: 'history', label: 'history', items: {}, },
   ],
-]
+  legal: [
+  //   { key: 'contributors', label: 'contributors', is: 'view-items', ...models.items.liner, },
+  //   // { key: 'terms', label: 'terms of use', items: {}, },
+  //   // { key: 'privacy', label: 'privacy policy', items: {}, },
+  //   { key: 'history', label: 'history', items: {}, },
+  ]
+}
+  
 export default {
   name: 'infoViewer',
   components: {
@@ -77,6 +125,7 @@ export default {
     return {
       // tabs,
       fields,
+      link_icons,
       active_tab: this.tab,
     }
   }

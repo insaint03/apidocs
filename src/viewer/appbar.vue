@@ -73,7 +73,7 @@ export default {
       return await this.with_progress(() => this.clears());
     },
     ...mapActions(useProjectStore, [
-      'clear',
+      'clears',
       'loads',
       'caches',
       'revoke',
@@ -88,8 +88,9 @@ export default {
       menus: [
         {
           title: 'file', items: [
-            { title: 'clear new', action: ()=>this.clear },
+            { title: 'clear new', action: ()=>{ this.clears() }  },
             { title: 'open/import...', action: ()=>{ this.import_dialog=true; } },
+            { title: 'embedding...', },
             { title: 'save/download...' },
             { title: 'export migration' },
             { title: 'export as openapi spec' },

@@ -326,6 +326,7 @@ export default class Datatype extends Descriptable {
             dt._is_origin = (opt.basis == null);
             dt._is_primitive = true;
             dt.summary = opt.summary;
+            // dt.migration = opt.migration;
             dt.description = opt.desc;
             dt.validation = opt.validation;
             return dt;
@@ -396,11 +397,12 @@ export default class Datatype extends Descriptable {
     static item_object_stringify(item) {
         return Patterns.item_serialize(item);
     }
-    static setup({name, basistype, description, validation, items, examples}) { 
+    static setup({name, basistype, description, validation, items, migration, examples, }) { 
         let dt = Datatype.create(name, basistype);
         dt.description = description;
         dt.validation = validation;
         dt.items = items;
+        dt.migration = migration;
         dt.examples = examples;
         return dt;
     }

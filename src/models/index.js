@@ -25,7 +25,9 @@ export default {
         this.location = new Project({});
         this.project = {};
         this.datatypes = {};
+        Datatype.clear();
         this.templates = {};
+        Template.clear();
         this.entities = [];
     },
 
@@ -69,7 +71,7 @@ export default {
     },
 
     get migrations() {
-        return this.dtypes.filter((d)=>d.migration);
+        return this.dtypes.filter((d)=>d.migration!=null);
     },
 
     _hierarchical_loads(puts, setup, find_parent, presets) {

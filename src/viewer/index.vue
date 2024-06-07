@@ -6,64 +6,50 @@
   </v-navigation-drawer>
   <v-main app v-scroll="scrolls">
     <v-expansion-panels elevation="0" ripple multiple>
+
       <!-- about project -->
-      <v-expansion-panel title="about project" elevation="0">
+      <v-expansion-panel title="_about" value="_about" elevation="0">
         <v-expansion-panel-text>
           <info-view tab="summary" id="about" />
         </v-expansion-panel-text>
       </v-expansion-panel>
-      <!-- TODO: migration scheme 
-      <v-expansion-panel title="migration" elevation="0">
+
+      <!-- TODO: migration scheme --> 
+      <v-expansion-panel title="_migration" value="_migration" elevation="0">
         <v-expansion-panel-text>
           <migrations-view />
         </v-expansion-panel-text>
       </v-expansion-panel>
-      -->
-      <!-- by template tagnames -->
-      <v-container fluid>
-        <v-row v-for="tmpl in tags" :key="`tag-${tmpl.tagname}`">
-          <v-col>
-            <v-card flat :id="tmpl.el">
-              <v-card-title :id="`tag-${tmpl.tagname}`">{{ tmpl.tagname }}</v-card-title>
-              <v-card-text>
-                {{  tmpl.description }}
-                <v-row>
-                  <!-- tmpl - datatypes -->
-                  <v-col>
-                    <v-list>
-                      <v-list-group>
-                        <v-list-item v-for="tp in tmpl.datatypes" :key="`tag-${tmpl.tagname}-${tp}`"
-                          :title="tp" />
-                      </v-list-group>
-                    </v-list>
-                  </v-col>
-                  <!-- tmpl - entities -->
-                  <v-col>
-                    <v-list>
-                      <v-list-group>
-                        <v-list-item v-for="(ep, ei) in tmpl.entities" :key="`tag-${tmpl.tagname}-${ei}`"
-                          :title="ep" />
-                      </v-list-group>
-                    </v-list>
-                  </v-col>
-                </v-row>
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-row>
-        <!-- datatype view -->
-        <datatype-view v-for="tp in datatype_list" :key="`type-${tp.name}`"
-          :id="tp.el"
-          :datatype="tp" />
-        <v-row>&nbsp;</v-row>
 
-        <!-- full api references -->
-        <endpoint-view v-for="ep, ei in entities" :key="`endpoint-${ei}`"
-          :id="ep.el"
-          :endpoint="ep" />
-        <v-row>&nbsp;</v-row>
-      </v-container>
+      <!-- by template tagnames -->
+      <v-expansion-panel v-for="tmpl in tags" :key="`tag-${tmpl.tagname}`"
+        :title="`#${tmpl.tagname}`" :value="tmpl.el">
+        <v-expansion-panel-text>
+          <tag-view :id="tmpl.el" v-bind="tmpl" />
+        </v-expansion-panel-text>  
+      </v-expansion-panel>
+
+      <!-- datatypes -->
+      <v-expansion-panel title="_datatypes" value="_datatypes">
+        <v-expansion-panel-text>
+          <v-row>
+            <v-col>datatypes</v-col>
+          </v-row>
+          <v-row v-for="tp in datatype_list" :key="tp.el">
+            <v-col>
+              <datatype-view :id="tp.el" :datatype="tp" />
+            </v-col>
+          </v-row>
+        </v-expansion-panel-text>
+      </v-expansion-panel>
     </v-expansion-panels>
+    <v-container fluid>
+      <!-- full api references -->
+      <endpoint-view v-for="ep, ei in entities" :key="`endpoint-${ei}`"
+        :id="ep.el"
+        :endpoint="ep" />
+      <v-row>&nbsp;</v-row>
+    </v-container>
   </v-main>
 </template>
 <script>
@@ -75,6 +61,7 @@ import appBar from './appbar.vue';
 import migrationsView from './migrations.vue';
 import tocView from './toc.vue';
 import infoView from './info.vue';
+import tagView from './tags.vue';
 import datatypeView from './datatype.vue';
 import endpointView from './endpoint.vue';
 // import tagView from './tags.vue';
@@ -93,7 +80,7 @@ export default {
     // emptyView,
     tocView,
     infoView,
-    // tagView,
+    tagView,
   },
   onMounted() {
     console.log('try to revoke');
