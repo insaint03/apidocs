@@ -45,10 +45,47 @@
     </v-expansion-panels>
     <v-container fluid>
       <!-- full api references -->
-      <endpoint-view v-for="ep, ei in entities" :key="`endpoint-${ei}`"
-        :id="ep.el"
-        :endpoint="ep" />
-      <v-row>&nbsp;</v-row>
+      <template v-if="project_ready">
+        <endpoint-view v-for="ep, ei in entities" :key="`endpoint-${ei}`"
+          :id="ep.el"
+          :endpoint="ep" />
+      </template>
+      <template v-else>
+        <!-- TODO: show guide, sample loading, or open -->
+        <v-row>
+          <!-- TODO: show guide to open -->
+          <v-col>
+            <v-card>
+              <v-card-title>Open document</v-card-title>
+              <v-card-text>
+                Click File > Open to load a project file.
+              </v-card-text>
+            </v-card>
+          </v-col>
+          <v-col>
+            <v-card>
+              <v-card-title>QuickLoad</v-card-title>
+              <v-card-text>
+                <v-list>
+                  <template v-if="recents && 0<recents.length">
+                    <v-list-subheader>Recents</v-list-subheader>
+                    <v-list-item v-for="rec in recents" :key="`recents.${rec.location}`"
+                      :title="rec.title" :subtitle="moment(rec.timestamp)"  :text="rec.location"
+                      @click="loads(rec.location)">
+                    </v-list-item>
+                    <v-divider />
+                  </template>
+                  <v-list-subheader>Examples</v-list-subheader>
+                  <v-list-item v-for="ex in list" :key="`examples.${ex.location}`"
+                    :title="ex.title" :subtitle="ex.location" :text="ex.description"
+                    :disabled="ex.disabled"
+                    @click="loads(ex.location)" />
+                </v-list>
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
+      </template>
     </v-container>
   </v-main>
 </template>
@@ -69,6 +106,7 @@ import endpointView from './endpoint.vue';
 
 import { mapActions, mapState } from 'pinia';
 import { useProjectStore } from '@/stores/project';
+import { useExampleStore } from '@/stores/example';
 
 export default {
   name: 'viewerPage',
@@ -83,16 +121,18 @@ export default {
     tagView,
   },
   onMounted() {
-    console.log('try to revoke');
-    this.revoke();
   },
   methods: {
     scrolls() {
 
     },
+    moment(timestamp) {
+      return (new Date(timestamp)).toLocaleString();
+    },
     ...mapActions(useProjectStore, [
       'caches',
       'revoke',
+      'loads',
       'saves',
       'recovers',
     ]),
@@ -100,6 +140,7 @@ export default {
   computed: {
     ...mapState(useProjectStore, [
       'project',
+      'project_ready',
       'datatype_list',
       'entities',
       'tags',
@@ -108,6 +149,10 @@ export default {
       'tag_entries',
       'migrations',
       'timestamp',
+      'recents',
+    ]),
+    ...mapState(useExampleStore, [
+      'list'
     ]),
   },
   data() {

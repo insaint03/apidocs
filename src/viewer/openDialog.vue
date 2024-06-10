@@ -19,10 +19,11 @@
 </template>
 
 <script>
-import { mapActions } from 'pinia';
+import { mapActions, mapState } from 'pinia';
 import { useProjectStore } from '@/stores/project';
-const recent_key = '_recents';
-const sample = '../../data/simple.native.yaml';
+import { useExampleStore } from '@/stores/example';
+// const recent_key = '_recents';
+// const sample = '../../data/simple.native.yaml';
 
 export default {
   name: 'openDialog',
@@ -36,12 +37,6 @@ export default {
       this.$emit('update:modelValue', false);
       
     },
-    load_recents() {
-      return JSON.parse(localStorage.getItem(recent_key) || '[]');
-    },
-    save_recents() {
-      localStorage.setItem(recent_key, JSON.stringify(this.recents));
-    },
     ...mapActions(useProjectStore, ['loads']),
   },
   props: {
@@ -49,20 +44,25 @@ export default {
   },
   computed: {
     items() {
-      return [this.search]
+      return [{location: this.search}]
         .concat(this.recents)
+        .concat(this.examples)
+        .filter((v)=>!v.disabled)
+        .map((v)=>v.location)
         .filter((v)=>v && 0<v.trim().length)
         .filter((v, i, a) => a.indexOf(v) === i);
     },
+    ...mapState(useExampleStore, {'examples': 'list'}),
+    ...mapState(useProjectStore, ['recents']),
   },
   data() {
-    const recents = this.load_recents();
+    // const recents = this.load_recents();
     return {
       value: this.modelValue,
       loading: false,
-      recents,
-      file: sample,
-      search: sample,
+      // recents,
+      file: null,
+      search: null,
     };
   },
 };

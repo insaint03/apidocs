@@ -8,6 +8,10 @@ import Patterns from '@/models/patterns';
 const yaml_parse = YAML.load;
 const yaml_stringify = YAML.dump;
 
+const recent_key = '_recents';
+const recent_max = 5;
+
+
 export default {
     location: null,
     project: new Project({}),
@@ -241,5 +245,29 @@ export default {
             (agg,tmpls)=>agg.map((ln)=>tmpls.map((tmpl)=>ln.concat([tmpl]))).flat()
         , [[]])
             .map((ln)=>new Entity(Template.build(...ln)));
+    },
+
+    get recents() {
+        return JSON.parse(localStorage.getItem(recent_key) || '[]');
+    },
+
+    set recents(value) {
+        const locations = [];
+        const items = [value].concat(this.recents)
+            .filter(v=>v&&v.location)
+            .reduce((agg,it)=>{
+                if(locations.includes(it.location)) {
+                    return agg;
+                } else {
+                    locations.push(it.location);
+                    return agg.concat(it);
+                }
+            }, []);
+        
+        localStorage.setItem(recent_key, 
+            JSON.stringify(items
+                // limit to recent_max
+                .filter((v,i)=>i<recent_max))
+        );
     }
 }

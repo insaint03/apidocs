@@ -47,9 +47,7 @@ export default class Entity extends Descriptable {
 
     get request() {
         return new Request({
-            ...this.templates.reduce((agg,tmpl)=>
-                Object.assign(agg, tmpl.request)
-            , {}),
+            ...Request.merge(...this.templates.map((tmpl)=>tmpl.request)),
             ...this._request,
         });
     }
@@ -63,9 +61,7 @@ export default class Entity extends Descriptable {
 
     get response() {
         return new Response({
-            ...this.templates.reduce((agg,tmpl)=>
-                Object.assign(agg, tmpl.response)
-            , {}),
+            ...Response.merge(...this.templates.map((tmpl)=>tmpl.response)),
             ...this._response,
         });
     }

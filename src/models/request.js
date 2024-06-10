@@ -21,7 +21,7 @@ export default class Request extends Message {
 
     constructor({method, path, queries, cookies, headers, body}) {
         super({cookies, headers, body});
-        this.method = (method || 'GET').toUpperCase();
+        this.method = (method||'GET').toUpperCase();
         this.path = path;
         this._path_matches = null;
         this.queries = queries;
