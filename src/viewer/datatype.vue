@@ -19,18 +19,13 @@
 </template>
 <script>
 import viewForms from './forms.vue';
-const _items = {
-  itemId: 'key',
-  itemTitle: 'key',
-  itemSubtitle: 'datatype',
-  itemDesc: 'description',
-};
+
 const fields = [
   // 
   [
     { key: 'name', label: 'name'},
     { key: 'summary', label: 'summary' },
-    // { key: 'items', label: 'items', is: 'view-items' },
+    { key: 'items', label: 'items', is: 'view-items' },
   ], 
   [
     { key: 'migration', label: 'migration'},

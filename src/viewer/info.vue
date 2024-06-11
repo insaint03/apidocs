@@ -19,7 +19,9 @@
       <!-- open document history view -->
       <v-btn text disabled>History</v-btn>
       <!-- show license & contributors -->
-      <v-btn text disabled>License & Contributors</v-btn>
+      <v-btn text disabled>License</v-btn>
+      <v-btn text disabled>Terms</v-btn>
+      <v-btn text disabled>Contributors</v-btn>
       <!-- open links menu -->
       <v-menu>
         <template #activator="{ props }">
@@ -67,14 +69,7 @@
 import { mapState } from 'pinia';
 import { useProjectStore } from '@/stores/project';
 import viewForms from './forms.vue';
-import models from '@/models';
 
-const liner_items = {
-  itemTitle: 'title',
-  itemSubtitle: 'keytype',
-  itemLinks: 'links',
-  itemDesc: 'description',
-}
 const link_icons = {
   github: 'mdi-github',
   repository: 'mdi-source-repository',
@@ -115,6 +110,11 @@ export default {
   components: {
     viewForms,
   },
+  methods: {
+    expand_icon(value) {
+      return `mdi-chevron-${value?'up':'down'}`;
+    }
+  },
   props: {
     tab: String,
   },
@@ -126,6 +126,11 @@ export default {
       // tabs,
       fields,
       link_icons,
+      show_more: false,
+      show_history: false,
+      show_license: false,
+      show_terms: false,
+      show_contributors: false,
       active_tab: this.tab,
     }
   }

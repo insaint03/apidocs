@@ -134,7 +134,7 @@ export default class Datatype extends Descriptable {
     get items() {
         // if null, it is array or object but typed "any"
         if(this.is_object) {
-            return (this._items||[]).map(Patterns.item_serialize);
+            return (this._items||[]);
         } else if(this.is_array) {
             return this._items || [];
         } else if(this.is_enum) {
@@ -170,6 +170,7 @@ export default class Datatype extends Descriptable {
         // clear non-collectives
         if(this.is_object) {
             tokens = tokens.map(Patterns.item_parse)
+                .map((it)=>Object.assign(it, {basistype: Datatype.find(it.datatype)}));
             auto_generates = tokens
                 .map((t)=>t.datatype);
         } else if(this.is_array) {
@@ -177,7 +178,7 @@ export default class Datatype extends Descriptable {
         } else {
             return null;
         }
-        this._items = this.items.concat(tokens);
+        this._items = (this._items || []).concat(tokens);
         // auto generate unspecified types
         auto_generates
             .filter((t)=>!Datatype.name_exists(t))

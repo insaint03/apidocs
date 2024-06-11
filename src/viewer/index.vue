@@ -5,24 +5,24 @@
     <tocView :open="opentabs" :scrollspy="scrollspy" />
   </v-navigation-drawer>
   <v-main app v-scroll="scrolls">
-    <v-expansion-panels elevation="0" ripple multiple>
+    <v-expansion-panels elevation="1" ripple multiple>
 
       <!-- about project -->
-      <v-expansion-panel title="_about" value="_about" elevation="0">
+      <v-expansion-panel title="_about" value="_about" elevation="1">
         <v-expansion-panel-text>
           <info-view tab="summary" id="about" />
         </v-expansion-panel-text>
       </v-expansion-panel>
 
       <!-- TODO: migration scheme --> 
-      <v-expansion-panel title="_migration" value="_migration" elevation="0">
+      <v-expansion-panel title="_migration" value="_migration" elevation="1">
         <v-expansion-panel-text>
           <migrations-view />
         </v-expansion-panel-text>
       </v-expansion-panel>
 
       <!-- by template tagnames -->
-      <v-expansion-panel v-for="tmpl in tags" :key="`tag-${tmpl.tagname}`"
+      <v-expansion-panel v-for="tmpl in tags" :key="`tag-${tmpl.tagname}`" elevation="1"
         :title="`#${tmpl.tagname}`" :value="tmpl.el">
         <v-expansion-panel-text>
           <tag-view :id="tmpl.el" v-bind="tmpl" />
@@ -30,7 +30,7 @@
       </v-expansion-panel>
 
       <!-- datatypes -->
-      <v-expansion-panel title="_datatypes" value="_datatypes">
+      <v-expansion-panel title="_datatypes" value="_datatypes" elevation="1">
         <v-expansion-panel-text>
           <v-row>
             <v-col>datatypes</v-col>
@@ -43,17 +43,17 @@
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
-    <v-container fluid>
+    <v-container fluid elevation="1">
       <!-- full api references -->
       <template v-if="project_ready">
         <endpoint-view v-for="ep, ei in entities" :key="`endpoint-${ei}`"
           :id="ep.el"
           :endpoint="ep" />
       </template>
+      <!-- on clear -->
       <template v-else>
-        <!-- TODO: show guide, sample loading, or open -->
         <v-row>
-          <!-- TODO: show guide to open -->
+          <!-- show guide to open -->
           <v-col>
             <v-card>
               <v-card-title>Open document</v-card-title>
