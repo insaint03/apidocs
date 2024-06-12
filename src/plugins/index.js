@@ -13,5 +13,6 @@ export default {
             .use(vuetify)
             .use(pinia)
             .use(vuerouter)
+
     }
 }

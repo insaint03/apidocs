@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 // import { ref } from "vue";
 
 import models from '@/models';
+import gtm from '@/gtm.js';
 const storage_key = 'apidocs';
 
 export const useProjectStore = defineStore('project', {
@@ -66,6 +67,7 @@ export const useProjectStore = defineStore('project', {
     },
     actions: {
         async loads(location) {
+            gtm.push('load', {location,})
             // load data
             const content = await models.loads(location);
 
@@ -88,6 +90,7 @@ export const useProjectStore = defineStore('project', {
             return models.state;
         },
         clears() {
+            gtm.push('clear', {});
             models.clear();
             this.$state = {
                 ...models.state,
