@@ -72,17 +72,25 @@ export default class Datatype extends Descriptable {
         return this.origin.name;
     }
 
-    // upstreaming hierarchy list
-    // : chaning basis to origin
-    // : (direction) from bottom -> top
-    hierarchy() { 
+    get inherits() {
         let queue = [];
         // run upstreams foreach
         this.upstreams((dt)=>{
             queue.push(dt.name);
             return dt.is_origin;
         }, (d)=>d);
-        return queue.map(Datatype.find);
+        // remove self
+        queue.shift();
+        // reverse top-down order
+        queue = queue.reverse();
+        return queue;
+    }
+
+    // upstreaming hierarchy list
+    // : chaning basis to origin
+    // : (direction) from bottom -> top
+    hierarchy() { 
+        return Datatype.finds(...this.inherits)
     }
 
     // 

@@ -1,11 +1,10 @@
 <template>
   <v-form>
-    <component v-for="field in fields" :key="field.key" 
-      :is="field.is || 'v-text-field'"
-      :modelValue="modelValue[field.key]" 
+    <component v-for="fl in fields" :key="fl.key" 
+      :is="fl.is || 'v-text-field'"
+      :modelValue="modelValue[fl.key]" 
       readonly
-      variant="underlined"
-      v-bind="field"
+      v-bind="{...$thx.field, ...fl,}"
     />
   </v-form>
 </template>
@@ -24,6 +23,8 @@ export default {
   props: {
     modelValue: Object,
     fields: Array,
+  },
+  computed: {
   },
   data() {
     return {

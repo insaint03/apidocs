@@ -52,7 +52,7 @@ export const useProjectStore = defineStore('project', {
         },
         // reorganize entities by request.path
         endpoints() {
-            return this.entities.reduce((agg, entity)=>{
+            const ret = this.entities.reduce((agg, entity)=>{
                 const pathname = entity.request.path;
                 const method = entity.request.method;
                 const key = [method,pathname].join('.');
@@ -60,6 +60,8 @@ export const useProjectStore = defineStore('project', {
                     .concat({method, pathname, entity,});
                 return agg;
             }, []);
+            ret.sort((l,r)=>l.pathname.localeCompare(r.pathname));
+            return ret;
         },
         recents() {
             return models.recents;

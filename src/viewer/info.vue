@@ -1,5 +1,5 @@
 <template>
-  <v-card elevation="0" color="info">
+  <v-card elevation="0" :color="$thx.color.primary">
     <v-card-item>
       <v-card-title>{{ project.name }}</v-card-title>
       <v-card-subtitle>{{ project.version }}</v-card-subtitle>

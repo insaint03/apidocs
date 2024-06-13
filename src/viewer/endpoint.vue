@@ -1,21 +1,28 @@
 <template>
-  <v-card elevation="0">
-    <v-toolbar color="primary" dark density="compact">
+  <v-card flat rounded="lg" :color="$thx.color.api">
+    <v-toolbar :color="$thx.color.api" dark density="compact">
       <v-toolbar-title>
-        {{ endpoint.request.method }} {{ endpoint.request.path }}
+        <v-chip dark :color="$thx.color.http_method[endpoint.request.method]">{{ endpoint.request.method }}</v-chip>
+         {{ endpoint.request.path }}
       </v-toolbar-title>
+      <v-spacer />
+      <v-toolbar-items>
+        <v-btn text @click="show.details = !show.details" :active="show.details">desc</v-btn>
+        <v-btn text @click="show.message = !show.message" :active="show.message">api</v-btn>
+      </v-toolbar-items>
     </v-toolbar>
+    <v-card-subtitle>{{ endpoint.summary }}</v-card-subtitle>
     <v-card-text>
-      <v-row>
+      <v-row v-show="show.details">
         <v-col>
-          <view-forms :modelValue="endpoint" :fields="fields.common" />
+          <view-forms :modelValue="endpoint" :fields="fields.left" />
         </v-col>
       </v-row>
-      <v-row>
-        <v-col cols="6">
+      <v-row v-show="show.message">
+        <v-col>
           <view-forms :modelValue="endpoint" :fields="fields.request" />
         </v-col>
-        <v-col cols="6">
+        <v-col>
           <view-forms :modelValue="endpoint" :fields="fields.response" />
         </v-col>
       </v-row>
@@ -25,10 +32,13 @@
 <script>
 import viewForms from './forms.vue';
 const fields={
-  common: [
+  left: [
     { key: 'summary', label: 'summary' },
     { key: 'desc', label: 'description', is: 'v-textarea' },
     { key: 'tags', label: 'tags', is: 'v-textarea' },
+  ],
+  right: [
+
   ],
   request: [
     { key: 'path', label: 'path' },
@@ -57,6 +67,10 @@ export default {
   },
   data() {
     return {
+      show: {
+        details: false,
+        message: false,
+      },
       fields,
     };
   }

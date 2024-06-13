@@ -1,5 +1,5 @@
 export default {
-    colors: {
+    color: {
         primary: '#FFD700',
         info: '#FFD700',
         datatype: '#FFD700',
@@ -7,10 +7,13 @@ export default {
         entity: '#FFD700',
         tag: '#FFD700',
     },
-    fonts: {
+    font: {
 
     },
-    fields: {
+    btn: {
+
+    },
+    field: {
         variant: 'underlined',
     },
     expanding_icon(value) {

@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar app flat color="primary" :extended="extension" progress scroll-behavior="hide">
+  <v-app-bar app flat :color="$thx.color.primary" :extended="extension" progress scroll-behavior="hide">
     <v-menu>
       <template #activator="{ props }">
         <v-app-bar-nav-icon v-bind="props" />
@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import { mapActions } from 'pinia';
+import { mapActions, } from 'pinia';
 import { useProjectStore } from '@/stores/project';
 
 import openDialog from './openDialog.vue';
@@ -80,6 +80,8 @@ export default {
       'saves',
       'recovers',
     ]),
+  },
+  computed: {
   },
   data() {
     return {

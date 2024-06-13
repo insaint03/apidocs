@@ -5,50 +5,69 @@
     <tocView :open="opentabs" :scrollspy="scrollspy" />
   </v-navigation-drawer>
   <v-main app v-scroll="scrolls">
-    <v-expansion-panels elevation="1" ripple multiple>
-
-      <!-- about project -->
-      <v-expansion-panel title="_about" value="_about" elevation="1">
-        <v-expansion-panel-text>
-          <info-view tab="summary" id="about" />
-        </v-expansion-panel-text>
-      </v-expansion-panel>
-
-      <!-- TODO: migration scheme --> 
-      <v-expansion-panel title="_migration" value="_migration" elevation="1">
-        <v-expansion-panel-text>
-          <migrations-view />
-        </v-expansion-panel-text>
-      </v-expansion-panel>
-
-      <!-- by template tagnames -->
-      <v-expansion-panel v-for="tmpl in tags" :key="`tag-${tmpl.tagname}`" elevation="1"
-        :title="`#${tmpl.tagname}`" :value="tmpl.el">
-        <v-expansion-panel-text>
-          <tag-view :id="tmpl.el" v-bind="tmpl" />
-        </v-expansion-panel-text>  
-      </v-expansion-panel>
-
-      <!-- datatypes -->
-      <v-expansion-panel title="_datatypes" value="_datatypes" elevation="1">
-        <v-expansion-panel-text>
-          <v-row>
-            <v-col>datatypes</v-col>
-          </v-row>
-          <v-row v-for="tp in datatype_list" :key="tp.el">
-            <v-col>
-              <datatype-view :id="tp.el" :datatype="tp" />
-            </v-col>
-          </v-row>
-        </v-expansion-panel-text>
-      </v-expansion-panel>
-    </v-expansion-panels>
     <v-container fluid elevation="1">
+      <v-row>
+        <v-col>
+          <!-- top panel sheet -->
+          <v-sheet class="ma-0 pa-0 border-thin" elevation="1">
+            <v-expansion-panels flat ripple multiple tile variant="accordion" :disabled="!project_ready">
+              <!-- about project -->
+              <v-expansion-panel value="_about" >
+                <v-expansion-panel-title :color="$thx.color.primary">
+                  <v-icon>mdi-information</v-icon>
+                  _about
+                </v-expansion-panel-title>
+                <v-expansion-panel-text :color="$thx.color.background">
+                  <info-view tab="summary" id="about" />
+                </v-expansion-panel-text>
+              </v-expansion-panel>
+              <!-- TODO: migration scheme -->
+              <v-expansion-panel value="_migration" class="border-b-thin">
+                <v-expansion-panel-title :color="$thx.color.migration">
+                  <v-icon>mdi-database-export</v-icon>
+                  _migration
+                </v-expansion-panel-title>
+                <v-expansion-panel-text>
+                  <migrations-view />
+                </v-expansion-panel-text>
+              </v-expansion-panel>
+              <!-- by template tagnames -->
+              <v-expansion-panel v-for="tmpl in tags" :key="`tag-${tmpl.tagname}`"
+                class="border-b-thin"
+                :value="tmpl.el">
+                <v-expansion-panel-title :color="$thx.color.tag">
+                  <v-icon>mdi-pound</v-icon>
+                  {{ tmpl.tagname}}
+                </v-expansion-panel-title>
+                <v-expansion-panel-text>
+                  <tag-view :id="tmpl.el" v-bind="tmpl" />
+                </v-expansion-panel-text>
+              </v-expansion-panel>
+              <!-- datatypes -->
+              <v-expansion-panel value="_datatypes" class="border-b-thin">
+                <v-expansion-panel-title :color="$thx.color.datatype">
+                  <v-icon>mdi-oci</v-icon>
+                  _datatypes
+                </v-expansion-panel-title>
+                <v-expansion-panel-text>
+                  <v-row v-for="tp in datatype_list" :key="tp.el">
+                    <v-col>
+                      <datatype-view :id="tp.el" :datatype="tp" />
+                    </v-col>
+                  </v-row>
+                </v-expansion-panel-text>
+              </v-expansion-panel>
+            </v-expansion-panels>
+          </v-sheet>
+        </v-col>
+      </v-row>
       <!-- full api references -->
       <template v-if="project_ready">
-        <endpoint-view v-for="ep, ei in entities" :key="`endpoint-${ei}`"
-          :id="ep.el"
-          :endpoint="ep" />
+        <v-row v-for="ep, ei in entities" :key="`endpoint-${ei}.${ep}`">
+          <v-col>
+            <endpoint-view  :endpoint="ep" />
+          </v-col>
+        </v-row>
       </template>
       <!-- on clear -->
       <template v-else>
@@ -67,18 +86,16 @@
               <v-card-title>QuickLoad</v-card-title>
               <v-card-text>
                 <v-list>
-                  <template v-if="recents && 0<recents.length">
+                  <template v-if="recents && 0 < recents.length">
                     <v-list-subheader>Recents</v-list-subheader>
-                    <v-list-item v-for="rec in recents" :key="`recents.${rec.location}`"
-                      :title="rec.title" :subtitle="moment(rec.timestamp)"  :text="rec.location"
-                      @click="loads(rec.location)">
+                    <v-list-item v-for="rec in recents" :key="`recents.${rec.location}`" :title="rec.title"
+                      :subtitle="moment(rec.timestamp)" :text="rec.location" @click="loads(rec.location)">
                     </v-list-item>
                     <v-divider />
                   </template>
                   <v-list-subheader>Examples</v-list-subheader>
-                  <v-list-item v-for="ex in list" :key="`examples.${ex.location}`"
-                    :title="ex.title" :subtitle="ex.location" :text="ex.description"
-                    :disabled="ex.disabled"
+                  <v-list-item v-for="ex in list" :key="`examples.${ex.location}`" :title="ex.title"
+                    :subtitle="ex.location" :text="ex.description" :disabled="ex.disabled"
                     @click="loads(ex.location)" />
                 </v-list>
               </v-card-text>
@@ -143,6 +160,7 @@ export default {
       'project_ready',
       'datatype_list',
       'entities',
+      'endpoints',
       'tags',
       'templates',
       'tag_datatypes',
