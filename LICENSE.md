@@ -1,6 +1,7 @@
 # CC BY-NC-SA 4.0
 
 ![CC-BY-NC-SA 4.0](https://mirrors.creativecommons.org/presskit/buttons/88x31/png/by-nc-sa.png)
+
 https://creativecommons.org/licenses/by-nc-sa/4.0/
 
 ## Abstract
@@ -9,16 +10,23 @@ The project/repository, `apidocs` (https://github.com/insaint03/apidocs) and all
 ### You are free to:
 
 ```yaml
-- Share: copy and redistribute the material in any medium or format
-- Adapt: remix, transform, and build upon the material
+- Share: |- 
+    copy and redistribute the material in any medium or format
+- Adapt: |- 
+    remix, transform, and build upon the material
+
 # The licensor cannot revoke these freedoms as long as you follow the license terms.
 ```
 
 ### Under the following terms:
 ```yaml
-- Attribution: You must give appropriate credit , provide a link to the license, and indicate if changes were made . You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
-- NonCommercial: You may not use the material for commercial purposes .
-- ShareAlike: If you remix, transform, or build upon the material, you must distribute your contributions under the same license as the original.
+- Attribution: |- 
+    You must give appropriate credit , provide a link to the license, and indicate if changes were made . You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
+- NonCommercial: |-
+    You may not use the material for commercial purposes.
+- ShareAlike: |-
+    If you remix, transform, or build upon the material, you must distribute your contributions under the same license as the original.
+
 # No additional restrictions — You may not apply legal terms or technological measures that legally restrict others from doing anything the license permits.
 ```
 ### Notices:
