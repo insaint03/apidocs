@@ -33,36 +33,16 @@ export const useProjectStore = defineStore('project', {
             return Object.values(this.templates);
         },
         // tag - named templates
-        tags() {
-            return Object.values(this.templates)
-                .filter((t)=>t.tagname!=null);
-        },
+        tags: models.get_tags,
         // datatypes by tagname
-        tag_datatypes() {
-            return models.tag_datatypes;
-        },
+        tag_datatypes: models.get_tag_datatypes,
         // entities by tagname
-        tag_entities() {
-            return models.tag_entities;
-        },
+        tag_entities: models.get_tag_entities,
         // migration provided datatypes
-        migrations() {
-            return Object.values(this.datatypes)
-                .filter((dt)=>dt.migration);
-        },
+        migrations: models.get_migrations,
         // reorganize entities by request.path
-        endpoints() {
-            const ret = this.entities.reduce((agg, entity)=>{
-                const pathname = entity.request.path;
-                const method = entity.request.method;
-                const key = [method,pathname].join('.');
-                agg[key] = (agg[key] || [])
-                    .concat({method, pathname, entity,});
-                return agg;
-            }, []);
-            ret.sort((l,r)=>l.pathname.localeCompare(r.pathname));
-            return ret;
-        },
+        endpoints: models.get_endpoints,
+        endpathes: models.get_endpathes,
         recents() {
             return models.recents;
         },

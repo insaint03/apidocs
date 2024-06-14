@@ -4,7 +4,7 @@
     <v-list-subheader>about the project</v-list-subheader>
     <v-list-item :title="project.name" :subtitle="project.version" 
       value="about" :color="$thx.color.primary"
-      @click="hash('about')">
+      href="#/about/">
       <template #prepend>
         <v-icon>{{ $thx.icon.about }}</v-icon>
       </template>
@@ -15,7 +15,7 @@
     <v-list-item v-for="tmpl in tags" :key="`toc.tag-${tmpl.tagname}`"
       value="tag" :color="$thx.color.tag"
       :title="tmpl.tagname" :subtitle="tmpl.summary"
-      @click="move(tmpl)" 
+      :href="`#/tag/${tmpl.tagname}`"
     >
       <template #prepend>
         <v-icon>{{ $thx.icon.tag }}</v-icon>
@@ -35,14 +35,15 @@
     <!-- datatypes -->
     <v-list-group value="datatypes">
       <template #activator="{ props }">
-        <v-list-item v-bind="props" title="datatypes" :color="$thx.color.datatype">
+        <v-list-item v-bind="props" title="datatypes" :color="$thx.color.datatype"
+          href="#/datatype/">
           <template #prepend>
             <v-icon>{{ $thx.icon.datatype }}</v-icon>
           </template>
         </v-list-item>
       </template>
       <v-list-item v-for="tp in datatype_list" :key="`toc.datatypes-${tp.name}`"
-        @click="move(tp)"
+        :href="`#/datatype/${tp.name}`"
         :title="tp.name" :subtitle="tp.basistype"></v-list-item>
     </v-list-group>
     <v-divider />
@@ -50,16 +51,15 @@
     <v-list-group value="endpoints">
       <template #activator="{ props }">
         <v-list-item v-bind="props" title="endpoints" value="endpoints"
+          href="#/endpoint/"
           :color="$thx.color.api">
           <template #prepend>
             <v-icon>{{ $thx.icon.endpoint }}</v-icon>
           </template>
         </v-list-item>
       </template>
-      <v-list-item v-for="(e,ei) in entities" :key="`toc.apis-${ei}`"       
-        @click="move(e)">
-        <v-list-item-title>[{{ e.request.method }}] {{ e.request.path }}</v-list-item-title>
-      </v-list-item>
+      <v-list-item v-for="(ep,ei) in endpathes" :key="`toc.apis-${ei}.${ep}`"       
+        :href="`#/endpoint${ep}`" :title="ep" />
     </v-list-group>
   </v-list>
 </template>
@@ -91,7 +91,7 @@ export default {
       'project', 
       'datatype_list',
       'templates',
-      'entities', 
+      'endpathes',
       'migrations',
 
       'tags',

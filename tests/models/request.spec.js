@@ -34,7 +34,7 @@ describe('request model specifications', ()=>{
             ];
             reqs.forEach(({path, expected})=>{
                 const request = new Request({path});
-                expect(request.path).toBe(expected);
+                expect(request.pathname).toBe(expected);
             });
         });
         // path parameter parsing

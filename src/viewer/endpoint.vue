@@ -1,29 +1,72 @@
 <template>
   <v-card rounded="md" flat>
-    <v-toolbar tile density="compact">
-      <v-toolbar-title>
-        <v-chip dark :color="$thx.color.http_method[endpoint.request.method]">{{ endpoint.request.method }}</v-chip>
-         {{ endpoint.request.path }}
-      </v-toolbar-title>
+    <v-toolbar :color="$thx.color.api">
+      <v-toolbar-items>
+        <v-btn icon readonly>
+          <v-icon>{{ $thx.icon.endpoint }}</v-icon>
+        </v-btn>
+        <v-btn text readonly style="text-transform: none;">
+          {{ endpath }}
+        </v-btn>
+      </v-toolbar-items>
       <v-spacer />
       <v-toolbar-items>
-        <v-btn text @click="show.details = !show.details" :active="show.details">desc</v-btn>
-        <v-btn text @click="show.message = !show.message" :active="show.message">api</v-btn>
+        <v-btn text :active="show_all_requests" @click="show_all_requests = !show_all_requests">req.</v-btn>
+        <v-btn text :active="show_all_responses" @click="show_all_responses = !show_all_responses">resp.</v-btn>
+        <v-btn icon :active="expanded" @click="expanded = !expanded">
+          <v-icon>{{ $thx.expanding_icon(expanded) }}</v-icon>
+        </v-btn>
       </v-toolbar-items>
     </v-toolbar>
-    <v-card-subtitle>{{ endpoint.summary }}</v-card-subtitle>
     <v-card-text>
-      <v-row v-show="show.details">
+      <v-row v-for="ep, ei in endpoints" :key="`ep-${endpath}.${ei}`">
         <v-col>
-          <view-forms :modelValue="endpoint" :fields="fields.left" />
-        </v-col>
-      </v-row>
-      <v-row v-show="show.message">
-        <v-col>
-          <view-forms :modelValue="endpoint" :fields="fields.request" />
-        </v-col>
-        <v-col>
-          <view-forms :modelValue="endpoint" :fields="fields.response" />
+          <v-card flat :color="$thx.color.api">
+            <v-toolbar flat density="compact" @click="show[ei].fill = !show[ei].fill" >
+              <v-toolbar-items>
+                <v-btn text readonly :color="$thx.color.http_method[ep.method]">
+                  {{ ep.method }}
+                </v-btn>
+                <v-btn text readonly style="text-transform: none;">
+                  {{ ep.pathname }}
+                </v-btn>
+              </v-toolbar-items>
+              <i>:{{ ep.title }}</i>
+              <v-spacer />
+              <v-toolbar-items>
+                <v-btn text readonly>
+                  {{ ep.status }}
+                  {{ ep.responses }}
+                </v-btn>
+                <v-btn icon :active="show[ei].fill">
+                  <v-icon>{{ $thx.expanding_icon(show[ei].fill) }}</v-icon>
+                </v-btn>
+              </v-toolbar-items>
+            </v-toolbar>
+            <v-card-text v-show="show[ei].fill">
+              <v-textarea :model-value="ep.description" readonly v-bind="$thx.field" />
+              <v-row>
+                <v-col v-show="show[ei].request">
+                  <request-view :request="ep.request" />
+                  <!-- 
+                <view-forms :model-value="ep.request" :fields="fields.request" />
+              -->
+                </v-col>
+                <v-col v-show="show[ei].response">
+                  <!--
+                <view-forms :model-value="ep.response" :fields="fields.response" />
+                -->
+                </v-col>
+              </v-row>
+            </v-card-text>
+            <v-card-actions v-show="show[ei].fill">
+              <v-spacer />
+              <v-btn text :active="show[ei].request"
+                @click="show[ei].request = !show[ei].request">req.</v-btn>
+              <v-btn text :active="show[ei].response"
+                @click="show[ei].response = !show[ei].response">resp.</v-btn>
+            </v-card-actions>
+          </v-card>
         </v-col>
       </v-row>
     </v-card-text>
@@ -31,7 +74,8 @@
 </template>
 <script>
 import viewForms from './forms.vue';
-const fields={
+import requestView from './request.vue';
+const fields = {
   left: [
     { key: 'summary', label: 'summary' },
     { key: 'desc', label: 'description', is: 'v-textarea' },
@@ -61,16 +105,44 @@ export default {
   name: 'endpointView',
   components: {
     viewForms,
+    requestView,
   },
   props: {
-    endpoint: Object,
+    endpath: String,
+    endpoints: Array,
+  },
+  computed: {
+    show_all_requests: {
+      get() {
+        return this.show.every(s => s.request);
+      },
+      set(value) {
+        this.show.forEach(s => s.request = value);
+      },
+    },
+    show_all_responses: {
+      get() {
+        return this.show.every(s => s.response);
+      },
+      set(value) {
+        this.show.forEach(s => s.response = value);
+      },
+    },
+    expanded: {
+      get() {
+        return this.show.every(s => s.fill);
+      },
+      set(value) {
+        this.show.forEach(s => s.fill = value);
+      },
+    },
   },
   data() {
+    // console.log((new Array(this.endpoints.length).fill()));
     return {
-      show: {
-        details: false,
-        message: false,
-      },
+      show: (new Array(this.endpoints.length))
+        .fill()
+        .map(() => ({ fill: true, request: true, response: true })),
       fields,
     };
   }

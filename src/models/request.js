@@ -32,9 +32,13 @@ export default class Request extends Message {
         return `${this.method} ${this.path} ${Message.http}`;
     }
 
-    get path() {
-        return this._path.map(Patterns.path_serialize)
+    get pathname() {
+        return this.path.map(Patterns.path_serialize)
             .join(Request.path_delimiter);
+    }
+
+    get path() {
+        return this._path || [];
     }
 
     set path(values) {

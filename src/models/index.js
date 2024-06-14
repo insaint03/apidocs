@@ -55,27 +55,62 @@ export default {
         }
     },
 
-    get tags() {
-        return this.tmpls
+    get_tags(store) {
+        return Object.values(store.templates)
             .filter((tmpl)=>tmpl.tagname!=null);
     },
 
-    get tag_datatypes() {
+    get_tag_datatypes() {
         return Object.fromEntries(this.tags.map((tmpl)=>[
             tmpl.tagname, 
             tmpl.datatypes,
         ]));
     },
 
-    get tag_entities() {
+    get_tag_entities() {
         return Object.fromEntries(this.tags.map((tmpl)=>[
             tmpl.tagname, 
             this.entities.filter((e)=>e.templates.includes(tmpl.name)),
         ]));
     },
 
-    get migrations() {
-        return this.dtypes.filter((d)=>d.migration!=null);
+    get_migrations(store) {
+        return Object.values(store.datatypes)
+            .filter((d)=>d.migration!=null);
+    },
+
+    get_endpoints(store) {
+        return store.entities.reduce((agg, entity)=>{
+            const pathname = entity.request.pathname;
+            const method = entity.request.method;
+            const requests = entity.request.body;
+            const status = entity.response.status;
+            const mimetype = entity.response.mimetype;
+            const resposnes = entity.response.body;
+
+            agg[pathname] = (agg[pathname] || [])
+                .concat([{
+                    title: entity.summary,
+                    desc: entity.description,
+                    tags: entity.tagnames,
+                    // request properties
+                    request: entity.request,
+                    pathname, 
+                    method, 
+                    requests, 
+                    // responnse properties
+                    response: entity.response,
+                    status, 
+                    mimetype, 
+                    resposnes,
+                }]);
+            return agg;
+        }, {});
+    },
+
+    get_endpathes(store) {
+        return Object.keys(store.endpoints)
+            .sort((l,r)=>l.localeCompare(r));
     },
 
     _hierarchical_loads(puts, setup, find_parent, presets) {
@@ -220,22 +255,21 @@ export default {
                 content = await yaml_parse(raw);
             }
         } else {
-            raw = await import(location);
+            raw = await import(location /* @vite-ignore */);
             content = raw.default || raw;
         }
 
         
-        return {
+        return ({
             location,
             raw,
             // timestamp: content.timestamp || Date.now(),
             ...content,
-        };
+        });
     },
 
-    // build a new entity by mixing templates
-    build(...templates) {
-        return new Entity(Template.build(...templates));
+    build(...tmpls) {
+        return new Entity(Template.build(...tmpls));
     },
 
     // from arrays of templates, build combinatorial entities

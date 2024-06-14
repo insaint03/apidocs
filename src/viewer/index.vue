@@ -66,9 +66,9 @@
       </v-row>
       <!-- full api references -->
       <template v-if="project_ready">
-        <v-row v-for="ep, ei in entities" :key="`endpoint-${ei}.${ep}`">
+        <v-row v-for="ep, ei in endpathes" :key="`endpoint-${ei}.${ep}`">
           <v-col>
-            <endpoint-view  :endpoint="ep" />
+            <endpoint-view :endpath="ep" :endpoints="endpoints[ep]" />
           </v-col>
         </v-row>
       </template>
@@ -109,6 +109,7 @@
       </template>
     </v-container>
   </v-main>
+  
 </template>
 <script>
 // import models from '@/models'
@@ -116,7 +117,7 @@
 
 // navigation tab
 import appBar from './appbar.vue';
-import migrationsView from './migrations.vue';
+// import migrationsView from './migrations.vue';
 import tocView from './toc.vue';
 import infoView from './info.vue';
 import tagView from './tags.vue';
@@ -133,7 +134,7 @@ export default {
   name: 'viewerPage',
   components: {
     appBar,
-    migrationsView,
+    // migrationsView,
     datatypeView,
     endpointView,
     // emptyView,
@@ -164,6 +165,7 @@ export default {
       'project_ready',
       'datatype_list',
       'entities',
+      'endpathes',
       'endpoints',
       'tags',
       'templates',

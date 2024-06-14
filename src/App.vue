@@ -1,6 +1,12 @@
 <template>
   <v-app>
     <router-view />
+    <v-footer app absolute style="height: 50vh;">
+      <v-row>
+        <v-col>
+        </v-col>
+      </v-row>
+    </v-footer>
   </v-app>
 </template>
 
