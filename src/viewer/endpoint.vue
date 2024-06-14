@@ -1,6 +1,6 @@
 <template>
-  <v-card flat rounded="lg" :color="$thx.color.api">
-    <v-toolbar :color="$thx.color.api" dark density="compact">
+  <v-card rounded="md" flat>
+    <v-toolbar tile density="compact">
       <v-toolbar-title>
         <v-chip dark :color="$thx.color.http_method[endpoint.request.method]">{{ endpoint.request.method }}</v-chip>
          {{ endpoint.request.path }}

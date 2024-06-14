@@ -33,7 +33,7 @@
             <template v-if="ln.links.length<=1">
               <v-list-item  :title="ln.title" :subtitle="ln.keytype">
                 <template #prepend>
-                  <v-icon>{{ link_icons[ln.keytype] }}</v-icon>
+                  <v-icon>{{ $thx.icon.links[ln.keytype] }}</v-icon>
                 </template>
                 <template #append v-if="0<ln.links.length">
                   <v-btn icon flat @click="()=>window.open(ln.links[0].href, '_blank')">
@@ -47,7 +47,7 @@
                 <template #activator="{ props }">
                   <v-list-item v-bind="props" :title="ln.title" :subtitle="ln.keytype">
                     <template #prepend>
-                      <v-icon>{{ link_icons[ln.keytype] }}</v-icon>
+                      <v-icon>{{ $thx.icon.links[ln.keytype] }}</v-icon>
                     </template>
                   </v-list-item>
                 </template>

@@ -14,15 +14,15 @@
     <v-card-text>
       <v-row>
         <!-- items -->
-        <v-col cols="12" xl="4" lg="6" v-show="show.items">
+        <v-col v-show="show.items">
           <view-items :model-value="datatype.name" />
         </v-col>
         <!-- details -->
-        <v-col cols="12" xl="4" lg="6" v-show="show.details">
+        <v-col v-show="show.details">
           <view-forms :model-value="datatype" :fields="fields.details" />
         </v-col>
         <!-- examples -->
-        <v-col cols="12" xl="4" lg="6" v-show="show.examples">
+        <v-col v-show="show.examples">
           <view-forms :model-value="datatype" :fields="fields.examples" />
         </v-col>
       </v-row>
@@ -36,9 +36,9 @@ import Datatype from '@/models/datatype';
 
 const fields = {
   details: [
-    { key: 'migration', label: 'migration'},
-    { key: 'defaults', label: 'defaults', is: 'v-textarea' },
+    { key: 'defaults', label: 'defaults' },
     { key: 'description', label: 'description', is: 'v-textarea' },
+    { key: 'migration', label: 'migration'},
     { key: 'validation', label: 'validation'},
   ],
   examples: [

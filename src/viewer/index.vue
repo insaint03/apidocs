@@ -14,14 +14,14 @@
               <!-- about project -->
               <v-expansion-panel value="_about" >
                 <v-expansion-panel-title :color="$thx.color.primary">
-                  <v-icon>mdi-information</v-icon>
+                  <v-icon>{{ $thx.icon.about }}</v-icon>
                   _about
                 </v-expansion-panel-title>
-                <v-expansion-panel-text :color="$thx.color.background">
+                <v-expansion-panel-text>
                   <info-view tab="summary" id="about" />
                 </v-expansion-panel-text>
               </v-expansion-panel>
-              <!-- TODO: migration scheme -->
+              <!-- 
               <v-expansion-panel value="_migration" class="border-b-thin">
                 <v-expansion-panel-title :color="$thx.color.migration">
                   <v-icon>mdi-database-export</v-icon>
@@ -31,13 +31,16 @@
                   <migrations-view />
                 </v-expansion-panel-text>
               </v-expansion-panel>
+              -->
               <!-- by template tagnames -->
               <v-expansion-panel v-for="tmpl in tags" :key="`tag-${tmpl.tagname}`"
                 class="border-b-thin"
                 :value="tmpl.el">
                 <v-expansion-panel-title :color="$thx.color.tag">
-                  <v-icon>mdi-pound</v-icon>
+                  <v-icon>{{ $thx.icon.tag }}</v-icon>
                   {{ tmpl.tagname}}
+                  <v-spacer />
+                  <i>: {{ tmpl.summary }} &nbsp;</i>
                 </v-expansion-panel-title>
                 <v-expansion-panel-text>
                   <tag-view :id="tmpl.el" v-bind="tmpl" />
@@ -46,7 +49,7 @@
               <!-- datatypes -->
               <v-expansion-panel value="_datatypes" class="border-b-thin">
                 <v-expansion-panel-title :color="$thx.color.datatype">
-                  <v-icon>mdi-oci</v-icon>
+                  <v-icon>{{ $thx.icon.datatype }}</v-icon>
                   _datatypes
                 </v-expansion-panel-title>
                 <v-expansion-panel-text>
@@ -94,7 +97,8 @@
                     <v-divider />
                   </template>
                   <v-list-subheader>Examples</v-list-subheader>
-                  <v-list-item v-for="ex in list" :key="`examples.${ex.location}`" :title="ex.title"
+                  <v-list-item v-for="ex,ei in list" :key="`examples.${ex.location}`" :title="ex.title"
+                    :active="ei==0" :color="$thx.color.primary"
                     :subtitle="ex.location" :text="ex.description" :disabled="ex.disabled"
                     @click="loads(ex.location)" />
                 </v-list>

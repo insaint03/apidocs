@@ -2,14 +2,25 @@
   <v-list v-model:opened="opentabs" v-if="project!=null">
     <!-- project info -->
     <v-list-subheader>about the project</v-list-subheader>
-    <v-list-item :title="project.name" :subtitle="project.version" @click="hash('about')" />
+    <v-list-item :title="project.name" :subtitle="project.version" 
+      value="about" :color="$thx.color.primary"
+      @click="hash('about')">
+      <template #prepend>
+        <v-icon>{{ $thx.icon.about }}</v-icon>
+      </template>
+    </v-list-item>
     <v-divider />
     <!-- by tag definition -->
     <v-list-subheader>by tag</v-list-subheader>
     <v-list-item v-for="tmpl in tags" :key="`toc.tag-${tmpl.tagname}`"
+      value="tag" :color="$thx.color.tag"
       :title="tmpl.tagname" :subtitle="tmpl.summary"
       @click="move(tmpl)" 
-    />
+    >
+      <template #prepend>
+        <v-icon>{{ $thx.icon.tag }}</v-icon>
+      </template>
+    </v-list-item>
     <v-divider />
     <!-- TODO::migration 
     <v-list-group value="migrations">
@@ -20,10 +31,15 @@
     </v-list-group>
     -->
     <v-divider />
+    <v-list-subheader>references</v-list-subheader>
     <!-- datatypes -->
     <v-list-group value="datatypes">
       <template #activator="{ props }">
-        <v-list-item v-bind="props" title="datatypes" />
+        <v-list-item v-bind="props" title="datatypes" :color="$thx.color.datatype">
+          <template #prepend>
+            <v-icon>{{ $thx.icon.datatype }}</v-icon>
+          </template>
+        </v-list-item>
       </template>
       <v-list-item v-for="tp in datatype_list" :key="`toc.datatypes-${tp.name}`"
         @click="move(tp)"
@@ -31,11 +47,16 @@
     </v-list-group>
     <v-divider />
     <!-- apis -->
-    <v-list-group value="apis">
+    <v-list-group value="endpoints">
       <template #activator="{ props }">
-        <v-list-item v-bind="props" title="apis"></v-list-item>
+        <v-list-item v-bind="props" title="endpoints" value="endpoints"
+          :color="$thx.color.api">
+          <template #prepend>
+            <v-icon>{{ $thx.icon.endpoint }}</v-icon>
+          </template>
+        </v-list-item>
       </template>
-      <v-list-item v-for="(e,ei) in entities" :key="`toc.apis-${ei}`"
+      <v-list-item v-for="(e,ei) in entities" :key="`toc.apis-${ei}`"       
         @click="move(e)">
         <v-list-item-title>[{{ e.request.method }}] {{ e.request.path }}</v-list-item-title>
       </v-list-item>
