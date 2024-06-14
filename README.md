@@ -29,3 +29,5 @@ Grouping entities within identical pathes comprises an Endpoint at openAPI spec 
 
 ## Github support
 
+
+![CC-BY-NC-SA 4.0](https://mirrors.creativecommons.org/presskit/buttons/88x31/png/by-nc-sa.png)
