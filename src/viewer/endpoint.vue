@@ -1,6 +1,6 @@
 <template>
   <v-card rounded="md" flat>
-    <v-toolbar :color="$thx.color.api">
+    <v-toolbar :color="$thx.color.api" @click="expanded = !expanded" v-intersects.once="(show)=>show?expanded=true:null">
       <v-toolbar-items>
         <v-btn icon readonly>
           <v-icon>{{ $thx.icon.endpoint }}</v-icon>
@@ -11,9 +11,9 @@
       </v-toolbar-items>
       <v-spacer />
       <v-toolbar-items>
-        <v-btn text :active="show_all_requests" @click="show_all_requests = !show_all_requests">req.</v-btn>
-        <v-btn text :active="show_all_responses" @click="show_all_responses = !show_all_responses">resp.</v-btn>
-        <v-btn icon :active="expanded" @click="expanded = !expanded">
+        <v-btn text :active="show_all_requests" @click.stop="show_all_requests = !show_all_requests">req.</v-btn>
+        <v-btn text :active="show_all_responses" @click.stop="show_all_responses = !show_all_responses">resp.</v-btn>
+        <v-btn icon>
           <v-icon>{{ $thx.expanding_icon(expanded) }}</v-icon>
         </v-btn>
       </v-toolbar-items>
@@ -21,60 +21,17 @@
     <v-card-text>
       <v-row v-for="ep, ei in endpoints" :key="`ep-${endpath}.${ei}`">
         <v-col>
-          <v-card flat :color="$thx.color.api">
-            <v-toolbar flat density="compact" @click="show[ei].fill = !show[ei].fill" >
-              <v-toolbar-items>
-                <v-btn text readonly :color="$thx.color.http_method[ep.method]">
-                  {{ ep.method }}
-                </v-btn>
-                <v-btn text readonly style="text-transform: none;">
-                  {{ ep.pathname }}
-                </v-btn>
-              </v-toolbar-items>
-              <i>:{{ ep.title }}</i>
-              <v-spacer />
-              <v-toolbar-items>
-                <v-btn text readonly>
-                  {{ ep.status }}
-                  {{ ep.responses }}
-                </v-btn>
-                <v-btn icon :active="show[ei].fill">
-                  <v-icon>{{ $thx.expanding_icon(show[ei].fill) }}</v-icon>
-                </v-btn>
-              </v-toolbar-items>
-            </v-toolbar>
-            <v-card-text v-show="show[ei].fill">
-              <v-textarea :model-value="ep.description" readonly v-bind="$thx.field" />
-              <v-row>
-                <v-col v-show="show[ei].request">
-                  <request-view :request="ep.request" />
-                  <!-- 
-                <view-forms :model-value="ep.request" :fields="fields.request" />
-              -->
-                </v-col>
-                <v-col v-show="show[ei].response">
-                  <!--
-                <view-forms :model-value="ep.response" :fields="fields.response" />
-                -->
-                </v-col>
-              </v-row>
-            </v-card-text>
-            <v-card-actions v-show="show[ei].fill">
-              <v-spacer />
-              <v-btn text :active="show[ei].request"
-                @click="show[ei].request = !show[ei].request">req.</v-btn>
-              <v-btn text :active="show[ei].response"
-                @click="show[ei].response = !show[ei].response">resp.</v-btn>
-            </v-card-actions>
-          </v-card>
+          <entity-view :model-value="ep" 
+            v-model:expand="show[ei].fill" 
+            v-model:show_request="show[ei].request" 
+            v-model:show_response="show[ei].response" />
         </v-col>
       </v-row>
     </v-card-text>
   </v-card>
 </template>
 <script>
-import viewForms from './forms.vue';
-import requestView from './request.vue';
+import entityView from './entity.vue';
 const fields = {
   left: [
     { key: 'summary', label: 'summary' },
@@ -104,8 +61,7 @@ const fields = {
 export default {
   name: 'endpointView',
   components: {
-    viewForms,
-    requestView,
+    entityView,
   },
   props: {
     endpath: String,
@@ -139,10 +95,11 @@ export default {
   },
   data() {
     // console.log((new Array(this.endpoints.length).fill()));
+    const shows = {fill: true, request: true, response: true};
     return {
       show: (new Array(this.endpoints.length))
         .fill()
-        .map(() => ({ fill: true, request: true, response: true })),
+        .map(() => ({...shows})),
       fields,
     };
   }

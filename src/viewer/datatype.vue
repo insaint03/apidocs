@@ -15,7 +15,7 @@
       <v-row>
         <!-- items -->
         <v-col v-show="show.items">
-          <view-items :model-value="datatype.name" />
+          <view-items :datatype="datatype" />
         </v-col>
         <!-- details -->
         <v-col v-show="show.details">

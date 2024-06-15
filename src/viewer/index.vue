@@ -4,15 +4,15 @@
   <v-navigation-drawer app location="right" permanent>
     <tocView :open="opentabs" :scrollspy="scrollspy" />
   </v-navigation-drawer>
-  <v-main app v-scroll="scrolls">
-    <v-container fluid elevation="1">
+  <v-main app>
+    <v-container fluid elevation="1"  id="main" v-scroll="scrolls">
       <v-row>
         <v-col>
           <!-- top panel sheet -->
           <v-sheet class="ma-0 pa-0 border-thin" elevation="1">
             <v-expansion-panels flat ripple multiple tile variant="accordion" :disabled="!project_ready">
               <!-- about project -->
-              <v-expansion-panel value="_about" >
+              <v-expansion-panel value="_about">
                 <v-expansion-panel-title :color="$thx.color.primary">
                   <v-icon>{{ $thx.icon.about }}</v-icon>
                   _about
@@ -145,8 +145,8 @@ export default {
   onMounted() {
   },
   methods: {
-    scrolls() {
-
+    scrolls(e) {
+      console.log('scroll', e, arguments);
     },
     moment(timestamp) {
       return (new Date(timestamp)).toLocaleString();
