@@ -1,6 +1,6 @@
 <template>
   <v-card rounded="md" flat>
-    <v-toolbar :color="$thx.color.api" @click="expanded = !expanded" v-intersects.once="(show)=>show?expanded=true:null">
+    <v-toolbar :color="$thx.color.api" @click="expanded = !expanded" v-intersect.once="(show)=>show?expanded=true:null">
       <v-toolbar-items>
         <v-btn icon readonly>
           <v-icon>{{ $thx.icon.endpoint }}</v-icon>

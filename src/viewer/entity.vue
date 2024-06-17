@@ -2,20 +2,32 @@
   <v-card flat :color="$thx.color.api">
     <v-toolbar flat density="compact" @click="expanding = !expanding">
       <v-toolbar-items>
-        <v-btn text readonly :color="$thx.color.http_method[ep.method]">
-          {{ ep.method }}
-        </v-btn>
         <v-btn text readonly style="text-transform: none;">
           {{ ep.pathname }}
         </v-btn>
-      </v-toolbar-items>
-      <i>:{{ ep.title }}</i>
-      <v-spacer />
-      <v-toolbar-items>
+        <v-btn text readonly active :color="$thx.color.http_method[ep.method]">
+          {{ ep.method }}
+        </v-btn>
+        <v-btn icon readonly>
+          <v-icon>mdi-chevron-double-right</v-icon>
+        </v-btn>
+        <v-btn text readonly active :color="$thx.color.http_status(ep.status)">
+          {{  ep.status }}
+        </v-btn>
         <v-btn text readonly>
-          {{ ep.status }}
+          {{ ep.mimetype }}
+        </v-btn>
+        <v-btn text readonly>
           {{ ep.responses }}
         </v-btn>
+      </v-toolbar-items>
+      <v-toolbar-title>
+        <sub>
+          :{{ ep.title }}
+        </sub>
+      </v-toolbar-title>
+      <v-spacer />
+      <v-toolbar-items>
         <v-btn icon>
           <v-icon>{{ $thx.expanding_icon(expanding) }}</v-icon>
         </v-btn>
@@ -31,6 +43,7 @@
               -->
         </v-col>
         <v-col v-show="exp_response">
+          <response-view :response="ep.response" />
           <!--
                 <view-forms :model-value="ep.response" :fields="fields.response" />
                 -->
@@ -46,10 +59,13 @@
 </template>
 <script>
 import requestView from './request.vue';
+import responseView from './response.vue';
+
 export default {
   name: 'entityView',
   components: {
     requestView,
+    responseView,
   },
   methods: {
 

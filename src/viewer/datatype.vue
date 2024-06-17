@@ -1,6 +1,6 @@
 <template>
-  <v-card :color="$thx.color.datatype">
-    <v-toolbar density="compact" :color="$thx.color.datatype">
+  <v-card>
+    <v-toolbar density="compact">
       <v-card-title>{{ datatype.name }}</v-card-title>
       <v-breadcrumbs :items="datatype.inherits" />
       <v-spacer />

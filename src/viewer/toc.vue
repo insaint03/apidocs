@@ -1,9 +1,10 @@
 <template>
-  <v-list v-model:opened="opentabs" v-if="project!=null">
+  <v-list v-if="project!=null">
     <!-- project info -->
     <v-list-subheader>about the project</v-list-subheader>
     <v-list-item :title="project.name" :subtitle="project.version" 
       value="about" :color="$thx.color.primary"
+      @click="opens('_about')"
       href="#/about/">
       <template #prepend>
         <v-icon>{{ $thx.icon.about }}</v-icon>
@@ -14,6 +15,7 @@
     <v-list-subheader>by tag</v-list-subheader>
     <v-list-item v-for="tmpl in tags" :key="`toc.tag-${tmpl.tagname}`"
       value="tag" :color="$thx.color.tag"
+      @click="opens(`_tag.${tmpl.tagname}`)"
       :title="tmpl.tagname" :subtitle="tmpl.summary"
       :href="`#/tag/${tmpl.tagname}`"
     >
@@ -35,14 +37,14 @@
     <!-- datatypes -->
     <v-list-group value="datatypes">
       <template #activator="{ props }">
-        <v-list-item v-bind="props" title="datatypes" :color="$thx.color.datatype"
-          href="#/datatype/">
+        <v-list-item v-bind="props" title="datatypes" :color="$thx.color.datatype">
           <template #prepend>
             <v-icon>{{ $thx.icon.datatype }}</v-icon>
           </template>
         </v-list-item>
       </template>
       <v-list-item v-for="tp in datatype_list" :key="`toc.datatypes-${tp.name}`"
+        @click="opens(`_datatype.${tp.name}`)"
         :href="`#/datatype/${tp.name}`"
         :title="tp.name" :subtitle="tp.basistype"></v-list-item>
     </v-list-group>
@@ -51,14 +53,14 @@
     <v-list-group value="endpoints">
       <template #activator="{ props }">
         <v-list-item v-bind="props" title="endpoints" value="endpoints"
-          href="#/endpoint/"
           :color="$thx.color.api">
           <template #prepend>
             <v-icon>{{ $thx.icon.endpoint }}</v-icon>
           </template>
         </v-list-item>
       </template>
-      <v-list-item v-for="(ep,ei) in endpathes" :key="`toc.apis-${ei}.${ep}`"       
+      <v-list-item v-for="(ep,ei) in endpathes" :key="`toc.apis-${ei}.${ep}`"
+        @click="opens(`_endpoint.${ep}`)"
         :href="`#/endpoint${ep}`" :title="ep" />
     </v-list-group>
   </v-list>
@@ -71,20 +73,18 @@ import { useProjectStore } from '@/stores/project';
 export default {
   name: 'tocViewer',
   props: {
-    open: Array,
+    open: {type: Object},
     scrollspy: Object,
   },
   methods: {
+    opens(target){
+      if(target) {
+        this.$emit(`update:open.${target}`, true);
+      }
+    },
     hash(ref) {
       window.location.hash = `#${ref}`;
     },
-    move(ref) {
-      this.hash(ref.el || ref);
-      // const el = document.getElementById(id);
-      // if (el) {
-      //   el.scrollIntoView({ behavior: 'smooth' });
-      // }
-    }
   },
   computed: {
     ...mapState(useProjectStore, [
@@ -103,7 +103,6 @@ export default {
   },
   data() {
     return {
-      opentabs: this.open || [],
       scrolls: this.scrollspy,
     };
   }

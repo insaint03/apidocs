@@ -78,18 +78,12 @@ export default class Request extends Message {
                 // array of {key, datatype, optional, defaults}
                 {
                     constraint: (it)=>typeof(it)==='object' && it.key && it.datatype, 
-                    parse: (it)=>[it.key, {datatype: it.datatype, required: it.required || !it.optional, defaults: it.defaults || undefined}], 
+                    parse: (it)=>({...it, required: it.required || !it.optional}), 
                 },
                 // array of 'key:datatype=defaults'
                 {
                     constraint: (it)=>typeof(it)==='string', 
-                    parse: (token)=>{
-                        const it = Patterns.item_parse(token);
-                        return [
-                            it.key,
-                            {datatype: it.datatype, required: it.required, defaults: it.defaults},
-                        ];
-                    }
+                    parse: (token)=>Patterns.item_parse(token)
                 }
             ],
         },
@@ -101,18 +95,12 @@ export default class Request extends Message {
                 // object of {key: {datatype, optional, defaults}}
                 {
                     constraint: ([k,v])=>typeof(k)==='string' && typeof(v)==='object' && v.datatype, 
-                    parse: ([k,v])=>[k, {datatype: v.datatype, required: v.required || !v.optional, defaults: v.defaults || undefined}], 
+                    parse: ([k,v])=>({key: k, datatype: v.datatype, required: v.required || !v.optional, defaults: v.defaults || undefined}), 
                 },
                 // object of {key: datatype?=defaults}
                 {
                     constraint: ([k,v])=>typeof(k)==='string' && typeof(v)==='string',
-                    parse: ([key,token])=>{
-                        const it = Patterns.item_parse(`${key}:${token}`);
-                        return [
-                            it.key,
-                            {datatype: it.datatype, required: it.required, defaults: it.defaults},
-                        ];
-                    }
+                    parse: ([key,token])=>Patterns.item_parse(`${key}:${token}`),
                 },
             ],
         },
@@ -124,43 +112,41 @@ export default class Request extends Message {
                 // 'key=datatype?=defaults'
                 {
                     constraint: (it)=>typeof(it)==='string' && it.includes('='),
-                    parse: (token)=>{
-                        const it = Patterns.item_parse(token);
-                        return [
-                            it.key,
-                            {datatype: it.datatype, required: it.required, defaults: it.defaults},
-                        ];
-                    },
+                    parse: Patterns.item_parse,
                 }
             ],
         }
     ];
 
     get queries() {
-        return Object.entries(this._queries || {})
-            .map(([key,val])=>Patterns.item_serialize({key, ...val}))
-            .join('\n');
+        return this._queries || [];
+        // return Object.entries(this._queries || {})
+        //     .map(([key,val])=>Patterns.item_serialize({key, ...val}))
+        //     .join('\n');
+    }
+
+    get query_texts() {
+        return this.queries.map(Patterns.item_serialize);
     }
 
     set queries(values) {
         // values = values || [];
-        this._queries = Request._parsing_query_conditions.reduce((agg, cond)=>{
-            if(agg!=null || !cond.container(values)) {
-                return agg;
-            }
-            return Object.fromEntries(
-                cond.separate(values).map((row)=>{
-                    return cond.items.reduce((agg, item)=>
-                        agg || (item.constraint(row) 
-                                ? item.parse(row) 
-                                : null)
-                        , null);
-                }));
-        }, null) || {};
+        this._queries = Request._parsing_query_conditions.reduce((agg, {container, separate, items})=>{
+            if(agg!=null || !container(values)) { return agg; }
+            return (agg||[]).concat(...separate(values).map((row)=>
+                items.reduce((inner, {constraint, parse})=>
+                    constraint(row)
+                    ? inner.concat(parse(row))
+                    : inner, [])));
+        }, null);
+    }
+
+    get query_fragments() {
+        return Object.fromEntries(this._queries.map((q)=>[q.key, q]));
     }
 
     query_fragment(key) {
-        return this._queries[key] || {};
+        return this._queries.find((q)=>q.key===key) || {};
     }
 
     static option() {

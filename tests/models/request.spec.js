@@ -95,13 +95,13 @@ describe('request model specifications', ()=>{
     describe('property: query setup', ()=>{
         test('query setup', ()=>{
             const req = new Request({queries: {}});
-            expect(req.queries).toBe('');
+            expect(req.query_texts.join('\n')).toBe('');
             req.queries = {'!a':'A', b:'B', c:'C=1'};
-            expect(req.queries).toBe('!a:A\nb:B\nc:C=1');
+            expect(req.query_texts.join('\n')).toBe('!a:A\nb:B\nc:C=1');
 
-            expect(req.query_fragment('a')).to.contain({datatype: 'A', required: true});
-            expect(req.query_fragment('b')).to.contain({datatype: 'B', required: false});
-            expect(req.query_fragment('c')).to.contain({datatype: 'C', defaults: '1'});
+            expect(req.query_fragments.a).to.contain({datatype: 'A', required: true});
+            expect(req.query_fragments.b).to.contain({datatype: 'B', required: false});
+            expect(req.query_fragments.c).to.contain({datatype: 'C', defaults: '1'});
         });
     });
 });

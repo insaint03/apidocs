@@ -1,6 +1,6 @@
 <template>
   <v-autocomplete :model-value="items"
-    v-bind="$thx.field" :label="label" chip>
+    v-bind="$thx.field" :label="label" chips>
   </v-autocomplete>
 </template>
 <script>

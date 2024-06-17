@@ -1,5 +1,5 @@
 <template>
-  <v-table class="items">
+  <v-table class="items" density="compact">
     <thead>
       <tr @click="()=>{expand_all = !expand_all}">
         <td>
@@ -24,7 +24,7 @@
             </v-icon>
             {{  it.key }}
           </th>
-          <td>
+          <td v-if="it.inherits">
             <v-breadcrumbs :items="it.inherits" />
           </td>
           <td class="flex-fill">
@@ -89,21 +89,21 @@ export default {
     toggle_expand(ii) {
       this.expended[ii] = !this.expended[ii];
     },
-    item_children(it) {
-      const basis = DataType.find(it.datatype, true);
-      // close if not object
-      if(!basis.is_object) { return null; }
+    // item_children(it) {
+    //   const basis = DataType.find(it.datatype, true);
+    //   // close if not object
+    //   if(!basis.is_object) { return null; }
 
-      return {
-        key: it.key,
-        datatype: basis.basistype,
-        inherits: basis.inherits,
-        title: basis.summary,
-      }
-    }
+    //   return {
+    //     key: it.key,
+    //     datatype: basis.basistype,
+    //     inherits: basis.inherits,
+    //     title: basis.summary,
+    //   }
+    // }
   },
   props: {
-    items: Array,
+    modelValue: Array,
     expending: {
       type: Boolean,
       default: false,
@@ -114,6 +114,21 @@ export default {
     },
   },
   computed: {
+    items() {
+      return this.modelValue.map((it) => {
+        const basis = DataType.find(it.datatype, true);
+        return {
+          ...it,
+          inherits: basis.inherits,
+          basis: basis,
+          items: basis.items,
+          origin: basis.basistype || basis.origintype,
+          title: basis.summary,
+          misc: basis.desc,
+          expandable: basis.is_collective,
+        }
+      });
+    },
     expand_all: {
       get() {
         return this.expended.every((it) => it==true);
@@ -128,7 +143,7 @@ export default {
   },
   data() {
     return {
-      expended: this.items.map(() => this.expending),
+      expended: this.modelValue.map(() => this.expending),
     }
   },
 }

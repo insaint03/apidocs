@@ -1,18 +1,23 @@
 import Descriptable from "./descriptable";
 import Patterns from "./patterns";
+import Datatype from "./datatype";
 
 export default class Message extends Descriptable {
     static http = 'HTTP/1.1';
 
     constructor({headers, cookies, body}) {
         super({});
-        this._headers = headers || [];
-        this._cookies = cookies || {};
-        this._body = body || null;
+        this.headers = headers || [];
+        this.cookies = cookies || {};
+        this.body = body || null;
     }
 
     get headers() {
-        return (this._headers || []).map(Patterns.item_serialize);
+        return (this._headers || []);
+    }
+    
+    get header_texts() {
+        return this.headers.map(Patterns.item_serialize);
     }
 
     set headers(value) {
@@ -39,11 +44,15 @@ export default class Message extends Descriptable {
     
 
     get cookies() {
-        return (this._cookies || []).map(Patterns.item_serialize);
+        return (this._cookies || []);
     }
 
     set cookies(value) {
         this._cookies = Patterns.map_items(value);
+    }
+
+    get cookie_texts() {
+        return this.cookies.map(Patterns.item_serialize);
     }
 
     put_cookie(key, datatype, defaults, required) {
@@ -55,7 +64,8 @@ export default class Message extends Descriptable {
     }
 
     get body() {
-        return this._body;
+        return this._body ? Datatype.find(this._body) : null;
+        // return Datatype.find(this._body);
     }
 
     set body(value) {

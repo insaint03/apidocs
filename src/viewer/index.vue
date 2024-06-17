@@ -2,66 +2,50 @@
   <!-- app bar -->
   <app-bar />
   <v-navigation-drawer app location="right" permanent>
-    <tocView :open="opentabs" :scrollspy="scrollspy" />
+    <tocView v-model:open="open" :scrollspy="scrollspy" />
   </v-navigation-drawer>
   <v-main app>
-    <v-container fluid elevation="1"  id="main" v-scroll="scrolls">
+    <v-container fluid elevation="1"  id="main">
+      <!-- project info -->
+      <v-row v-if="project_ready">
+        <v-col>
+          <info-view tab="summary" id="/about/" v-model:open="open._about" />
+        </v-col>
+      </v-row>
+      <!-- TODO: migrations //--
       <v-row>
         <v-col>
-          <!-- top panel sheet -->
-          <v-sheet class="ma-0 pa-0 border-thin" elevation="1">
-            <v-expansion-panels flat ripple multiple tile variant="accordion" :disabled="!project_ready">
-              <!-- about project -->
-              <v-expansion-panel value="_about">
-                <v-expansion-panel-title :color="$thx.color.primary">
-                  <v-icon>{{ $thx.icon.about }}</v-icon>
-                  _about
-                </v-expansion-panel-title>
-                <v-expansion-panel-text>
-                  <info-view tab="summary" id="about" />
-                </v-expansion-panel-text>
-              </v-expansion-panel>
-              <!-- 
-              <v-expansion-panel value="_migration" class="border-b-thin">
-                <v-expansion-panel-title :color="$thx.color.migration">
-                  <v-icon>mdi-database-export</v-icon>
-                  _migration
-                </v-expansion-panel-title>
-                <v-expansion-panel-text>
-                  <migrations-view />
-                </v-expansion-panel-text>
-              </v-expansion-panel>
-              -->
-              <!-- by template tagnames -->
-              <v-expansion-panel v-for="tmpl in tags" :key="`tag-${tmpl.tagname}`"
-                class="border-b-thin"
-                :value="tmpl.el">
-                <v-expansion-panel-title :color="$thx.color.tag">
-                  <v-icon>{{ $thx.icon.tag }}</v-icon>
-                  {{ tmpl.tagname}}
-                  <v-spacer />
-                  <i>: {{ tmpl.summary }} &nbsp;</i>
-                </v-expansion-panel-title>
-                <v-expansion-panel-text>
-                  <tag-view :id="tmpl.el" v-bind="tmpl" />
-                </v-expansion-panel-text>
-              </v-expansion-panel>
-              <!-- datatypes -->
-              <v-expansion-panel value="_datatypes" class="border-b-thin">
-                <v-expansion-panel-title :color="$thx.color.datatype">
-                  <v-icon>{{ $thx.icon.datatype }}</v-icon>
-                  _datatypes
-                </v-expansion-panel-title>
-                <v-expansion-panel-text>
-                  <v-row v-for="tp in datatype_list" :key="tp.el">
-                    <v-col>
-                      <datatype-view :id="tp.el" :datatype="tp" />
-                    </v-col>
-                  </v-row>
-                </v-expansion-panel-text>
-              </v-expansion-panel>
-            </v-expansion-panels>
-          </v-sheet>
+          <collapsible-card title="_migration" icon="mdi-database-export" :default-open="false" actions>
+            <migrations-view />
+          </collapsible-card>
+        </v-col>
+      </v-row>
+      -->
+
+      <!-- by template -->
+      <v-row>
+        <v-col>
+          <collapsible-card v-for="tmpl in tags" :key="`tag-${tmpl.tagname}`"
+            v-model:open="open._tag[tmpl.tagname]"
+            :id="`/tag/${tmpl.tagname}`"
+            :card-props="{color: $thx.color.tag}" :title="tmpl.tagname" :icon="$thx.icon.tag">
+            <template #toolbar-sub><i>:{{ tmpl.summary }}</i></template>
+            <tag-view :id="tmpl.el" v-bind="tmpl" />
+          </collapsible-card>
+        </v-col>
+      </v-row>
+      <!-- by datatypes -->
+      <v-row>
+        <v-col>
+          <collapsible-card v-if="project_ready"
+            id="/datatype/" v-model:open="open._datatype"
+            :card-props="{color: $thx.color.datatype}" title="_datatypes" :icon="$thx.icon.datatype">
+            <v-row v-for="tp in datatype_list" :key="tp.el">
+              <v-col>
+                <datatype-view :id="`/datatype/${tp.name}`" :datatype="tp" />
+              </v-col>
+            </v-row>
+          </collapsible-card>
         </v-col>
       </v-row>
       <!-- full api references -->
@@ -117,6 +101,7 @@
 
 // navigation tab
 import appBar from './appbar.vue';
+import collapsibleCard from '@/components/collapsibleCard.vue';
 // import migrationsView from './migrations.vue';
 import tocView from './toc.vue';
 import infoView from './info.vue';
@@ -134,6 +119,7 @@ export default {
   name: 'viewerPage',
   components: {
     appBar,
+    collapsibleCard,
     // migrationsView,
     datatypeView,
     endpointView,
@@ -181,8 +167,15 @@ export default {
   },
   data() {
     return {
-      opentabs: [],
+      open:{
+        _about: false,
+        _tag: {},
+        _datatype: false,
+        _endpoint: {},
+      },
+      // opentabs: [],
       scrollspy: {},
+
     }
   }
 }

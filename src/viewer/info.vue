@@ -1,21 +1,23 @@
 <template>
-  <v-card elevation="0" :color="$thx.color.primary">
-    <v-card-item>
-      <v-card-title>{{ project.name }}</v-card-title>
-      <v-card-subtitle>{{ project.version }}</v-card-subtitle>
-    </v-card-item>
-    <v-card-text>
-      <v-row>
-        <!-- form links -->
-        <v-col cols="12" md="6">
-            <view-forms v-model="project" :fields="fields.summary" />
-        </v-col>
-        <v-col cols="12" md="6">
-            <view-forms v-model="project" :fields="fields.desc" />
-        </v-col>
-      </v-row>
-    </v-card-text>
-    <v-card-actions>
+  <collapsible-card
+    :open="open" @update:open="(v)=>$emit('update:open', v)"
+    :card-props="{color: $thx.color.primary}"
+    actions
+    :title="`_about :${project.name}`" icon="mdi-information" :default-open="false">
+    <template #card-item-title>{{ project.name }}</template>
+    <template #card-item-subtitle>{{ project.version }}</template>
+    <v-row>
+      <!-- form links -->
+      <v-col cols="12" md="6">
+          <view-forms v-model="project" :fields="fields.summary" />
+      </v-col>
+      <v-col cols="12" md="6">
+          <view-forms v-model="project" :fields="fields.desc" />
+      </v-col>
+    </v-row>
+
+    <template #card-actions>
+      <v-spacer />
       <!-- open document history view -->
       <v-btn text disabled>History</v-btn>
       <!-- show license & contributors -->
@@ -62,13 +64,14 @@
           </template>
         </v-list>
       </v-menu>
-    </v-card-actions>
-  </v-card>
+    </template>
+  </collapsible-card>
 </template>
 <script>
 import { mapState } from 'pinia';
 import { useProjectStore } from '@/stores/project';
 import viewForms from './forms.vue';
+import collapsibleCard from '@/components/collapsibleCard.vue';
 
 const link_icons = {
   github: 'mdi-github',
@@ -109,6 +112,7 @@ export default {
   name: 'infoViewer',
   components: {
     viewForms,
+    collapsibleCard,
   },
   methods: {
     expand_icon(value) {
@@ -117,6 +121,7 @@ export default {
   },
   props: {
     tab: String,
+    open: Boolean,
   },
   computed: {
     ...mapState(useProjectStore, ['project']),

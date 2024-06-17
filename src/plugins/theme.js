@@ -6,9 +6,9 @@ const themes = {
             primary: '#039BE5',
             secondary: '#43A047',
             accent: '#D81B60',
-            info: '',
-            warn: '',
-            danger: '',
+            info: 'info',
+            warn: 'warn',
+            danger: 'danger',
             migration: '#009688',
             datatype: '#43A047',
             tag: '#795548',
@@ -20,6 +20,19 @@ const themes = {
                 PUT: '#FF9800',
                 DELETE: '#F44336',
             },
+            http_status(status) {
+                const code = parseInt(status);
+                switch(true) {
+                    case code<200: 
+                        return this.info;
+                    case code<300: 
+                        return this.success;
+                    case code<400: 
+                        return this.info;
+                    default: 
+                        return this.dander;
+                }
+            }
         },
         icon: {
             about: 'mdi-information',

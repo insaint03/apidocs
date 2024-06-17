@@ -4,7 +4,7 @@
   <!-- mode array -->
   <array-items-view v-else-if="mode_array" :items="datatype.items" :label="label" />
   <!-- mode object -->
-  <object-items-view v-else-if="mode_object" :items="this.items" :label="label" :expending="expending" />
+  <object-items-view v-else-if="mode_object" :model-value="datatype.items" :label="label" :expending="expending" />
 </template>
 <script>
 import Datatype from '@/models/datatype';
@@ -29,7 +29,7 @@ export default {
     datatype: Datatype,
     expending: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     label: {
       type: String,
@@ -45,21 +45,6 @@ export default {
     },
     mode_object() {
       return this.datatype.origintype === 'object';
-    },
-    items() {
-      return this.datatype.items.map((it) => {
-          const basis = Datatype.find(it.datatype, true);
-          return {
-            ...it,
-            inherits: basis.inherits,
-            basis: basis,
-            items: basis.items,
-            origin: basis.basistype || basis.origintype,
-            title: basis.summary,
-            misc: basis.description,
-            expandable: basis.is_collective,
-          }
-      });
     },
     expand_all: {
       get() {
