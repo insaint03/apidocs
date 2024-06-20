@@ -141,11 +141,7 @@ export default class Datatype extends Descriptable {
      */
     get items() {
         // if null, it is array or object but typed "any"
-        if(this.is_object) {
-            return (this._items||[]);
-        } else if(this.is_array) {
-            return this._items || [];
-        } else if(this.is_enum) {
+        if(this.is_collective) {
             return this._items || [];
         }
         else {
@@ -162,7 +158,7 @@ export default class Datatype extends Descriptable {
             // when items gets object
             if(!Array.isArray(value) && typeof value === 'object') {
                 value = Object.entries(value)
-                    .map(([k,v])=>`${k}:${v}}`);
+                    .map(([k,v])=>`${k}:${v}`);
             }
             // add new items
             this.parse_add_item(...value);

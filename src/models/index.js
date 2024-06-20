@@ -55,9 +55,13 @@ export default {
         }
     },
 
-    get_tags(store) {
-        return Object.values(store.templates)
+    get_tags() {
+        return Object.values(this.templates)
             .filter((tmpl)=>tmpl.tagname!=null);
+            // .map((tmpl)=>({
+            //     ...tmpl,
+            //     entities: this.entities.filter((e)=>e.templates.includes(tmpl.name)),
+            // }));
     },
 
     get_tag_datatypes() {

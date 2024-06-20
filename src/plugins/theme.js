@@ -13,7 +13,7 @@ const themes = {
             datatype: '#43A047',
             tag: '#795548',
             template: '#FB8C00',
-            api: '#039BE5',
+            endpoint: '#039BE5',
             http_method: {
                 GET: '#43A047',
                 POST: '#FFC107',
@@ -38,10 +38,11 @@ const themes = {
             about: 'mdi-information',
             migration: 'mdi-database-export',
             tag: 'mdi-pound',
-            datatype: 'mdi-oci',
+            datatype: 'mdi-database-edit',
             endpoint: 'mdi-api',
             is_expanded: 'mdi-chevron-up',
             to_expanding: 'mdi-chevron-down',
+            external: 'mdi-open-in-new',
             links: {
                 github: 'mdi-github',
                 repository: 'mdi-source-repository',
@@ -60,6 +61,12 @@ const themes = {
         field: {
             variant: 'underlined',
             readonly: true,
+        },
+        table: {
+
+        },
+        button: {
+
         },
         expanding_icon(value) {
             return value ? this.icon.is_expanded : this.icon.to_expanding;

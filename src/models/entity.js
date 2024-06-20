@@ -27,12 +27,17 @@ export default class Entity extends Descriptable {
 
     // tmpls only holds template names(string)
     get template_names() {
-        return this._tmpls;
+        return this._tmpls || [];
     }
 
     get templates() {
         return this._tmpls.map(Template.find)
             .filter((t)=>t!=null);
+    }
+
+    // check template affiliation
+    affiliated(template_name) {
+        return this.template_names.includes(template_name);
     }
 
 

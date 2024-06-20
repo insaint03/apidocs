@@ -33,7 +33,7 @@
 </template>
 <script>
 import Request from '@/models/request';
-import objectItems from './objectItems.vue';
+import objectItems from '@/components/objectItems.vue';
 // import datatypeView from './datatype.vue';
 
 export default {

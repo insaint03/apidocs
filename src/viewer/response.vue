@@ -28,8 +28,8 @@
 </template>
 <script>
 import Response from '@/models/response';
-import objectItems from './objectItems.vue';
-import datatypeView from './datatype.vue';
+import objectItems from '@/components/objectItems.vue';
+import datatypeView from './section/datatype.vue';
 
 export default {
   name: 'responseView',

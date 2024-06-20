@@ -68,8 +68,8 @@ export const useProjectStore = defineStore('project', {
                 desc: content.project.description,
                 timestamp: content.timestamp || Date.now(),
             };
-            // announce state change
-            return models.state;
+            // // announce state change
+            // return models.state;
         },
         clears() {
             gtm.push('clear', {});

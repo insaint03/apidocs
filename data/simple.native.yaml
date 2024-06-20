@@ -56,7 +56,7 @@ datatypes:
     description: |-
       item array
     items:
-      "!item": item
+      - item
   access_token:
     basistype: string
     description: access token

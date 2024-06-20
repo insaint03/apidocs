@@ -116,9 +116,10 @@ export default class Template extends Descriptable {
         return tmpls.map((t)=>t.name || t);
     }
 
-    static setup({name, extend, tagname, description, request, response}) {
+    static setup({name, extend, tagname, datatypes, description, request, response}) {
         const tmpl = new Template(name, extend);
         tmpl.tagname = tagname || null;
+        tmpl.datatypes = datatypes || [];
         tmpl.description = description || null;
         tmpl.request = request || {};
         tmpl.response = response || {};

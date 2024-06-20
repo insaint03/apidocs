@@ -18,7 +18,10 @@ export default mergeConfig(
       coverage: {
         reporter: ['text-summary','html','json-summary'],
         reportOnFailure: true,
-      }
+      },
+      inspector: {
+        enabled: false,
+      },
     },
     resolve: {
       alias: {
