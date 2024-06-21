@@ -15,9 +15,21 @@
     <datatype-section v-for="dt in datatype_references" :key="`datatype-${dt.name}`"
       :datatype="dt" />
     <p>&nbsp;</p>
-    <endpoint-section v-for="ep, ei in endpathes" :key="`endpoint-${ei}.${ep}`"
-      :endpath="ep" :endpoints="endpoints[ep]" />
+    <!-- endpoints -->
+    <template v-for="(ep, ei) in endpathes" :key="`endpoint-${ei}.${ep}`">
+      <h2 :id="`/endpoint${ep}`" class="border-b-thin">
+        <v-btn flat icon readonly :title="`${ep}`">
+          <v-icon :color="$thx.color.endpoint">{{ $thx.icon.endpoint }}</v-icon>
+        </v-btn>
+        {{ ep }}
+      </h2>
+      <template v-for="eps,epi in endpoints[ep]" :key="`endpoint-${ei}.${ep}-${epi}`">
+        <endpoint-section  v-bind="eps" />
+      </template>
     <p>&nbsp;</p>
+      
+
+    </template>
   </v-container>
 </template>
 <script>
@@ -47,7 +59,7 @@ export default {
     datatypes: Object,
     templates: Object,
     entities: Array,
-    endpoints: Object,
+    // endpoints: Object,
     tags: Array,
     timestamp: Number,
   },
@@ -58,6 +70,7 @@ export default {
     },
     ...mapState(useProjectStore, [
       'endpathes',
+      'endpoints',
       'tag_datatypes',
       'tag_entities',
       'migrations',

@@ -1,15 +1,12 @@
 <template>
-  <div>
-    <mark-down :model-value="datatype.desc" />
-  </div>
-  <div>
-    <v-label>types</v-label>
+  <div class="ma-2 pa-1">
     <v-breadcrumbs :items="datatype.inherits" />
-  </div>
-  <div v-for="fld,fi in fields" :key="`datatype-field.${fld}.${fi}`">
-    <v-text-field v-bind="$thx.field" :label="fld" 
-      :model-value="datatype[fld]"
-      :disabled="!datatype[fld]" />
+    <mark-down :model-value="datatype.desc" />
+    <div v-for="fld,fi in fields" :key="`datatype-field.${fld}.${fi}`">
+      <v-text-field v-bind="$thx.field" :label="fld" 
+        :model-value="datatype[fld] || ' (unspecified)'"
+        :disabled="!datatype[fld]" />
+    </div>
   </div>
 </template>
 <script>

@@ -1,47 +1,43 @@
 <template>
-  
-  <v-table v-bind="$props">
+  <v-table v-if="items && 0<items.length" class="rounded my-2">
     <thead>
-      <slot name="header">
-      <!-- header -->
       <tr>
-        <td :colspan="columns.length">
+        <td colspan="3">
           <v-label>{{ label }}</v-label>
         </td>
       </tr>
-      </slot>
     </thead>
     <tbody>
-      <v-tooltip v-for="(item, row) in items" :key="`tv-${row}`" :disabled="!tooltip" location="center">
-        <template #activator="{ props }">
-          <tr v-bind="props">
-            <slot name="row-item" :row="row" :item="item" :columns="columns">
-              <td v-for="(column, col) in columns" :key="`tv-${row}-${col}`">
-                <slot name="`cell-item" :row="row" :col="col" :column="column" :item="item">
-                  {{ item[column] }}
-                </slot>
-              </td>
-            </slot>
-          </tr>
-        </template>
-        <slot name="tooltip" :item="item" :columns="columns" :row="row"></slot>
-      </v-tooltip>
+      <template v-for="(item, row) in items" :key="`tv-${row}`">
+        <tr class="border-b-thin">
+          <th>{{ item.key }}</th>
+          <td><v-breadcrumbs :items="typeprop(item.datatype, 'inherits')" /></td>
+          <td>
+            <v-text-field :model-value="typeprop(item.datatype, 'summary')" v-bind="$thx.field"
+              single-line hide-details readonly />
+          </td>
+        </tr>
+      </template>
     </tbody>
   </v-table>
 </template>
 <script>
+import Datatype from '@/models/datatype';
+
 export default {
   name: 'tableItemsView',
+  methods: {
+    typeprop(name, key) {
+      const dt = Datatype.find(name, false);
+      return dt ? dt[key] :null;
+    },
+
+  },
   props: {
     items: Array,
-    columns: Array,
-    tooltip: {
-      type: Boolean,
-      default: false,
-    },
     label: {
       type: String,
-      default: ()=>'table' 
+      default: '',
     },
   },
   data() {

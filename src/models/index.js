@@ -84,30 +84,30 @@ export default {
     },
 
     get_endpoints(store) {
-        return store.entities.reduce((agg, entity)=>{
+        return store.entities.reduce((agg, entity, index)=>{
             const pathname = entity.request.pathname;
             const method = entity.request.method;
             const requests = entity.request.body;
             const status = entity.response.status;
             const mimetype = entity.response.mimetype;
-            const resposnes = entity.response.body;
+            const responses = entity.response.body;
 
-            agg[pathname] = (agg[pathname] || [])
-                .concat([{
-                    title: entity.summary,
-                    desc: entity.description,
-                    tags: entity.tagnames,
-                    // request properties
-                    request: entity.request,
-                    pathname, 
-                    method, 
-                    requests, 
-                    // responnse properties
-                    response: entity.response,
-                    status, 
-                    mimetype, 
-                    resposnes,
-                }]);
+            agg[pathname] = (agg[pathname] || []);
+            agg[pathname].push({
+                index: index+1,
+                entity,
+                tags: entity.tagnames,
+                // request properties
+                request: entity.request,
+                pathname, 
+                method, 
+                requests,
+                // responnse properties
+                response: entity.response,
+                status,
+                mimetype,
+                responses,
+            });
             return agg;
         }, {});
     },

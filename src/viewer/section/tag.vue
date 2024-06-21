@@ -27,23 +27,17 @@
 
           <!-- apis -->
           <v-list-subheader title="endpoints" :color="$thx.color.endpoint" />
-          <v-list-item v-for="ep in entities" :key="`tag-${tag.tagname}.${ep.el}`"
-            class="tooltip" :href="`#/endpoint/${ep.el}/`"
-            :subtitle="ep.summary"
+          <v-list-item v-for="ep,ei in entities" :key="`tag-${tag.tagname}.${ei}`"
+            class="tooltip" :href="`#/endpoint/${ei+1}/`"
+            :title="ep.summary"
             :prepend-icon="$thx.icon.endpoint" :color="$thx.color.endpoint">
-            <v-list-item-title>
-              <v-toolbar flat density="compact" color="inherit">
-                <v-toolbar-items>
-                  <v-btn text flat readonly size="small">{{ ep.request.method }}</v-btn>
-                  {{ ep.request.pathname }}
-                </v-toolbar-items>
+            <v-list-item-subtitle>
+              <div class="d-flex flex-fill align-center justify-between">
+                <request-group :request="ep.request" size="small"  />
                 <v-spacer />
-                <v-toolbar-items>
-                  <v-btn text flat readonly size="small">{{ ep.response.mimetype }}</v-btn>
-                  <v-btn text flat readonly size="small">{{ ep.response.status }}</v-btn>
-                </v-toolbar-items>
-              </v-toolbar>
-            </v-list-item-title>
+                <response-group :response="ep.response" size="small" />
+              </div>
+            </v-list-item-subtitle>
           </v-list-item>
         </v-list>
       </v-col>
@@ -57,6 +51,8 @@ import Datatype from '@/models/datatype';
 // import Datatype from './datatype.vue';
 
 import cardSection from './card.vue';
+import requestGroup from '@/viewer/components/requestGroup.vue';
+import responseGroup from '@/viewer/components/responseGroup.vue';
 // import tableItems from '@/viewer/components/tableItems.vue';
 // import listItems from '@/viewer/components/listItems.vue';
 
@@ -64,8 +60,8 @@ export default {
   name: 'tagSection',
   components: {
     cardSection,
-    // listItems,
-    // tableItems,
+    requestGroup,
+    responseGroup,
   },
   props: {
     tag: Template,

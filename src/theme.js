@@ -15,6 +15,7 @@ export default {
     },
     field: {
         variant: 'underlined',
+        placeholder: '(unspecified)'
     },
     expanding_icon(value) {
         return `mdi-chevron-${value?'up':'down'}`;

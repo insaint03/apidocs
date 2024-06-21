@@ -20,10 +20,11 @@ const themes = {
                 PUT: '#FF9800',
                 DELETE: '#F44336',
             },
+            markdown: '#263238',
             http_status(status) {
                 const code = parseInt(status);
                 switch(true) {
-                    case code<200: 
+                    case code<=200: 
                         return this.info;
                     case code<300: 
                         return this.success;

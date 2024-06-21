@@ -5,13 +5,16 @@
         <slot name="card-title"></slot>
       </div>
       <v-spacer />
-      <v-btn-group v-if="0<items.length">
-        <v-btn v-for="it,ii in items" :key="`section-toggle-${it}.${ii}`" text flat
-          :color="expanding.includes(it)?color:'default'"
-          @click="toggle(it)">
-          {{ it }}
-        </v-btn>
-      </v-btn-group>
+      <slot name="items">
+        <v-btn-group v-if="0<items.length" density="compact">
+          <v-btn v-for="it,ii in items" :key="`section-toggle-${it}.${ii}`" text flat
+            size="small"
+            :color="expanding.includes(it)?color:'default'"
+            @click="toggle(it)">
+            {{ it }}
+          </v-btn>
+        </v-btn-group>
+      </slot>
     </v-card-title>
     <v-divider />
     <!-- defaults -->
@@ -29,6 +32,7 @@
         </template>
       </v-row>
     </v-card-text>
+    <slot name="append"> </slot>
   </v-card>
 </template>
 <script>

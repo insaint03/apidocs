@@ -2,7 +2,8 @@
   <v-list v-if="project!=null">
     <!-- project info -->
     <v-list-subheader>about the project</v-list-subheader>
-    <v-list-item :title="project.name" :subtitle="project.version" 
+    <v-list-item :title="project.name" :subtitle="project.version"
+      :tooltip="project.location" 
       value="about" :color="$thx.color.primary"
       @click="opens('_about')"
       href="#/about/">
@@ -17,7 +18,7 @@
       value="tag" :color="$thx.color.tag"
       @click="opens(`_tag.${tmpl.tagname}`)"
       :title="tmpl.tagname" :subtitle="tmpl.summary"
-      :href="`#/tag/${tmpl.tagname}`"
+      :href="`#/tag/${tmpl.tagname}/`"
     >
       <template #prepend>
         <v-icon>{{ $thx.icon.tag }}</v-icon>
@@ -43,9 +44,9 @@
           </template>
         </v-list-item>
       </template>
-      <v-list-item v-for="tp in datatype_list" :key="`toc.datatypes-${tp.name}`"
+      <v-list-item v-for="tp in Object.values(datatypes).filter((d)=>d.is_collective)" :key="`toc.datatypes-${tp.name}`"
         @click="opens(`_datatype.${tp.name}`)"
-        :href="`#/datatype/${tp.name}`"
+        :href="`#/datatype/${tp.name}/`"
         :title="tp.name" :subtitle="tp.basistype"></v-list-item>
     </v-list-group>
     <v-divider />
@@ -89,7 +90,7 @@ export default {
   computed: {
     ...mapState(useProjectStore, [
       'project', 
-      'datatype_list',
+      'datatypes',
       'templates',
       'endpathes',
       'migrations',
