@@ -13,6 +13,11 @@ const routes = Object.entries({
   path: `/${name}`,
   component: component,
 }));
+routes.push({
+  name: 'index',
+  path: '/',
+  component: viewerScreen,
+})
 
 const router = createRouter({
   // history: createWebHashHistory(),
