@@ -21,9 +21,9 @@ export default class Descriptable {
     }
 
     set description(value) {
-        const lines = (value || '').split('\n')
-            .map((t)=>t.trim())
-            .filter((t)=>t && t.length>0);
+        const lines = (value || '').split('\n');
+            // .map((t)=>t.trim())
+            // .filter((t)=>t && t.length>0);
 
         this._summary = lines.shift();
         this._desc = lines.join('\n');

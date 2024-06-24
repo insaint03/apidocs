@@ -1,19 +1,23 @@
 <template>
   <v-card flat :color="color">
-    <v-card-item>
-      <v-card-subtitle>{{ subtitle }}</v-card-subtitle>
-      <v-card-title>{{ title }}</v-card-title>
-    </v-card-item>
+    <slot name="header">
+      <v-card-item>
+        <v-card-subtitle>{{ subtitle }}</v-card-subtitle>
+        <v-card-title>{{ title }}</v-card-title>
+      </v-card-item>
+    </slot>
     <v-card-text>
-      <!-- queries -->
-      <table-items v-if="queries" :items="queries" label="queries"  />
-      <!-- cookies -->
-      <table-items v-if="modelValue.cookies" :items="modelValue.cookies" label="cookies"  />
-      <!-- headers -->
-      <table-items v-if="modelValue.headers" :items="modelValue.headers" label="headers"  />
-      <!-- body -->
-      <datatypeItems v-if="modelValue.body" :datatype="modelValue.body" label="body" />
-      <!-- <table-items v-if="modelValue.body && modelValue.body.items" :items="modelValue.body.items" label="body"  /> -->
+      <slot name="body">
+        <!-- queries -->
+        <table-items v-if="queries" :items="queries" label="queries"  />
+        <!-- cookies -->
+        <table-items v-if="modelValue.cookies" :items="modelValue.cookies" label="cookies"  />
+        <!-- headers -->
+        <table-items v-if="modelValue.headers" :items="modelValue.headers" label="headers"  />
+        <!-- body -->
+        <datatypeItems v-if="modelValue.body" :datatype="modelValue.body" label="body" />
+        <!-- <table-items v-if="modelValue.body && modelValue.body.items" :items="modelValue.body.items" label="body"  /> -->
+      </slot>
     </v-card-text>
 
   </v-card>
@@ -34,9 +38,12 @@ export default {
     color: { type: String, required: false, default: 'primary' },
     title: { type: String, required: false, default: 'title' },
     subtitle: { type: String, required: false, default: 'subtitle' },
-    queries: { type: Array, required: false, default: null}
+    // queries: { type: Array, required: false, default: null}
   },
   computed: {
+    queries() {
+      return this.modelValue.queries;
+    },
     cookies() {
       return this.modelValue.cookies;
     },

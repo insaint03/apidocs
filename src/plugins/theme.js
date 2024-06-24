@@ -61,7 +61,7 @@ const themes = {
         },
         field: {
             variant: 'underlined',
-            readonly: true,
+            readonly: /^(\/|\/view\/?)$/i.test(window.location.pathname),
         },
         table: {
 

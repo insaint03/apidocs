@@ -11,34 +11,47 @@
     <!-- summary description -->
     <v-row>
       <v-col>
-        <div>{{ tag.summary }}</div>
-        <mark-down :model-value="tag.desc"  />
+        <i>{{ tag.summary }}</i>
+        <mark-down :model-value="tag.descr"  />
       </v-col>
       <v-col>
         <v-list>
           <!-- datatypes -->
           <v-list-subheader title="datatypes" :color="$thx.color.datatype" />
-          <v-list-item v-for="dt in datatype_items" :key="`tag-${tag.tagname}.${dt.name}`"
-            class="tooltip" :href="`#/datatype/${dt.name}/`"
-            :title="dt.localname" :subtitle="dt.summary" 
-            :prepend-icon="$thx.icon.datatype" :color="$thx.color.datatype" />
+          <template v-for="dt in datatype_items" :key="`tag-${tag.tagname}.${dt.name}`">
+            <datatype-tool-card :modelValue="dt">
+              <template #default="{props}">
+                <v-list-item  v-bind="props"
+                  class="tooltip" :href="`#/datatype/${dt.name}/`"
+                  :title="dt.localname" :subtitle="dt.summary" 
+                  :prepend-icon="$thx.icon.datatype" :color="$thx.color.datatype" />
+              </template>
+            </datatype-tool-card>
+          </template>
+
           
           <v-divider />
 
           <!-- apis -->
           <v-list-subheader title="endpoints" :color="$thx.color.endpoint" />
-          <v-list-item v-for="ep,ei in entities" :key="`tag-${tag.tagname}.${ei}`"
-            class="tooltip" :href="`#/endpoint/${ei+1}/`"
-            :title="ep.summary"
-            :prepend-icon="$thx.icon.endpoint" :color="$thx.color.endpoint">
-            <v-list-item-subtitle>
-              <div class="d-flex flex-fill align-center justify-between">
-                <request-group :request="ep.request" size="small"  />
-                <v-spacer />
-                <response-group :response="ep.response" size="small" />
-              </div>
-            </v-list-item-subtitle>
-          </v-list-item>
+          <template v-for="ep,ei in entities" :key="`tag-${tag.tagname}.${ei}`">
+            <endpoint-tool-card :modelValue="ep">
+              <template #default="{ props }">
+                <v-list-item v-bind="props"
+                  class="tooltip" :href="`#/endpoint/${ei+1}/`"
+                  :title="ep.summary"
+                  :prepend-icon="$thx.icon.endpoint" :color="$thx.color.endpoint">
+                  <v-list-item-subtitle>
+                    <div class="d-flex flex-fill align-center justify-between">
+                      <request-group :request="ep.request" size="small"  />
+                      <v-spacer />
+                      <response-group :response="ep.response" size="small" />
+                    </div>
+                  </v-list-item-subtitle>
+                </v-list-item>
+              </template>
+            </endpoint-tool-card>
+          </template>
         </v-list>
       </v-col>
     </v-row>
@@ -53,6 +66,8 @@ import Datatype from '@/models/datatype';
 import cardSection from './card.vue';
 import requestGroup from '@/viewer/components/requestGroup.vue';
 import responseGroup from '@/viewer/components/responseGroup.vue';
+import datatypeToolCard from '@/components/datatypeToolCard.vue'
+import endpointToolCard from '@/components/endpointToolCard.vue'
 // import tableItems from '@/viewer/components/tableItems.vue';
 // import listItems from '@/viewer/components/listItems.vue';
 
@@ -62,6 +77,9 @@ export default {
     cardSection,
     requestGroup,
     responseGroup,
+
+    datatypeToolCard,
+    endpointToolCard,
   },
   props: {
     tag: Template,

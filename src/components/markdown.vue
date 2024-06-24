@@ -23,7 +23,7 @@ export default {
   },
   computed: {
     htmls() {
-      return this.markdown.render(this.value || '');
+      return this.markdown.render(this.modelValue || '');
     }
   },
   data() {
@@ -33,7 +33,7 @@ export default {
         style: Object.entries(this.$thx.color.markdown)
           .map(([k,v])=>`${k}:${v}`).join(';'),
       },
-      value: this.modelValue,
+      // value: this.modelValue,
     };
   }
 }

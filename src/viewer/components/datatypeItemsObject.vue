@@ -1,5 +1,5 @@
 <template>
-  <v-table v-bind="$thx.table" class="rounded-lg">
+  <v-table v-bind="$thx.table" class="rounded-lg" style="min-width: 30vw;">
     <thead>
       <tr>
         <td colspan="2">

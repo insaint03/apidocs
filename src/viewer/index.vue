@@ -1,6 +1,5 @@
 <template>
   <!-- app bar -->
-  <app-bar />
   <v-main app>
     <document-view v-if="project_ready" 
       :project="project"
@@ -19,11 +18,11 @@
 // on empty
 
 // navigation tab
-import appBar from './appbar.vue';
+import appBar from '@/components/appbar.vue';
 // import migrationsView from './migrations.vue';
 
 import documentView from './document.vue';
-import emptyView from './empty.vue';
+import emptyView from '@/components/empty.vue';
 // import tagView from './tags.vue';
 
 
@@ -72,9 +71,6 @@ export default {
       'migrations',
       'timestamp',
       'recents',
-    ]),
-    ...mapState(useExampleStore, [
-      'list'
     ]),
   },
   data() {
