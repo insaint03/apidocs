@@ -1,13 +1,19 @@
 <template>
-  <v-list-subheader>{{ label }}</v-list-subheader>
+  <v-list-subheader v-if="label">{{ label }}</v-list-subheader>
   <v-list-item v-for="(item,ii) in items" :key="`liner-${label}.${ii}`"
-    :title="item.title" :subtitle="item.description">
+    :title="item.title" :subtitle="item.description"
+    :active="editable">
     <template #prepend>
-      <v-btn :title="item.keytype" flat readonly>
-        <v-icon v-if="icons">{{ icons[item.keytype] }}</v-icon>
+      <v-btn :title="item.keytype" flat readonly style="background:inherit;color:inherit">
+        <v-icon v-if="icons && icons[item.keytype]">{{ icons[item.keytype] }}</v-icon>
         <span v-else>
           {{ (item.keytype || '').substr(0,3).toUpperCase() }}
         </span>
+      </v-btn>
+    </template>
+    <template #append v-if="editable">
+      <v-btn icon flat @click="$emit('close', item)" style="background:inherit;color:inherit">
+        <v-icon>mdi-close</v-icon>
       </v-btn>
     </template>
     <ul v-if="has_links(item)">
@@ -25,7 +31,7 @@
  * description
  */
 export default {
-  name: 'linerList',
+  name: 'linerListGroup',
   methods: {
     has_links(item) {
       return item.links && 0<item.links.length;
@@ -41,6 +47,7 @@ export default {
     label: String,
     items: Array,
     icons: { type: Object,required: false },
+    editable: { type: Boolean, required: false, default: false },
   },
   computed: {
 

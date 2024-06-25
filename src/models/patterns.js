@@ -119,7 +119,7 @@ export default class Patterns {
                 agg.keytype = keymatch.groups.keytype;
             }
             else if(linkmatch) {
-                const links = linkmatch.groups.links.split(/[,\s*]+/g)
+                const links = linkmatch.groups.links.split(/[,\n*]+/g)
                     .map((ln)=>ln.split(/\|/).map((t)=>t.trim()).filter((t)=>t))
                     .map(([href,anchor,])=>({href, anchor: anchor || href}));
                 agg.links = (agg.links || []).concat(links)

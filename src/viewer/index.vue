@@ -14,26 +14,17 @@
   </v-main>
 </template>
 <script>
-// import models from '@/models'
-// on empty
-
-// navigation tab
-import appBar from '@/components/appbar.vue';
-// import migrationsView from './migrations.vue';
 
 import documentView from './document.vue';
 import emptyView from '@/components/empty.vue';
-// import tagView from './tags.vue';
 
 
 import { mapActions, mapState } from 'pinia';
 import { useProjectStore } from '@/stores/project';
-import { useExampleStore } from '@/stores/example';
 
 export default {
   name: 'viewerPage',
   components: {
-    appBar,
     // emptyView,
     documentView,
     emptyView,

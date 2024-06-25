@@ -18,7 +18,7 @@
       </v-col>
       <v-col class="d-flex align-start justify-end">
         <div>
-          <v-label class="d-flex flex-fill">&copy;dxnlab presents since 2024</v-label><br />
+          <v-label class="d-flex flex-fill">&copy;dxnlab. &lt;yg.song&gt; presents</v-label><br />
           <v-btn class="inherit" text href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank"
             title="license via Creative Commons BY-NC-SA 4.0">
             CC BY-NC-SA &nbsp;
@@ -42,8 +42,10 @@ export default {
   data() {
     return {
       supplied: [
-        {title: 'vuetify', subtitle: 'component framework', href: 'https://vuetifyjs.com'},
-        {title: 'markdown-it', subtitle: 'markdown', href: 'https://markdown-it.github.io'},
+        {title: 'vuetify', icon:'$vuetify', subtitle: 'components/layout', href: 'https://vuetifyjs.com'},
+        {title: 'markdown-it', icon:'mdi-language-markdown', subtitle: 'markdown', href: 'https://markdown-it.github.io'},
+        {title: 'material design icons', icon:'mdi-material-design', subtitle: 'icons', href: 'https://pictogrammers.com/'},
+        {title: 'github', icon: 'mdi-github', subtitle: 'Repository & others', href: 'https://github.com/insaint03/apidocs' },
       ]
     };
   }

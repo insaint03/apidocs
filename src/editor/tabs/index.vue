@@ -1,6 +1,6 @@
 <template>
   <v-bottom-navigation v-model="tab" color="primary" grow shift mandatory flat>
-    <v-btn v-for="item in editTabs" :key="`tab-nav.${item.key}`" @click="tab=item.key" :value="item.key" :color="item.color || 'default'" >
+    <v-btn v-for="item in editTabs" :key="`tab-nav.${item.key}`" @click="tab=item.key" :value="item.key" :color="$thx.color[item.key]" >
       <v-icon>{{ $thx.icon[item.icon] || `mdi-${item.icon}`  }}</v-icon>
       <span>{{ item.title || item.key }}</span>
     </v-btn>
@@ -14,14 +14,14 @@
 </template>
 <script>
 import Project from '@/models/project';
-import editTabs from './index.js';
+import tabs from './index.js';
 
-const tab_defaults = 'entities';
+const tab_defaults = 'endpoint';
 
 export default {
   name: 'editView',
   components: {
-    ...editTabs.map((tab) => tab.component).filter((c) => c!=null),
+    ...tabs.components,
   },
   methods: {
 
@@ -56,7 +56,7 @@ export default {
   },
   data() {
     return {
-      editTabs,
+      editTabs:tabs.editTabs,
       tab:tab_defaults,
       nav_left: false,
       nav_right: false,

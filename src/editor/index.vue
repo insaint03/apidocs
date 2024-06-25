@@ -16,7 +16,6 @@
 import { mapActions, mapState } from 'pinia';
 import { useProjectStore } from '@/stores/project';
 
-import appBar from '@/components/appbar.vue';
 import editView from './tabs/index.vue';
 import emptyView from '@/components/empty.vue';
 
@@ -25,7 +24,6 @@ import emptyView from '@/components/empty.vue';
 export default {
   name: 'editorPage',
   components: {
-    appBar,
     editView,
     emptyView,
     
