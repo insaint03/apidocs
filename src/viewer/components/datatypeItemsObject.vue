@@ -34,7 +34,7 @@
         </tr>
         <tr v-show="expanded[it.key]">
           <td colspan="3">
-
+            <mark-down :model-value="it.desc" />
           </td>
         </tr>
       </template>
@@ -53,15 +53,11 @@ import Datatype from '@/models/datatype';
 export default {
   name: 'datatypeItems',
   methods: {
-    typeprop(name, key) {
-      const dt = Datatype.find(name);
-      return dt ? dt[key] :null;
-    },
     inheritance(tp) {
-      return this.typeprop(tp, 'inherits');
+      return Datatype.typeprop(tp, 'inherits');
     },
     summary_of(tp) {
-      return this.typeprop(tp, 'summary')
+      return Datatype.typeprop(tp, 'summary')
     },
   },
   props: {
@@ -78,6 +74,9 @@ export default {
       }    
     },
 
+  },
+  mounted() {
+    console.log('items', this.datatype.name, this.datatype.items);
   },
   data() {
     return {

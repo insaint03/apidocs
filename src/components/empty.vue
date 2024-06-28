@@ -57,7 +57,7 @@ export default {
   },
   // degug
   mounted() {
-    this.loads(this.list[0].location);
+    // this.loads(this.list[0].location);
   },
 }
 </script>

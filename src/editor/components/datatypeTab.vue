@@ -1,118 +1,109 @@
 <template>
-  <v-navigation-drawer loctaion="left" :model-value="modelValue" title="datatypes" permanent>
-    <v-list>
-      <v-list-subheader>Parameters</v-list-subheader>
+  <v-navigation-drawer class="fill-height pa-0"
+    order="1"
+    loctaion="left" :model-value="show" permanent>
+    <v-list
+      :color="$thx.color.datatype"
+      @click.stop="selection=[]"
+      multiple selectable slim>    
+      <v-list-subheader>datatypes</v-list-subheader>
+      <v-list-item>
+
+      </v-list-item>
       <v-divider />
-      <v-list-group value="form-area">
-        <template #activator="{ props }">
-          <v-list-item v-bind="props">
-            <v-text-field v-model="search_text" label="Name" hide-details clearable
-              append-inner-icon="mdi-plus" @click:append-inner.stop="appends('string', search_text)" @click.stop />
-            <!-- appending icon -->
-          </v-list-item>
-          <v-divider />
-        </template>
-        <!-- search -->
-        <!-- type hierarchy filter -->
-        <v-list-item title="descendant">
-        </v-list-item>
-        <!-- show migrations only -->
-        <v-list-item title="migrations">
-        </v-list-item>
-      </v-list-group>
-      <v-divider />
-      <!-- primitive grouping -->
-      <v-list-group v-for="grp in groupeds" :key="`param-grp.${grp.name}.${treeshaped}`" :value="grp.name">
-        <template #activator="{ props }">
-          <v-list-item v-bind="props" v-show="0<grp.items.length">
-            <v-list-item-title>
-              {{ grp.name }}
-              <v-badge inline :content="items_count_of(grp)" />
-            </v-list-item-title>
-          </v-list-item>
-        </template>
-        <v-list-item v-for="it in grp.items" :key="`param-item.${grp.name}.${it.name}`" 
-          :title="it.name" :subtitle="it.basistype"
-          v-show="search(it)"
-          @click="(ev)=>selecting(ev,it)">
-        </v-list-item>
-      </v-list-group>
+      <template v-for="origin,oi in origins" :key="`nav-left-datatype-${origin}.${oi}`">
+        <v-divider v-if="oi!=0" />
+        <v-list-subheader v-show="0<items[origin].length"
+          @click.stop>{{ origin }}</v-list-subheader>
+        <v-list-item 
+          v-for="item,ii in items[origin]" :key="`nav-left.${origin}-${item.name}.${ii}`"
+          @click.stop="($ev)=>selecting($ev, item.name)"
+          :active="selection.includes(item.name)"
+          :title="item.name" :value="item.name" />
+      </template>
     </v-list>
   </v-navigation-drawer>
 </template>
 
 <script>
 import Datatype from '@/models/datatype';
-import { mapWritableState, mapActions } from 'pinia';
-import { useParameterStore } from '@/stores/parameter';
+// Datatype origins sort order 
+//  by object, enum, array, string, number, bytes, boolean.
+// const datatype_origins = [
+//   'object',
+//   'enum',
+//   'array',
+//   'string',
+//   'number',
+//   'blob',
+//   'boolean'
+// ];
+
 
 
 export default {
   name: 'datatypeTab',
   methods: {
-    items_count_of(origin) {
-      return this.items_of(origin).length;
-    },
-    items_of(origin) {
-      return this.items.filter((it) => it.is_descendant_of(origin));
-    },
     init() {
     },
     selecting(ev, it) {
       if(ev.ctrlKey) {
-        this.multi_select(it);
+        // multiselect: select toggle
+        this.selection
+          = this.selection.includes(it)
+            ? this.selection.filter((v)=>v!==it)
+            : [...this.selection, it];
       } else {
-        this.single_select(it);
+        // single select: change the selection item
+        this.selection = [it];
       }
+      this.$emit('update:model-value', this.selection);
     },
-    ...mapActions(useParameterStore, [
-      'search','unselect','single_select','multi_select','appends','tree_shaped'
-    ]),
-  },
-  watch: {
-    selection() {
-      this.$emit('select', this.selection);
-    }
   },
   props: {
     modelValue: {
+      type: Array,
+      required: true,
+    },
+    show: {
       type: Boolean,
       required: true,
-    }
+    },
+    datatypes: {
+      type: Object,
+      required: true,
+    },
   },
   onUpdated() {
 
   },
   computed: {
-    item_groups() {
-      return Datatype.origins.map((o)=>{
-        return {
-          group: o,
-          name: o.name,
-          items: this.ordereds.filter((it)=>it.origintype == o.name),
-          _tick: this.tree_shaped,
-        }
-      }).filter((grp)=>grp.items.length >0);
+    types() {
+      return Object.values(this.datatypes)
+        .filter(t=>!t.is_primitive);
+
     },
-    search_pattern() {
+    pattern() {
       return this.search ? new RegExp(this.search, 'i') : null;
     },
-    ...mapWritableState(useParameterStore, [
-      'all',
-      'origins',
-      'items',
-      'ordereds',
-      'search_text',
-      'groupeds',
-      'treeshaped',
-    ]),
+    items() {
+      let ret = Object.fromEntries(this.origins.map((origintype)=>[
+        origintype,
+        this.types
+          .filter((v)=>v.origintype===origintype
+          && !(this.pattern && !this.pattern.test(v.name)))
+      ]));
+      return ret;
+    },
   },
   data() {
     return {
+      search: null,
       value: this.modelValue,
-      open_groups: [],
-      selection: null,
+      origins: Datatype.origins.map((d)=>d.name),
+      open_groups: ['object','enum'],
+      selection: [],
     }
   }
 }
-</script>@/stores/parameter@/models/datatype
+</script>

@@ -17,14 +17,19 @@
       </v-col>
       <v-col v-if="modelValue.items">
         <v-list line="two" density="compact">
-          <v-list-subheader>properties</v-list-subheader>
-          <v-list-item 
-            v-for="(it,ii) in modelValue.items" :key="`datatype-item-${ii}`"
-            :title="it.key" :subtitle="summarize(it.datatype) || ':'">
-            <template #append>
-              <v-breadcrumbs :items="inheritance(it.datatype)" class="pa-1" />
-            </template>
-          </v-list-item>
+          <template v-if="modelValue.is_object">
+            <v-list-subheader>properties</v-list-subheader>
+            <v-list-item 
+              v-for="(it,ii) in modelValue.items" :key="`datatype-item-${ii}`"
+              :title="it.key" :subtitle="summarize(it.datatype) || ':'">
+              <template #append>
+                <v-breadcrumbs :items="inheritance(it.datatype)" class="pa-1" />
+              </template>
+            </v-list-item>
+          </template>
+          <template v-else-if="modelValue.is_array">
+            
+          </template>
         </v-list>
       </v-col>
     </v-row>

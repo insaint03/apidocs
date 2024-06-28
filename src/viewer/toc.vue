@@ -38,11 +38,11 @@
     <!-- datatypes -->
     <v-list-group value="datatypes">
       <template #activator="{ props }">
-        <v-list-item v-bind="props" title="datatypes" :color="$thx.color.datatype">
-          <template #prepend>
-            <v-icon>{{ $thx.icon.datatype }}</v-icon>
-          </template>
-        </v-list-item>
+        <v-list-item v-bind="props" 
+          title="datatypes" 
+          :color="$thx.color.datatype" 
+          :prepend-icon="$thx.icon.datatype"
+          href="#/datatype/" />
       </template>
       <v-list-item v-for="tp in Object.values(datatypes).filter((d)=>d.is_collective)" :key="`toc.datatypes-${tp.name}`"
         @click="opens(`_datatype.${tp.name}`)"
@@ -53,12 +53,12 @@
     <!-- apis -->
     <v-list-group value="endpoints">
       <template #activator="{ props }">
-        <v-list-item v-bind="props" title="endpoints" value="endpoints"
-          :color="$thx.color.api">
-          <template #prepend>
-            <v-icon>{{ $thx.icon.endpoint }}</v-icon>
-          </template>
-        </v-list-item>
+        <v-list-item v-bind="props" 
+          title="endpoints" 
+          value="endpoints"
+          :color="$thx.color.api"
+          :prepend-icon="$thx.icon.endpoint"
+          href="#/endpoint/" />
       </template>
       <v-list-item v-for="(ep,ei) in endpathes" :key="`toc.apis-${ei}.${ep}`"
         @click="opens(`_endpoint.${ep}`)"

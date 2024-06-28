@@ -17,18 +17,18 @@
       <template v-for="it,ii in datatype.items" :key="`dt-item.${it}x${ii}`">
         <tr @click="expanded[it] = !expanded[it]">
           <th>
-            - {{ it }}
+            - {{ it.name }}
           </th>
           <td>
             <v-text-field :model-value="summary_of(it)" v-bind="$thx.field"
-            single-line hide-details placeholder="summary" readonly
-            :append-icon="$thx.expanding_icon(expanded[it.key])"
-            min-width="5vw" />
+              single-line hide-details placeholder="summary" readonly
+              :append-icon="$thx.expanding_icon(expanded[it.key])"
+              min-width="5vw" />
           </td>
         </tr>
         <tr v-show="expanded[it.key]">
           <td colspan="2">
-            <!-- TODO: fill in -->
+            <mark-down :model-value="it.desc" />
           </td>
         </tr>
       </template>

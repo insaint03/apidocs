@@ -1,12 +1,14 @@
 <template>
   <datatype-items-object v-if="datatype.is_object" v-bind="$props" />
   <datatype-items-array v-else-if="datatype.is_array" v-bind="$props" />
+  <datatype-items-enum v-else-if="datatype.is_enum" v-bind="$props" />
 </template>
 <script>
 import Datatype from '@/models/datatype';
 
 import datatypeItemsObject from './datatypeItemsObject.vue';
 import datatypeItemsArray from './datatypeItemsArray.vue';
+import datatypeItemsEnum from './datatypeItemsEnum.vue';
 
 const headers = {
   object: ' {',
@@ -24,6 +26,7 @@ export default {
   components: {
     datatypeItemsObject,
     datatypeItemsArray,
+    datatypeItemsEnum,
   },
   methods: {
     typeprop(name, key) {

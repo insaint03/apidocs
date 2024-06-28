@@ -32,7 +32,7 @@ describe('template model specifications', ()=>{
             const tmpl = new Template('name')
             const desc = 'summary\n\nbody'
             tmpl.description = desc;
-            expect(tmpl.description).toBe('summary\nbody');
+            expect(tmpl.description).toBe('summary\n\nbody');
             expect(tmpl.summary).toBe('summary');
             expect(tmpl.desc).toBe('body');
         });

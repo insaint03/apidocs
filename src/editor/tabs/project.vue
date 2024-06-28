@@ -27,18 +27,11 @@
         </v-col>
         
         <v-col xl="4" md="6" sm="12">
-          <v-textarea :model-value="value.description"
+          <markdown-field 
+            v-model="value.description" 
+            label="description"
             @change="describe"
-            label="description" v-bind="$thx.field" />
-          <v-divider>
-            <v-label>description preview</v-label>
-          </v-divider>
-          <v-card>
-            <v-card-title>{{ value.summary }}</v-card-title>
-            <v-card-text>
-              <mark-down v-model="value.desc" />
-            </v-card-text>
-          </v-card>
+            v-bind="$thx.field" />
         </v-col>
         <v-col xl="4" md="6" sm="12">
           <!-- project license -->
@@ -65,6 +58,7 @@ import singleLinerField from '@/editor/components/singleLinerField.vue';
 import multiLinerFields from '@/editor/components/multiLinerFields.vue';
 import keywordField from '@/editor/components/keywordField.vue';
 import historyField from '@/editor/components/historyField.vue';
+import markdownField from '@/components/markdownField.vue';
 
 export default {
   name: 'projectEditor',
@@ -73,6 +67,7 @@ export default {
     multiLinerFields,
     keywordField,
     historyField,
+    markdownField,
   },
   methods: {
     describe(ev) {
@@ -81,11 +76,11 @@ export default {
     }
   },
   props: {
-    modelValue: Project,
+    project: Project,
   },
   data() {
     return {
-      value: this.modelValue,
+      value: this.project,
     };
   }
 }

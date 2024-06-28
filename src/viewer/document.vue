@@ -7,15 +7,30 @@
     <info-section :project="project" />
     <p>&nbsp;</p>
     <!-- tag types -->
+    <v-toolbar flat :color="$thx.color.template" id="/tag/">
+      <v-toolbar-title>
+        <v-icon>{{ $thx.icon.tag }}</v-icon>
+      </v-toolbar-title>
+    </v-toolbar>
     <tag-section v-for="tmpl in tags" :key="`tag-${tmpl.tagname}`"
       :tag="tmpl" 
       :entities="entities.filter((e)=>e.affiliated(tmpl.name))"/>
     <p>&nbsp;</p>
     <!-- datatypes -->
+    <v-toolbar flat :color="$thx.color.datatype" id="/datatype/">
+      <v-toolbar-title>
+        <v-icon>{{ $thx.icon.datatype }}</v-icon>
+      </v-toolbar-title>
+    </v-toolbar>
     <datatype-section v-for="dt in datatype_references" :key="`datatype-${dt.name}`"
       :datatype="dt" />
     <p>&nbsp;</p>
     <!-- endpoints -->
+    <v-toolbar flat :color="$thx.color.endpoint" id="/endpoint/">
+      <v-toolbar-title>
+        <v-icon>{{ $thx.icon.endpoint }}</v-icon>
+      </v-toolbar-title>
+    </v-toolbar>
     <template v-for="(ep, ei) in endpathes" :key="`endpoint-${ei}.${ep}`">
       <h2 :id="`/endpoint${ep}`" class="border-b-thin">
         <v-btn flat icon readonly :title="`${ep}`">

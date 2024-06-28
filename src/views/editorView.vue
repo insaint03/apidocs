@@ -35,8 +35,7 @@
   <!-- main area window controlled by bottom navigation -->
   <v-main app>
   <!-- left navbar area/datatype -->
-    <datatype-tab v-if="show_datatype_tab" 
-      v-model="nav_left" />
+    <datatype-tab v-if="show_datatype_tab" v-model="nav_left" />
 
     <v-container fluid>
       <v-window v-model="tab">
@@ -190,11 +189,11 @@ export default {
       // templates: [],
 
       // selected items
-      selected_datatype: null,
       disabled_datatype_props: [],
+      selected_datatype: null,
       selected_entity: null,
       selected_template: null,
     }
   },
 }
-</script>@/stores/project
+</script>@/stores/project../editor/components

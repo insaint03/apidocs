@@ -25,11 +25,23 @@ export default class Patterns {
             required: !!match.required,
         }
     }
+    static item_parse_enum(token) {
+        // on enum, split first space (and/or common delimiters)
+        //  into value, and its description
+        const [value, desc] = token.split(/[\s:;-]+/);
+        return {
+            value, desc,
+        };
+
+    }
     // item key mapping
     static item_items = {itemId: 'key', itemTitle: 'key', itemSubtitle: 'datatype' };
 
     static item_serialize({key, datatype, defaults, required}) {
         return `${required?'!':''}${key}:${datatype}${defaults?`=${defaults}`:''}`;
+    }
+    static item_serialize_enum({value, desc}) {
+        return `${value} ${desc}`;
     }
 
     static map_items(values) {

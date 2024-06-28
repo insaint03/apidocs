@@ -52,7 +52,7 @@
           <!-- response card -->
           <v-col>
             <message-card :model-value="response"
-              :title="responses.name" :subtitle="`${mimetype} (${response.status_title})`"
+              :title="response.status_title" :subtitle="`${response.mimetype} (${response.status_title})`"
               :color="$thx.color.http_status(status)" />
           </v-col>
         </v-row>

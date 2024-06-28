@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer location="right" :model-value="modelValue" permanent>
+  <v-navigation-drawer order="9" location="right" :model-value="modelValue" permanent>
     <v-list-subheader>Templates</v-list-subheader>
     <!-- search control -->
     <v-text-field v-model="search" label="Search" outlined append-icon="mdi-magnify" />
@@ -27,7 +27,7 @@ export default {
   },
   computed: {
     ordereds() {
-      return [...this.templates]
+      return Object.values(this.templates)
         .sort((a, b) => a.name.localeCompare(b.name));
     },
     items() {

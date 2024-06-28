@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar app flat absolute color="black" :extended="extension" progress scroll-behavior="hide">
+  <v-app-bar flat absolute color="black" order="1" :extended="extension" progress scroll-behavior="hide">
     <v-menu>
       <template #activator="{ props }">
         <v-app-bar-nav-icon v-bind="props" />

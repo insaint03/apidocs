@@ -1,4 +1,4 @@
-import NameDuplication from "@/exceptions/NameDuplication";
+// import NameDuplication from "@/exceptions/NameDuplication";
 import ValueNotFound from "@/exceptions/ValueNotFound";
 import Datatype from "@/models/datatype";
 import { describe, expect, test, assert } from "vitest";
@@ -23,21 +23,22 @@ describe('datatype model specifications', ()=>{
                 expect(Datatype.find(dt.name, true)).toBe(dt);
             });  
         });
-        test('name duplications', ()=>{
-            const thename = rname('test');
-            const dt = Datatype.create(thename, 'string');
-            expect(dt).toBeInstanceOf(Datatype);
-            expect(()=>new Datatype(thename, 'string')).toThrow(NameDuplication);
-        });
-        test('name deduplication on create', ()=>{
-            const thename = rname('test');
-            const ctrl = Datatype.create(thename, 'string');
-            const exp = Datatype.create(thename, 'object');
-            expect(ctrl.name).toBe(thename);
-            expect(exp.name).not.toBe(thename);
-            expect(ctrl).toBeInstanceOf(Datatype);
-            expect(exp).toBeInstanceOf(Datatype);
-        });
+
+        // test('name duplications', ()=>{
+        //     const thename = rname('test');
+        //     const dt = Datatype.create(thename, 'string');
+        //     expect(dt).toBeInstanceOf(Datatype);
+        //     expect(()=>new Datatype(thename, 'string')).toThrow(NameDuplication);
+        // });
+        // test('name deduplication on create', ()=>{
+        //     const thename = rname('test');
+        //     const ctrl = Datatype.create(thename, 'string');
+        //     const exp = Datatype.create(thename, 'object');
+        //     expect(ctrl.name).toBe(thename);
+        //     expect(exp.name).not.toBe(thename);
+        //     expect(ctrl).toBeInstanceOf(Datatype);
+        //     expect(exp).toBeInstanceOf(Datatype);
+        // });
         test('non-existing basis type', ()=>{
             expect(()=>Datatype.create(rname('test'), 'this.will.never.be.exists')).toThrowError(ValueNotFound);
         });
@@ -195,7 +196,8 @@ describe('datatype model specifications', ()=>{
         test('get/set items at non-collective', ()=>{
             const thename = rname('test');
             const dt = new Datatype(thename, 'string');
-            expect(dt.parse_add_item('tests', '1','2','3')).toBeNull();
+            dt.items = ['tests','1','2','3'];
+            expect(dt.items).toBeNull();
         });
 
         test('get items at array', ()=>{
@@ -211,7 +213,7 @@ describe('datatype model specifications', ()=>{
             testset.forEach((v,i)=>{
                 // test auto generate
                 expect(Datatype.name_exists(v)).toBeTruthy();
-                expect(v).toBe(dt.items[i]);
+                expect(v).toBe(dt.items[i].name);
             });
         });
 

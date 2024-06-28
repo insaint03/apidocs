@@ -13,7 +13,7 @@ export default class Descriptable {
     }
 
     get desc() {
-        return this._desc || '';
+        return (this._desc || '').trim();
     }
 
     get description() {
@@ -21,11 +21,25 @@ export default class Descriptable {
     }
 
     set description(value) {
-        const lines = (value || '').split('\n');
+        // const lines = (value || '').split('\n');
             // .map((t)=>t.trim())
             // .filter((t)=>t && t.length>0);
 
-        this._summary = lines.shift();
-        this._desc = lines.join('\n');
+        this._summary = Descriptable.get_summary(value);
+        this._desc = Descriptable.get_desc(value);
     }
+
+    static get_summary(text) {
+        return (text || '').split('\n')
+            .shift();
+            // .map((t)=>t.trim())
+            // .filter((t)=>t && t.length>0);
+    }
+
+    static get_desc(text) {
+        return (text || '').split('\n')
+            .slice(1)
+            .join('\n');
+    }
+
 }

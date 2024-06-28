@@ -24,17 +24,12 @@ export default class Datatype extends Descriptable {
         this._defaults = null;
         this._items = null;
         this._migration = null;
-        
-        // name validation
-        if(Datatype._store.filter((p)=>p.name === name).length > 0) {
-            throw new NameDuplication(Datatype._type, name);
-        } else {
-            Datatype._store.push(this);
-        }
+    
+        Datatype._store.push(this);
     }
 
     get el() {
-        return `dt-${this.name}`;
+        return `datatype/${this.name}`;
     }
 
     get namespace() { return Patterns.naming_parse(this.name).namespace || ''; }
@@ -79,10 +74,10 @@ export default class Datatype extends Descriptable {
             queue.push(dt.name);
             return dt.is_origin;
         }, (d)=>d);
-        // remove self
-        queue.shift();
+        // do not remove self since 20240627
+        // queue.shift();
         // reverse top-down order
-        queue = queue.reverse();
+        // queue = queue.reverse();
         return queue;
     }
 
@@ -149,48 +144,32 @@ export default class Datatype extends Descriptable {
         }
 
     }
-    set items(value) {
-        // expect value to be an array of strings
-        if(this.is_collective) {
-            // clear previous items
-            this._items = [];
-            
-            // when items gets object
-            if(!Array.isArray(value) && typeof value === 'object') {
-                value = Object.entries(value)
-                    .map(([k,v])=>`${k}:${v}`);
-            }
-            // add new items
-            this.parse_add_item(...value);
-        }
-    }
-
-    parse_add_item(...tokens) {
-        // assert tokens to be string
-        tokens = tokens.filter((t)=>typeof t === 'string')
-        //
-        let auto_generates = [];
-
-        // clear non-collectives
-        if(this.is_object) {
-            tokens = tokens.map(Patterns.item_parse)
-                .map((it)=>Object.assign(it, {basistype: Datatype.find(it.datatype)}));
-            auto_generates = tokens
-                .map((t)=>t.datatype);
-        } else if(this.is_array) {
-            auto_generates = tokens;
-        } else {
+    get items_text() {
+        if(!this.is_collective) {
             return null;
         }
-        this._items = (this._items || []).concat(tokens);
-        // auto generate unspecified types
-        auto_generates
-            .filter((t)=>!Datatype.name_exists(t))
-            .forEach((t)=>{
-                Datatype.create(t, Datatype.default_basis);
-            });
-        return this.items;
+        return Datatype.serialize_items(this.origintype, this.items);
+        
     }
+
+    set items(value) {
+        // expect value to be an array of strings
+        if(!this.is_collective) { return; }
+
+        // when items gets object
+        if(typeof value === 'object' && !Array.isArray(value)) {
+            value = Object.entries(value)
+                .map(([k,v])=>`${k}:${v}`);
+        } 
+        // stringify its elements
+        if(Array.isArray(value)) {
+            value = value.map((v)=>typeof(v)==='string' ? v : v.toString());
+        } 
+        const appends = Datatype.parse_items(this.origintype, ...value);
+        this._items = [].concat(appends);
+    }
+
+    
 
     is_descendant_of(origin) {
         let comparative_name = origin.name || origin;
@@ -303,16 +282,17 @@ export default class Datatype extends Descriptable {
         }
         Datatype._store = [
             // foundational
-            {name: 'string', basis: null, summary: 'String', validation: (v)=>{ return typeof v === 'string'; }},
-            {name: 'number', basis: null, summary: 'Number', validation: (v)=>{ return typeof v === 'number'; }},
-            {name: 'boolean', basis: null, summary: 'Boolean', validation: (v)=>{ return typeof v === 'boolean'; }},
-            {name: 'array', basis: null, summary: 'Array', validation: (v)=>{ return Array.isArray(v); }},
-            {name: 'object', basis: null, summary: 'Object', validation: (v)=>{ return typeof v === 'object'; }},
+            {name: 'object', basis: null, summary: 'Object', validation: (v)=>(typeof v === 'object')},
             {name: 'enum', basis: null, summary: 'Enumeration', },
+            {name: 'array', basis: null, summary: 'Array', validation: (v)=>(Array.isArray(v))},
+            {name: 'string', basis: null, summary: 'String', validation: (v)=>(typeof v === 'string')},
+            {name: 'number', basis: null, summary: 'Number', validation: (v)=>(typeof v === 'number')},
+            {name: 'boolean', basis: null, summary: 'Boolean', validation: (v)=>(typeof v === 'boolean')},
+            {name: 'blob', basis: null, summary: 'Blob bytes', validation: (v)=>(true)},
             
             // advanced basis
-            {name: 'integer', basis: 'number', summary: 'Integer', validation: (v)=>{ return Number.isInteger(v); }},
-            {name: 'float', basis: 'number', summary: 'Float', validation: (v)=>{ return typeof v === 'number'; }},
+            {name: 'integer', basis: 'number', summary: 'Integer', validation: (v)=>(Number.isInteger(v))},
+            {name: 'float', basis: 'number', summary: 'Float', validation: (v)=>(typeof v === 'number')},
             {name: 'decimal', basis: 'string', summary: 'Decimal', desc: 'Decimal String', validation: (v)=>/^\d+$/.test(v)},
             {name: 'hex', basis: 'string', summary: 'Hexadecimal', desc: 'Hexadecimal String', validation: (v)=>/^[\da-fA-F]+$/.test(v)},
             {name: 'base64', basis: 'string', summary: 'Base64', desc: 'base64 formatted string', validation: (v)=>/^[\w+/]+={0,2}$/.test(v)},
@@ -368,14 +348,14 @@ export default class Datatype extends Descriptable {
     static create(prefix, basis) {
         // generate unique name
         let name = prefix || '';
-        let unique_counter = 0;
-        let max_iteration = 1e2;
-        while(Datatype.name_exists(name) && 0<max_iteration--) {
-            name = `${prefix}${++unique_counter}`;
-        }
-        if(max_iteration <= 0) {
-            name = `${prefix}${Date.now()}`;
-        }
+        // let unique_counter = 0;
+        // let max_iteration = 1e2;
+        // while(Datatype.name_exists(name) && 0<max_iteration--) {
+        //     name = `${prefix}${++unique_counter}`;
+        // }
+        // if(max_iteration <= 0) {
+        //     name = `${prefix}${Date.now()}`;
+        // }
         return new Datatype(name, basis || Datatype.default_basis);
     }
     static name_exists(name) { 
@@ -416,6 +396,57 @@ export default class Datatype extends Descriptable {
     // item row generator for object basis types
     static obj_item_row(key, typename, desc=null, required=false, nullable=true, defaults=null) {
         return {key, type: Datatype.find(typename), desc, required, nullable, defaults};
+    }
+
+    static serialize_items(origintype, ...items) {
+        items = items.filter((it)=>it!=null);
+        const mapper = {
+            array: (it)=>it.name || it,
+            object: Patterns.item_serialize,
+            enum: Patterns.item_serialize_enum,
+        }[origintype];
+        return mapper ? items.map(mapper).join('\n') : null;
+    }
+
+    static parse_items(origintype, ...text) {
+        const parser = {
+            array: Datatype.parse_items_array,
+            object: Datatype.parse_items_object,
+            enum: Patterns.item_parse_enum,
+        }[origintype];
+        return parser ? parser(...text) : null;
+    }
+
+    static parse_items_object(...tokens) {
+        // assert tokens to be string
+        // tokens = tokens.filter((t)=>typeof t === 'string')
+        //
+        let auto_generates = [];
+
+        // clear non-collectives
+        tokens = tokens
+            .map(Patterns.item_parse)
+            .map((it)=>Object.assign(it, {basistype: Datatype.find(it.datatype)}));
+        auto_generates = tokens
+            .map((t)=>t.datatype);
+        // this._items = (this._items || []).concat(tokens);
+        // auto generate unspecified types
+        auto_generates
+            .filter((t)=>!Datatype.name_exists(t))
+            .forEach((t)=>{
+                Datatype.create(t, Datatype.default_basis);
+            });
+        return tokens;
+    }
+
+    static parse_items_array(...tokens) {
+        return tokens.map((t)=>Datatype.find(t) 
+            || Datatype.create(t, Datatype.default_basis));
+    }
+
+    static typeprop(typename, propname) {
+        const the_type = Datatype.find(typename);
+        return the_type ? the_type[propname] : null;
     }
 
 
