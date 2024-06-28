@@ -25,18 +25,29 @@
     </v-toolbar>
     <v-card-text>
       <v-form>
-        <template v-for="p,pi in properties" :key="`datatype-edit.property-${p.key}.${pi}`">
-          <component :is="p.field || 'v-text-field'"
-            :disabled="!has_select"
-            :datatype="datatype"
-            :model-value="datatype[p.key]"
-            :label="p.label || p.key"
-            :rules="p.rules"
-            v-bind="$thx.field"
-            
-           />
-
-        </template>
+        <v-row>
+          <v-col cols="3">
+            <v-text-field v-model="datatype.name" label="name" v-bind="$thx.field" />
+          </v-col>
+          <v-col cols="3">
+            <v-text-field v-model="datatype.basistype" label="basistype" v-bind="$thx.field" />
+          </v-col>
+          <v-col cols="3">
+            <v-checkbox disabled v-model="datatype.is_primitive" label="is_primitive" v-bind="$thx.field" />
+          </v-col>
+          <v-col cols="3">
+            <v-text-field :disabled="datatype.origintype!='object'" v-model="datatype.migration" label="migration" v-bind="$thx.field" />
+          </v-col>
+        </v-row>
+        
+        <markdown-field v-model="datatype.description" :datatype="datatype" label="description" v-bind="$thx.field" />
+        <items-field v-if="datatype.items" 
+          v-model="datatype.items" :datatype="datatype" label="items" v-bind="$thx.field" />
+        <v-divider>details</v-divider>
+        
+        <v-text-field disabled v-model="datatype.defaults" label="defaults" v-bind="$thx.field" />
+        <v-text-field disabled v-model="datatype.validation" label="validation" v-bind="$thx.field" />
+        <v-text-field disabled label="examples" v-bind="$thx.field" /> <!-- TODO: examples -->
       </v-form>
     </v-card-text>
   </v-card>
@@ -47,17 +58,17 @@ import markdownField from '@/components/markdownField.vue';
 import itemsField from '../components/itemsField.vue';
 
 const datatype_properties = [
-  {key: 'name', },
-  {key: 'description', field: 'markdown-field',},
-  {key: 'validation',},
-  {key: 'defaults',},
-  {key: 'migration',},
-  {key: 'items', field: 'items-field',},
-  {key: 'examples',},
+  'name',
+  'basistype',
+  'origintype',
+  'description',
+  'items',
+  'migration',
+  'defaults',
+  'validation',
+  'examples',
 ];
-const none_field_properties = [
-  'basistype','origintype',
-];
+
 export default {
   name: 'datatypeEditor',
   components: {
@@ -93,15 +104,12 @@ export default {
       return this.selected_types.length===1;
     },
     datatype() {
-      const attrs = datatype_properties.map((p)=>p.key)
-        .concat(none_field_properties)
-        .filter((v,i,a)=>a.indexOf(v)===i);
       const init = Object.fromEntries(
-        attrs.map((p)=>[p,undefined]));
+        datatype_properties.map((p)=>[p,undefined]));
       
       return this.selected_types.reduce((agg,name)=>{
         const the_type = this.datatypes[name];
-        attrs.forEach((pn)=>{
+        datatype_properties.forEach((pn)=>{
           const current = agg[pn];
           const compare = the_type[pn];
 

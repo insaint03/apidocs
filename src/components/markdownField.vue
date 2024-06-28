@@ -3,15 +3,14 @@
     <template #activator="{ props }">
       <v-textarea v-model:model-value="value"
         :label="$props.label"
+        hint="first line is summary, rests are long markdown description"
         v-bind="{...props, ...$thx.field}"
         @change="$emit('change', value)"  />
     </template>
+    <v-divider>preview</v-divider>
     <v-card>
-      <v-divider>preview</v-divider>
       <v-card-title>{{ summary }}</v-card-title>
-      <v-card-text>
-        <mark-down v-model="desc" />
-      </v-card-text>
+      <mark-down v-model="desc" />
     </v-card>
   </v-tooltip>
 </template>
@@ -21,6 +20,7 @@ import Descriptable from '@/models/descriptable';
 export default {
   name: 'markdownField',
   props: {
+    label: String,
     modelValue: String,
   },
   computed: {

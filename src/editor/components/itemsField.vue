@@ -25,12 +25,21 @@
 </template>
 <script>
 import Datatype from '@/models/datatype';
+import Patterns from '@/models/patterns';
+
+const hints = {
+  array: '# single name of datatype (i.e. "string")',
+  enum: '# value (space) description. will split at left-most space.',
+  object: '# !key:datatype=defaults',
+}
+
 export default {
   name: 'itemsField',
   methods: {
-    update() {
-      console.log('update invoked', this.texts);
-      this.$emit('update:modelValue', Datatype.parse_items(this.origintype, this.texts));
+    update(ev) {
+      this.texts = ev.target.value;
+      // console.log('update invoked', arguments);
+      // this.$emit('update:modelValue', Datatype.parse_items(this.origintype, this.texts));
     }
   },
   props: {
@@ -41,6 +50,9 @@ export default {
     disabled: Boolean,
   },
   computed: {
+    hint() {
+      return hints[this.origintype];
+    },
     basis() {
       return this.datatype.basistype !=null
         ? Datatype.find(this.datatype.basistype)
@@ -70,6 +82,36 @@ export default {
         return (origin && items)
           ? Datatype.serialize_items(this.origintype, ...this.datatype.items)
           : '';
+      },
+      set(value) {
+        const tokens = value.split('\n')
+          .map((ln)=>ln.trim())
+          .filter((ln)=>ln.length>0);
+        let values = null;
+        // when object items, convert primitive type as new
+        if(this.origintype==='object') {
+          values = tokens.map(Patterns.item_parse)
+            .map((it)=>{
+              const dtype = Datatype.find(it.datatype);
+              if(!dtype || dtype.is_primitive) {
+                const newtype = Datatype.create(`${this.datatype.name}._${it.key}`, it.datatype);
+                return {
+                  ...it,
+                  datatype: newtype.name,
+                };
+              } else {
+                return it;
+              }
+            });
+        } 
+        // or simply use Datatype.parse_items
+        else {
+          values = Datatype.parse_items(this.origintype, ...tokens)
+        }
+
+        // console.log('text updated', values);
+        this.$emit('update:modelValue', values);
+
       }
     },
     // texts() { 

@@ -25,14 +25,12 @@ export default class Patterns {
             required: !!match.required,
         }
     }
+    static _item_enum_split = /^(?<value>[^\s])\s+(?<desc>.*)$/
     static item_parse_enum(token) {
         // on enum, split first space (and/or common delimiters)
         //  into value, and its description
-        const [value, desc] = token.split(/[\s:;-]+/);
-        return {
-            value, desc,
-        };
-
+        const match = Patterns._item_enum_split.exec(token)
+        return match ? {...match.groups} : null;
     }
     // item key mapping
     static item_items = {itemId: 'key', itemTitle: 'key', itemSubtitle: 'datatype' };
