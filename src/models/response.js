@@ -86,7 +86,7 @@ export default class Response extends Message {
 
     constructor({mimetype, status, headers, cookies, body}) {
         super({headers, cookies, body});
-        this._mtype = mimetype;
+        this._mtype = mimetype || 'application/json';
         this.status = status || '200';
     }
 

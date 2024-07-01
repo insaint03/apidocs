@@ -18,7 +18,7 @@ const routes = Object.entries({
 routes.push({
   name: 'index',
   path: '/',
-  component: viewerScreen,
+  component: editorScreen,
 })
 
 const router = createRouter({

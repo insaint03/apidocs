@@ -43,7 +43,7 @@ export default class Request extends Message {
 
     set path(values) {
         this._path = (values || '').split(Request.path_delimiter)
-            .map((frag)=>Patterns.path_parse(frag));
+            .map(Patterns.path_parse);
     }
 
     path_fragment(index) {

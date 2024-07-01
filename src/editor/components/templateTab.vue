@@ -1,28 +1,51 @@
 <template>
-  <v-navigation-drawer order="9" location="right" :model-value="modelValue" permanent>
-    <v-list-subheader>Templates</v-list-subheader>
-    <!-- search control -->
-    <v-text-field v-model="search" label="Search" outlined append-icon="mdi-magnify" />
-    <!-- items -->
-    <v-list-item v-for="item in items" :key="`template-tab.${item.name}`" @click="$emit('select', item)">
-      <v-list-item-title>{{ item.name }}</v-list-item-title>
-      <v-list-item-subtitle v-if="item.extends"><v-chip>{{ item.extends }}</v-chip></v-list-item-subtitle>
-    </v-list-item>
+  <v-navigation-drawer class="fill-height pa-0"
+    order="1" location="right" 
+    :model-value="show" permanent>
+    <v-list
+      :color="$thx.color.template"
+      @click.stop
+      selectable slim>
+      <v-list-subheader>Templates</v-list-subheader>
+      <!-- search control -->
+      <v-text-field v-model="search" label="Search" outlined append-icon="mdi-magnify" />
+      <!-- migration items -->
+      <v-list-item v-for="tmpl,ti in all_tags" :key="`template-tab.${tmpl.name}.${ti}`"
+        :active="selected==tmpl"
+        @click="selected = (selected!=tmpl) ? tmpl : null"
+        :title="tmpl.name">
+        <v-list-item-subtitle>
+          <v-icon size="small">{{ $thx.icon.tag }}</v-icon>
+          {{ tmpl.tagname }} 
+          <template v-if="tmpl.extends">/ {{ tmpl.extends }}</template>
+        </v-list-item-subtitle>
+      </v-list-item>
+      <!-- items -->
+      <v-divider />
+      <v-list-item v-for="tmpl,ti in all_none_tags" :key="`template-tab.x.${tmpl.name}.${ti}`"
+        :title="tmpl.name" :subtitle="tmpl.extends"
+        :active="selected==tmpl"
+        @click="selected = (selected!=tmpl) ? tmpl : null" />
+    </v-list>
+
   </v-navigation-drawer>
 </template>
 
 <script>
-import { mapWritableState } from 'pinia';
-import { useProjectStore } from '@/stores/project';
+import { mapState, mapWritableState } from 'pinia';
+import { useTemplateStore } from '@/stores/template';
 
 // import Template from '@/models/template';
 
 export default {
   name: 'templateTab',
+  methods: {
+  },
   props: {
-    modelValue: {
+    show: {
       type: Boolean,
-      required: true,
+      // required: true,
+      default: true,
     }
   },
   computed: {
@@ -36,12 +59,20 @@ export default {
         : /^.*$/i;
       return this.ordereds.filter((it) => filter.test(it.name));
     },
-    ...mapWritableState(useProjectStore, ['templates']),
+    ...mapWritableState(useTemplateStore, [
+      'selected',
+    ]),
+    ...mapState(useTemplateStore, [
+      'all',
+      'all_tags',
+      'all_none_tags',
+    ]),
   },
   data() {
     return {
       value: this.modelValue,
       search: null,
+      selection: [],
     }
   }
 }

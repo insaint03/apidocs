@@ -42,14 +42,6 @@ export default {
 
   },
   watch: {
-    selected_datatype() {
-      if(this.tab!='datatype')
-        this.tab = 'datatype';
-    },
-    selected_template() {
-      if(this.tab!='template')
-        this.tab = 'template';
-    }
   },
   props: {
     // project: Project,
@@ -73,10 +65,6 @@ export default {
         request: {},
         response: {},
       };
-    },
-
-    template_selected() {
-      return this.selected_template || {};
     },
 
     ...mapWritableState(useProjectStore, [

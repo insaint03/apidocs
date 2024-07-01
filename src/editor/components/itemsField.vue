@@ -32,7 +32,8 @@
         <v-autocomplete v-if="is_array" v-bind="$thx.field"
           single-line auto-select-first item-title="name" item-value="name"
           :items="alltypes"
-          :model-value="puts.datatype" @change="items.push(puts.datatype)" />
+          v-model="puts.datatype"
+          @change="add_item(puts.datatype)" />
         <div v-else-if="is_enum" class="d-flex flex-fill justify-between">
           <v-text-field v-model="puts.value" label="value" v-bind="$thx.field" />
           <v-text-field v-model="puts.desc" label="desc" v-bind="$thx.field" />
@@ -62,11 +63,14 @@ export default {
     itemsObjectField,
   },
   watch: {
-    items() {
-      this.$emit('change', {target:{name: 'items', value:this.items}});
-    }
+    // items() {
+    //   this.$emit('change', {target:{name: 'items', value:this.items}});
+    // }
   },
   methods: {
+    update_values(value) {
+      this.$emit('change', {target:{name: 'items', value:(value || this.items)}});
+    },
     basis_prop(typename) {
       return Datatype.typeprop(typename, 'inherits');
     },
@@ -96,44 +100,64 @@ export default {
         this.add_object_item({ctrlKey:true, shiftKey:true});
       }
     },
-    add_object_item(ev) {
-      if(false
-      // check keyname set
-      || (this.is_object && !(this.puts.key && this.puts.datatype))
-      || (this.is_array && !this.puts.datatype)
-      || (this.is_enum && !(this.puts.value))
-      // or ctrl/shift key also pressed
-      || !(ev.ctrlKey || ev.shiftKey)) {
-        return;
+    add_item(val) {
+      if(this.is_array) {
+        console.log('add_item', val);
+        const value = this.items.concat(this.findtype(val));
+        this.update_values(value);
+        // clear selection
+        this.puts.datatype = null;
+
+      } else if(this.is_enum) {
+        const value = {
+          value: this.puts.value,
+          desc: this.puts.desc,
+        };
+        this.update_values(value);
       }
-      
-      // build newtype on non-primitive datatype selection
-      let dtype = this.findtype(this.puts.datatype);
-      if(!dtype || dtype.is_primitive) {
-        const newtype = `${this.values.name}._${this.puts.key}`;
-        dtype = Datatype.create(newtype, this.puts.datatype);
-        dtype.summary = this.puts.summary;
-        this.datatypes[newtype] = dtype;
-      }
-      const item = {
-        key: this.puts.key,
-        datatype: dtype.name,
-        defaults: this.puts.defaults,
-        required: this.puts.required,
-      };
-      this.values.items.push(item);
-      // clear puts
-      this.puts = {
-        key: null,
-        datatype: null,
-        summary: null,
-        defaults: null,
-        required: false,
-        summary_editable: true,
-      };
-      // focus back to key input
-      this.$refs['item-key-input'].focus();
     },
+    remove_item(index) {
+      this.items = this.items.splice(index, 1);
+      this.update_values();
+    },
+    // add_object_item(ev) {
+    //   if(false
+    //   // check keyname set
+    //   || (this.is_object && !(this.puts.key && this.puts.datatype))
+    //   || (this.is_array && !this.puts.datatype)
+    //   || (this.is_enum && !(this.puts.value))
+    //   // or ctrl/shift key also pressed
+    //   || !(ev.ctrlKey || ev.shiftKey)) {
+    //     return;
+    //   }
+      
+    //   // build newtype on non-primitive datatype selection
+    //   let dtype = this.findtype(this.puts.datatype);
+    //   if(!dtype || dtype.is_primitive) {
+    //     const newtype = `${this.values.name}._${this.puts.key}`;
+    //     dtype = Datatype.create(newtype, this.puts.datatype);
+    //     dtype.summary = this.puts.summary;
+    //     this.datatypes[newtype] = dtype;
+    //   }
+    //   const item = {
+    //     key: this.puts.key,
+    //     datatype: dtype.name,
+    //     defaults: this.puts.defaults,
+    //     required: this.puts.required,
+    //   };
+    //   this.values.items.push(item);
+    //   // clear puts
+    //   this.puts = {
+    //     key: null,
+    //     datatype: null,
+    //     summary: null,
+    //     defaults: null,
+    //     required: false,
+    //     summary_editable: true,
+    //   };
+    //   // focus back to key input
+    //   this.$refs['item-key-input'].focus();
+    // },
     ...mapActions(useDatatypeStore, [
       'findtype',
       'updates',

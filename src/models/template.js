@@ -59,11 +59,11 @@ export default class Template extends Descriptable {
 
     set tagname(value) { this._tagname = value;}
 
-    get extend() {
+    get extends() {
         return this._extends;
     }
 
-    set extend(v) {
+    set extends(v) {
         // TODO: map template
         this._extends = v;
     }
