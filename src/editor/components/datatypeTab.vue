@@ -7,8 +7,17 @@
       @click.stop="selection=[]"
       multiple selectable slim>    
       <v-list-subheader>datatypes</v-list-subheader>
-      <v-list-item>
-
+      <v-list-item class="pa-0" color="default">
+        <v-text-field v-model="search_query" 
+          v-bind="$thx.field"
+          label="search & create"
+          placeholder="regexp"
+          hide-details solo
+          append-inner-icon="mdi-plus-circle" clearable
+          prepend-inner-icon="mdi-magnify"
+          @click:append-inner="create_search"
+          @keyup.ctrl.enter="create_search" />
+          
       </v-list-item>
       <v-divider />
       <template v-for="origin,oi in origins" :key="`nav-left-datatype-${origin}.${oi}`">
@@ -17,7 +26,7 @@
           @click.stop>{{ origin }}</v-list-subheader>
         <v-list-item 
           v-for="item,ii in items[origin]" :key="`nav-left.${origin}-${item.name}.${ii}`"
-          @click.stop="($ev)=>selecting($ev, item.name)"
+          @click.stop="($ev)=>select($ev, item.name)"
           :active="selection.includes(item.name)"
           :title="item.name" :value="item.name" />
       </template>
@@ -26,19 +35,9 @@
 </template>
 
 <script>
-import Datatype from '@/models/datatype';
-// Datatype origins sort order 
-//  by object, enum, array, string, number, bytes, boolean.
-// const datatype_origins = [
-//   'object',
-//   'enum',
-//   'array',
-//   'string',
-//   'number',
-//   'blob',
-//   'boolean'
-// ];
-
+// import Datatype from '@/models/datatype';
+import { mapActions, mapState, mapWritableState } from 'pinia';
+import { useDatatypeStore } from '@/stores/datatype';
 
 
 export default {
@@ -46,19 +45,23 @@ export default {
   methods: {
     init() {
     },
-    selecting(ev, it) {
-      if(ev.ctrlKey) {
-        // multiselect: select toggle
-        this.selection
-          = this.selection.includes(it)
-            ? this.selection.filter((v)=>v!==it)
-            : [...this.selection, it];
-      } else {
-        // single select: change the selection item
-        this.selection = [it];
-      }
-      this.$emit('update:model-value', this.selection);
-    },
+    // selecting(ev, it) {
+    //   this.select
+    //   if(ev.ctrlKey) {
+    //     // multiselect: select toggle
+    //     this.selection
+    //       = this.selection.includes(it)
+    //         ? this.selection.filter((v)=>v!==it)
+    //         : [...this.selection, it];
+    //   } else {
+    //     // single select: change the selection item
+    //     this.selection = [it];
+    //   }
+    //   this.$emit('update:model-value', this.selection);
+    // },
+    ...mapActions(useDatatypeStore, [
+      'select','create_search'
+    ]),
   },
   props: {
     modelValue: {
@@ -69,41 +72,25 @@ export default {
       type: Boolean,
       required: true,
     },
-    datatypes: {
-      type: Object,
-      required: true,
-    },
-  },
-  onUpdated() {
-
   },
   computed: {
-    types() {
-      return Object.values(this.datatypes)
-        .filter(t=>!t.is_primitive);
-
-    },
-    pattern() {
-      return this.search ? new RegExp(this.search, 'i') : null;
-    },
-    items() {
-      let ret = Object.fromEntries(this.origins.map((origintype)=>[
-        origintype,
-        this.types
-          .filter((v)=>v.origintype===origintype
-          && !(this.pattern && !this.pattern.test(v.name)))
-      ]));
-      return ret;
-    },
+    ...mapState(useDatatypeStore, [
+      'types',
+      'origins',
+      'items',
+      'search_pattern',
+    ]),
+    ...mapWritableState(useDatatypeStore, [
+      'project',
+      'selection',
+      'search_query',
+    ]),
   },
   data() {
     return {
-      search: null,
       value: this.modelValue,
-      origins: Datatype.origins.map((d)=>d.name),
       open_groups: ['object','enum'],
-      selection: [],
     }
-  }
+  },
 }
 </script>

@@ -47,7 +47,7 @@ export default class Datatype extends Descriptable {
     // basis readonly (direct upper type)
     get basis() { return Datatype.find(this._basistype || this._origintype); }
     set basis(value) { 
-        const _basis = Datatype.find(value);
+        const _basis = Datatype.find(value.name || value);
         this._basistype = _basis.name;
         this._items = null;
         this._hierarchy = null;
@@ -77,8 +77,7 @@ export default class Datatype extends Descriptable {
         // do not remove self since 20240627
         // queue.shift();
         // reverse top-down order
-        // queue = queue.reverse();
-        return queue;
+        return queue.reverse();
     }
 
     // upstreaming hierarchy list
@@ -157,18 +156,25 @@ export default class Datatype extends Descriptable {
     set items(value) {
         // expect value to be an array of strings
         if(!this.is_collective) { return; }
-
-        // when items gets object
+        // clense input values into array of items
         if(typeof value === 'object' && !Array.isArray(value)) {
             value = Object.entries(value)
                 .map(([k,v])=>`${k}:${v}`);
-        } 
-        // stringify its elements
-        if(Array.isArray(value)) {
-            value = value.map((v)=>typeof(v)==='string' ? v : v.toString());
-        } 
-        const appends = Datatype.parse_items(this.origintype, ...value);
-        this._items = [].concat(appends);
+        } else if(typeof value==='string') {
+            value = value.split('\n')
+                .map((ln)=>ln.trim())
+                .filter((ln)=>ln);
+        }
+
+        if(this.origintype==='array') {
+            this._items = value;
+        } else if(this.origintype==='object') {
+            this._items = value.map((v)=>(v.key && v.datatype)
+                ? v : Patterns.item_parse(v));
+        } else if(this.origintype==='enum') {
+            this._items = value.map((v)=>(v.value)
+                ? v : Patterns.item_parse_enum(v));
+        }
     }
 
     
@@ -294,20 +300,20 @@ export default class Datatype extends Descriptable {
             {name: 'blob', basis: null, summary: 'Blob bytes', validation: (v)=>(true)},
             
             // advanced basis
-            // {name: 'integer', basis: 'number', summary: 'Integer', validation: (v)=>(Number.isInteger(v))},
-            // {name: 'float', basis: 'number', summary: 'Float', validation: (v)=>(typeof v === 'number')},
-            // {name: 'decimal', basis: 'string', summary: 'Decimal', desc: 'Decimal String', validation: (v)=>/^\d+$/.test(v)},
-            // {name: 'hex', basis: 'string', summary: 'Hexadecimal', desc: 'Hexadecimal String', validation: (v)=>/^[\da-fA-F]+$/.test(v)},
-            // {name: 'base64', basis: 'string', summary: 'Base64', desc: 'base64 formatted string', validation: (v)=>/^[\w+/]+={0,2}$/.test(v)},
-            // {name: 'date', basis: 'string', summary: 'Date', desc: 'ISO date string', validation: (v)=>/^\d{2,4}-\d{2}-\d{2}$/.test(v)},
-            // {name: 'time', basis: 'string', summary: 'Time', desc: 'ISO time string', validation: (v)=>/^\d{2}:\d{2}:\d{2}$/.test(v)},
-            // {name: 'datetime', basis: 'string', summary: 'Datetime', desc: 'ISO datetime string', validation: (v)=>/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/.test(v)},
-            // {name: 'timestamp', basis: 'number', summary: 'Timestamp', desc: 'Unix timestamp', validation: (v)=>Number.isInteger(v)},
-            // {name: 'timestamp_nano', basis: 'number', summary: 'Timestamp Nano', desc: 'Unix timestamp in nanoseconds', validation: (v)=>Number.isInteger(v)},
-            // {name: 'email', basis: 'string', summary: 'Email', desc: 'Email address', validation: (v)=>/^[\w._%+-]+@[\w.-]+\.[a-z]{2,}$/i.test(v)},
-            // {name: 'uri', basis: 'string', summary: 'URI', desc: 'Uniform Resource Identifier', validation: (v)=>/^\w+?:\/\/[\w.-]+\.[a-z]{2,}/i.test(v)},
-            // {name: 'phone', basis: 'string', summary: 'Phone', desc: 'Phone number', validation: (v)=>/^\+?\d{2,4}-?\d{2,4}-?\d{2,4}$/.test(v)},
-            // {name: 'uuid', basis: 'string', summary: 'UUID', desc: 'Universally Unique Identifier', validation: (v)=>/^[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}$/i.test(v)},
+            {name: 'integer', basis: 'number', summary: 'Integer', validation: (v)=>(Number.isInteger(v))},
+            {name: 'float', basis: 'number', summary: 'Float', validation: (v)=>(typeof v === 'number')},
+            {name: 'decimal', basis: 'string', summary: 'Decimal', desc: 'Decimal String', validation: (v)=>/^\d+$/.test(v)},
+            {name: 'hex', basis: 'string', summary: 'Hexadecimal', desc: 'Hexadecimal String', validation: (v)=>/^[\da-fA-F]+$/.test(v)},
+            {name: 'base64', basis: 'string', summary: 'Base64', desc: 'base64 formatted string', validation: (v)=>/^[\w+/]+={0,2}$/.test(v)},
+            {name: 'date', basis: 'string', summary: 'Date', desc: 'ISO date string', validation: (v)=>/^\d{2,4}-\d{2}-\d{2}$/.test(v)},
+            {name: 'time', basis: 'string', summary: 'Time', desc: 'ISO time string', validation: (v)=>/^\d{2}:\d{2}:\d{2}$/.test(v)},
+            {name: 'datetime', basis: 'string', summary: 'Datetime', desc: 'ISO datetime string', validation: (v)=>/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/.test(v)},
+            {name: 'timestamp', basis: 'number', summary: 'Timestamp', desc: 'Unix timestamp', validation: (v)=>Number.isInteger(v)},
+            {name: 'timestamp_nano', basis: 'number', summary: 'Timestamp Nano', desc: 'Unix timestamp in nanoseconds', validation: (v)=>Number.isInteger(v)},
+            {name: 'email', basis: 'string', summary: 'Email', desc: 'Email address', validation: (v)=>/^[\w._%+-]+@[\w.-]+\.[a-z]{2,}$/i.test(v)},
+            {name: 'uri', basis: 'string', summary: 'URI', desc: 'Uniform Resource Identifier', validation: (v)=>/^\w+?:\/\/[\w.-]+\.[a-z]{2,}/i.test(v)},
+            {name: 'phone', basis: 'string', summary: 'Phone', desc: 'Phone number', validation: (v)=>/^\+?\d{2,4}-?\d{2,4}-?\d{2,4}$/.test(v)},
+            {name: 'uuid', basis: 'string', summary: 'UUID', desc: 'Universally Unique Identifier', validation: (v)=>/^[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}$/i.test(v)},
             
         ].map((opt)=>{
             let dt = new Datatype(opt.name, opt.basis || opt.name);
@@ -351,14 +357,14 @@ export default class Datatype extends Descriptable {
     static create(prefix, basis) {
         // generate unique name
         let name = prefix || '';
-        // let unique_counter = 0;
-        // let max_iteration = 1e2;
-        // while(Datatype.name_exists(name) && 0<max_iteration--) {
-        //     name = `${prefix}${++unique_counter}`;
-        // }
-        // if(max_iteration <= 0) {
-        //     name = `${prefix}${Date.now()}`;
-        // }
+        let unique_counter = 0;
+        let max_iteration = 1e2;
+        while(Datatype.name_exists(name) && 0<max_iteration--) {
+            name = `${prefix}${++unique_counter}`;
+        }
+        if(max_iteration <= 0) {
+            name = `${prefix}${Date.now()}`;
+        }
         return new Datatype(name, basis || Datatype.default_basis);
     }
     static name_exists(name) { 

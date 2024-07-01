@@ -1,71 +1,111 @@
 <template>
-  <items-object-field v-if="is_object" :label="label" :disabled="disabled" />
-  <div v-else class="d-flex flex-fill flex-wrap justify-space-evenly">
-    <!-- editor mode -->
-    <v-list theme="dark" class="flex-fill">
-      <v-list-subheader>items</v-list-subheader>
-      <v-list-item 
-        class="border-t-thin"
-        v-for="(it,ii) in items" :key="`datatype-item-${ii}`"
-        prepend-icon="mdi-package">
-        <template v-if="is_array">
-          <v-list-item-title>
-            <v-chip>{{ basis_prop(it).join(' / ') }}</v-chip>
-          </v-list-item-title>
-          <v-list-item-subtitle>
-            // {{ summary_prop(it) }}
-          </v-list-item-subtitle>
-        </template>
-        <template v-else-if="is_enum">
-          <v-list-item-title>{{ it.value }}</v-list-item-title>
-          <v-list-item-subtitle>{{ it.desc }}</v-list-item-subtitle>
-        </template>
-        <template #append>
-          <v-btn icon flat @click="items.splice(ii,1)">
-            <v-icon>mdi-close</v-icon>
+  <!-- object origin -->
+  <v-table v-show="items!=null" class="item-field" theme="dark">
+    <thead>
+      <tr>
+        <td colspan="3">
+          <v-btn flat @click="autopush=!autopush"
+            size="small"
+            :title="autopush ? 'auto push' : 'manual push'"
+            :active="autopush">
+            <v-icon>mdi-auto-mode</v-icon>
           </v-btn>
-        </template>
-      </v-list-item>
-      <v-divider />
-      <!-- adding fields item -->
-      <v-list-item>
-        <v-autocomplete v-if="is_array" v-bind="$thx.field"
-          single-line auto-select-first item-title="name" item-value="name"
-          :items="alltypes"
-          :model-value="puts.datatype" @change="items.push(puts.datatype)" />
-        <div v-else-if="is_enum" class="d-flex flex-fill justify-between">
-          <v-text-field v-model="puts.value" label="value" v-bind="$thx.field" />
-          <v-text-field v-model="puts.desc" label="desc" v-bind="$thx.field" />
-        </div>
-      </v-list-item>
-    </v-list>
-    <!-- raw mode -->
-    <div class="flex-fill pa-1">
-      <v-textarea :model-value="texts" :disabled="disabled" v-bind="$thx.field"
-        @change="($ev)=>texts=$ev.target.value" />
-    </div>
-  </div>
+          &nbsp;
+          <v-label>{{ label }}</v-label>
+        </td>
+        <td colspan="2">
+          <v-btn text flat v-bind="$thx.btn" @click="raw_mode=!raw_mode">
+            {{ raw_mode ? 'raw' : 'table' }}
+          </v-btn>
+        </td>
+      </tr>
+    </thead>
+    <tbody v-if="raw_mode">
+      <tr>
+        <td colspan="5">
+          <v-textarea :model-value="texts"
+            v-bind="$thx.field"
+            :label="label"
+            :disabled="disabled"
+            @change="(ev)=>texts=ev.target.value" />
+        </td>
+      </tr>
+      </tbody>
+      <tbody v-else>
+        <tr v-for="it,ii in items" :key="`it-field.item.${ii}`">
+            <th class="item-key">
+              <v-icon size="small" :title="it.required ? 'required' : 'optional'">
+                {{ icon_required(it.required) }}
+              </v-icon>
+              {{ it.key }} :
+            </th>
+            <td class="item-datatype">
+              <v-chip size="small">{{ basis_prop(it.datatype).join(' / ') }}</v-chip>
+            </td>
+            <td class="item-summary">
+              // {{ summary_prop(it.datatype) }}
+            </td>
+            <td class="item-defaults">
+              <span v-show="it.defaults">= {{ it.defaults }}</span>
+            </td>
+            <td class="item-action">
+              <v-btn icon flat @click="items.splice(ii,1)">
+                <v-icon>mdi-close</v-icon>
+              </v-btn>
+            </td>
+        </tr>
+      </tbody>
+      <tfoot>
+          <tr @keydown.enter="add_object_item">
+            <td class="item-key">
+              <v-text-field 
+                ref="item-key-input"
+                v-model="puts.key" label="key" v-bind="$thx.field"
+                single-line
+                :prepend-inner-icon="icon_required(puts.required)"
+                @click:prepend-inner="puts.required=!puts.required"
+                @keydown="check_key_required"
+                @keydown.enter="add_object_item">
+              </v-text-field>
+            </td>
+            <td class="item-datatype">
+              <v-autocomplete label="datatype" v-bind="$thx.field" 
+                single-line auto-select-first item-title="name" return-object
+                :items="alltypes"
+                :model-value="puts.datatype" @update:model-value="update_puttype">
+                <template #prepend> : </template>
+              </v-autocomplete>
+            </td>
+            <td class="item-summary">
+              <v-text-field v-model="puts.summary" label="summary" v-bind="$thx.field"
+                single-line hint="ctrl+enter to add"
+                :disabled="!puts.summary_editable"
+                @keydown.enter="add_object_item"
+                >
+                <template #prepend> // </template>
+              </v-text-field>
+            </td>
+            <td class="item-defaults">
+              <v-text-field v-model="puts.defaults" label="defaults" v-bind="$thx.field"
+                single-line
+                @keydown.enter="add_object_item">
+                <template #prepend> = </template>
+              </v-text-field>
+            </td>
+          </tr>
+      </tfoot>
+  </v-table>
 </template>
+
 <script>
 import Datatype from '@/models/datatype';
 import Patterns from '@/models/patterns';
 
-import itemsObjectField from './itemsObjectField.vue';
-
 import { mapActions, mapState, mapWritableState } from 'pinia';
 import { useDatatypeStore } from '@/stores/datatype';
 
-
 export default {
-  name: 'itemsField',
-  components: {
-    itemsObjectField,
-  },
-  watch: {
-    items() {
-      this.$emit('change', {target:{name: 'items', value:this.items}});
-    }
-  },
+  name: 'itemsFieldObject',
   methods: {
     basis_prop(typename) {
       return Datatype.typeprop(typename, 'inherits');
@@ -73,7 +113,6 @@ export default {
     summary_prop(typename) {
       return Datatype.typeprop(typename, 'summary');
     },
-
     icon_required(value) {
       return value ? 'mdi-exclamation' : 'mdi-blank';
     },
@@ -146,9 +185,6 @@ export default {
     disabled: Boolean,
   },
   computed: {
-    hint() {
-      return hints[this.origintype];
-    },
     basis() {
       return this.values.basistype !=null
         ? Datatype.find(this.values.basistype)

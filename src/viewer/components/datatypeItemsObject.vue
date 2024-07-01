@@ -13,7 +13,7 @@
         </td>
       </tr>
     </thead>
-    <tbody>
+    <tbody density="compact">
       <!-- type object -->
       <template v-for="it,ii in datatype.items" :key="`dt-itme.${it.datatype}x${ii}`">
         <tr @click="expanded[it.key] = !expanded[it.key]">
@@ -22,11 +22,10 @@
             {{ it.key }}:
           </th>
           <td>
-            <v-breadcrumbs :items="inheritance(it.datatype)" />
-            {{ summary_of(it.datatype) }}
+            <v-breadcrumbs :items="inheritance(it.datatype)" class="pa-0" />
           </td>
           <td>
-            <v-text-field :model-value="it.title" v-bind="$thx.field"
+            <v-text-field :model-value="summary_of(it.datatype)" v-bind="$thx.field"
             single-line hide-details placeholder="summary" readonly
             :append-icon="$thx.expanding_icon(expanded[it.key])"
             min-width="5vw" />

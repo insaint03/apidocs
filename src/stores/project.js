@@ -10,14 +10,14 @@ export const useProjectStore = defineStore('project', {
     state: ()=>models.state,
     getters: {
         // project had set flag (boolean)
-        project_ready() {
-            return this.project && this.project.name;
+        project_ready(store) {
+            return store.project && store.project.name;
         },
-        has_datatypes() {
-            return this.datatypes && Object.entries(this.datatypes).length > 0;
+        has_datatypes(store) {
+            return store.datatypes && Object.entries(store.datatypes).length > 0;
         },
-        has_entities() {
-            return this.entities && this.entities.length > 0;
+        has_entities(store) {
+            return store.entities && store.entities.length > 0;
         },
 
         // datatype list to show on the page
@@ -99,6 +99,6 @@ export const useProjectStore = defineStore('project', {
             // recover session storage from local
             sessionStorage.setItem(storage_key, localStorage.getItem(storage_key));
             this.revoke();
-        }
+        },
     }
 });
