@@ -1,7 +1,5 @@
 <template>
-  <v-navigation-drawer location="right" permanent>
-    <toc-view v-model:open="open" :scrollspy="scrollspy" />
-  </v-navigation-drawer>
+  
   <v-container fluid elevation="1"  id="main">
     <!-- project info -->
     <info-section :project="project" />
@@ -51,9 +49,6 @@
 import { mapState } from 'pinia';
 import { useProjectStore } from '@/stores/project';
 
-import tocView from './toc.vue';
-
-
 import Project from '@/models/project';
 import sections from './section';
 // import Tags from './tags.vue';
@@ -65,7 +60,7 @@ export default {
     }
   },
   components: {
-    tocView,
+    // tocView,
 
     ...sections,
   },

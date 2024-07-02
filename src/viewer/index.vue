@@ -1,5 +1,9 @@
 <template>
-  <!-- app bar -->
+  <!-- nav bar -->
+  <v-navigation-drawer v-if="project_ready" app
+    location="right" permanent>
+    <table-of-contents />
+  </v-navigation-drawer>
   <v-main app>
     <document-view v-if="project_ready" 
       :project="project"
@@ -14,7 +18,7 @@
   </v-main>
 </template>
 <script>
-
+import tableOfContents from './toc.vue';
 import documentView from './document.vue';
 import emptyView from '@/components/empty.vue';
 
@@ -26,6 +30,7 @@ export default {
   name: 'viewerPage',
   components: {
     // emptyView,
+    tableOfContents,
     documentView,
     emptyView,
   },
