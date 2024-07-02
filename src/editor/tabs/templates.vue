@@ -111,7 +111,9 @@ export default {
     }
   },
   methods: {
-
+    ...mapActions(useTemplateStore, [
+      'create_new',
+    ])
   },
   props: {
 

@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia'
 import { useProjectStore } from './project'
 
-// import Template  from '@/models/template'
+import Template  from '@/models/template'
+
 const fields = [
     'name',
     'datatypes',
@@ -31,6 +32,8 @@ export const useTemplateStore = defineStore('templates', {
         }
     },
     actions: {
-
+        create_new(name, extend) {
+            this.project.templates[name] = new Template(name, extend);
+        }
     },
 });
