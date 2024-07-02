@@ -7,9 +7,9 @@
   </v-window>
 
   <!-- left navigation on datatypes -->
-  <datatype-nav v-model:show="show_datatype_tab" />
+  <datatype-nav v-model:show="show_datatype_tab" @selected="tab='datatype'" />
   <!-- right navigation on templates -->
-  <template-nav :model-value="show_template_tab" />
+  <template-nav :model-value="show_template_tab" @selected="tab='template'" />
   <!-- bottom for tab -->
   <v-bottom-navigation v-model="tab" color="primary" grow shift mandatory>
     <v-btn v-for="item in editTabs" :key="`tab-nav.${item.key}`" @click="tab=item.key" :value="item.key" :color="$thx.color[item.key]" >

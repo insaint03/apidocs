@@ -5,6 +5,7 @@
     <v-list
       :color="$thx.color.datatype"
       @click.stop="selection=[]"
+      @update:selected="$emit('selected')"
       multiple selectable slim>    
       <v-list-subheader>datatypes</v-list-subheader>
       <v-list-item class="pa-0" color="default">

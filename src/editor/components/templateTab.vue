@@ -5,6 +5,7 @@
     <v-list
       :color="$thx.color.template"
       @click.stop
+      @update:selected="$emit('selected')"
       selectable slim>
       <v-list-subheader>Templates</v-list-subheader>
       <!-- search control -->
