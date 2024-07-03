@@ -68,14 +68,23 @@
 </template>
 
 <script>
-import { mapState } from 'pinia';
-import { useProjectStore } from '@/stores/project';
+// import { mapState } from 'pinia';
+// import { useProjectStore } from '@/stores/project';
+import models from '@/models';
 
 export default {
   name: 'tocViewer',
   props: {
     open: {type: Object},
     scrollspy: Object,
+    
+    project: Object,
+    datatypes: Object,
+    templates: Object,
+    entities: Array,
+    // endpathes: Array,
+    // migrations: Array,
+    // tags: Array,
   },
   methods: {
     opens(target){
@@ -88,19 +97,28 @@ export default {
     },
   },
   computed: {
-    ...mapState(useProjectStore, [
-      'project', 
-      'datatypes',
-      'templates',
-      'endpathes',
-      'migrations',
+    tags() {
+      return models.get_tags(this);
+    },
+    endpoints() {
+      return models.get_endpoints(this);
+    },
+    endpathes() {
+      return models.get_endpathes(this);
+    },
+    // ...mapState(useProjectStore, [
+    //   'project', 
+    //   'datatypes',
+    //   'templates',
+    //   'endpathes',
+    //   'migrations',
 
-      'tags',
-      'tag_datatypes',
-      'tag_entities',
-      'has_datatypes',
-      'has_entities',
-    ]),
+    //   'tags',
+    //   'tag_datatypes',
+    //   'tag_entities',
+    //   'has_datatypes',
+    //   'has_entities',
+    // ]),
   },
   data() {
     return {

@@ -75,7 +75,7 @@ export default {
 
   },
   mounted() {
-    console.log('items', this.datatype.name, this.datatype.items);
+    // console.log('items', this.datatype.name, this.datatype.items);
   },
   data() {
     return {

@@ -9,6 +9,18 @@ export default defineConfig({
   server: {
     port: 8080,
   },
+  build: {
+    rollupOptions: {
+      input: {
+        main: './index.html',
+        embed: './embed/index.html',
+      },
+      output: {
+        entryFileNames: '[name].js',
+        assetFileNames: 'assets/[name][extname]',
+      }
+    }
+  },
   preview: {
     // use 8081 port
     port: 8081,

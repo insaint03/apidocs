@@ -55,8 +55,8 @@ export default {
         }
     },
 
-    get_tags() {
-        return Object.values(this.templates)
+    get_tags(store) {
+        return Object.values(store.templates)
             .filter((tmpl)=>tmpl.tagname!=null);
             // .map((tmpl)=>({
             //     ...tmpl,
@@ -142,14 +142,14 @@ export default {
         this.project = new Project({...(values.project)});
         // and load datatypes
         this.datatypes = 
-            this._hierarchical_loads(values.datatypes || {},
+            this._hierarchical_loads(values.datatypes || values.data.datatypes || {},
                 (k,v)=>Datatype.setup({name: k, ...v}),
                 (k,v)=>v.basistype,
                 Datatype.names(...Datatype.all),
             );
         // then templates next,
         this.templates = 
-            this._hierarchical_loads(values.templates || {},
+            this._hierarchical_loads(values.templates || values.data.templates || {},
                 (k,v)=>Template.setup({name: k, ...v}),
                 (k,v)=>v.extend,
                 Template.names(...Template.all),
@@ -167,12 +167,10 @@ export default {
         loads = loads || this.state;
         return JSON.stringify({
             location: loads.location,
-            data: {
-                project: loads.project,
-                datatypes: loads.datatypes,
-                templates: loads.templates,
-                entities: loads.entities,
-            },
+            project: loads.project,
+            datatypes: loads.datatypes,
+            templates: loads.templates,
+            entities: loads.entities,
             timestamp: loads.timestamp || Date.now(),
         });
     },
@@ -182,10 +180,10 @@ export default {
         const content = JSON.parse(loads);
         return {
             location: content.location,
-            project: content.data.project,
-            datatypes: content.data.datatypes,
-            templates: content.data.templates,
-            entities: content.data.entities,
+            project: content.project,
+            datatypes: content.datatypes,
+            templates: content.templates,
+            entities: content.entities,
             timestamp: content.timestamp,
         }
     },
@@ -195,12 +193,10 @@ export default {
         loads = loads || this.state;
         return yaml_stringify({
             location: loads.location,
-            data: {
-                project: loads.project,
-                datatypes: loads.datatypes,
-                templates: loads.templates,
-                entities: loads.entities,
-            },
+            project: loads.project,
+            datatypes: loads.datatypes,
+            templates: loads.templates,
+            entities: loads.entities,
             timestamp: loads.timestamp || Date.now(),
         });
     },
@@ -210,10 +206,10 @@ export default {
         const content = yaml_parse(yaml);
         return {
             location: content.location,
-            project: content.data.project,
-            datatypes: content.data.datatypes,
-            templates: content.data.templates,
-            entities: content.data.entities,
+            project: content.project,
+            datatypes: content.datatypes,
+            templates: content.templates,
+            entities: content.entities,
             timestamp: content.timestamp,
         }
     },
@@ -221,10 +217,10 @@ export default {
     // recover data from an object
     async recover(loads) {
         this.location = loads.location;
-        this.project = loads.data.project;
-        this.datatypes = loads.data.datatypes;
-        this.templates = loads.data.templates;
-        this.entities = loads.data.entities;
+        this.project = loads.project;
+        this.datatypes = loads.datatypes;
+        this.templates = loads.templates;
+        this.entities = loads.entities;
         this.timestamp = loads.timestamp;
     },
 
@@ -307,5 +303,5 @@ export default {
                 // limit to recent_max
                 .filter((v,i)=>i<recent_max))
         );
-    }
+    },
 }

@@ -71,6 +71,27 @@ export const useProjectStore = defineStore('project', {
             // // announce state change
             // return models.state;
         },
+        get_filename(location) {
+            const fmatch = /\/?(?<fname>[^/]+)$/.exec(location);
+            return fmatch ? fmatch.groups.fname : location;
+
+        },
+        async download(filename) {
+            // test filetype, defaults to yaml. json is also available
+            const download = this.get_filename(filename)
+            const serializer = /\.json$/.test(filename) 
+                ? models.serialize_json 
+                : models.serialize_yaml;
+            // build download link
+            const text = await serializer(this);
+            const href = URL.createObjectURL(
+                new Blob([text], {type: 'text/plain'})
+            );
+            Object.assign(
+                document.createElement('a'), 
+                { href, download,}
+            ).click();
+        },
         clears() {
             gtm.push('clear', {});
             models.clear();

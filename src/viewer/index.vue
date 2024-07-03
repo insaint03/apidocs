@@ -1,18 +1,15 @@
 <template>
   <!-- nav bar -->
   <v-navigation-drawer v-if="project_ready" app
+    
     location="right" permanent>
-    <table-of-contents />
+    <table-of-contents
+      v-bind="info_bindings"
+    />
   </v-navigation-drawer>
   <v-main app>
     <document-view v-if="project_ready" 
-      :project="project"
-      :datatypes="datatypes"
-      :templates="templates"
-      :entities="entities"
-      :endpoints="endpoints"
-      :tags="tags"
-      :timestamp="timestamp"
+      v-bind="info_bindings"
     />
     <empty-view v-else />
   </v-main>
@@ -52,6 +49,18 @@ export default {
     ]),
   },
   computed: {
+    info_bindings() {
+      return {
+        project: this.project,
+        datatypes: this.datatypes,
+        templates: this.templates,
+        entities: this.entities,
+        endpathes: this.endpathes,
+        endpoints: this.endpoints,
+        tags: this.tags,
+        timestamp: this.timestamp,
+      }
+    },
     ...mapState(useProjectStore, [
       'project',
       'project_ready',
@@ -62,9 +71,7 @@ export default {
       'endpoints',
       'tags',
       'templates',
-      'tag_datatypes',
-      'tag_entries',
-      'migrations',
+      // 'migrations',
       'timestamp',
       'recents',
     ]),

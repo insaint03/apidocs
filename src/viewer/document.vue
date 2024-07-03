@@ -46,8 +46,9 @@
   </v-container>
 </template>
 <script>
-import { mapState } from 'pinia';
-import { useProjectStore } from '@/stores/project';
+// import { mapState } from 'pinia';
+// import { useProjectStore } from '@/stores/project';
+import models from '@/models';
 
 import Project from '@/models/project';
 import sections from './section';
@@ -70,21 +71,24 @@ export default {
     templates: Object,
     entities: Array,
     // endpoints: Object,
-    tags: Array,
+    // endpathes: Array,
+    // tags: Array,
     timestamp: Number,
   },
   computed: {
+    tags(){
+      return models.get_tags({templates: this.templates});
+    },
+    endpoints() {
+      return models.get_endpoints({entities: this.entities});
+    },
+    endpathes() {
+      return models.get_endpathes({endpoints: this.endpoints});
+    },
     datatype_references() {
       return Object.values(this.datatypes).filter((d)=>d.items
       );
     },
-    ...mapState(useProjectStore, [
-      'endpathes',
-      'endpoints',
-      'tag_datatypes',
-      'tag_entities',
-      'migrations',
-    ]),
   },
   data() {
     return {

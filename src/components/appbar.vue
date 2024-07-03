@@ -45,18 +45,24 @@
     </template>
   </v-app-bar>
   <open-dialog v-model="import_dialog" />
+  <embed-dialog v-model="embed_dialog" :location="location" />
+  <download-dialog v-model="download_dialog" />
 </template>
 
 <script>
-import { mapActions, } from 'pinia';
+import { mapActions,mapState } from 'pinia';
 import { useProjectStore } from '@/stores/project';
 
 import openDialog from './openDialog.vue';
+import embedDialog from '@/components/dialogs/embed.vue'
+import downloadDialog from '@/components/dialogs/download.vue';
 
 export default {
   name: 'appBar',
   components: {
     openDialog,
+    embedDialog,
+    downloadDialog,
   },
   methods: {
     async with_progress(action) {
@@ -82,18 +88,23 @@ export default {
     ]),
   },
   computed: {
+    ...mapState(useProjectStore, [
+      'location',
+    ]),
   },
   data() {
     return {
       progress: true,
       import_dialog: false,
+      embed_dialog: false,
+      download_dialog: false,
       menus: [
         {
           title: 'file', items: [
             { title: 'clear new', action: ()=>{ this.clears() }  },
             { title: 'open/import...', action: ()=>{ this.import_dialog=true; } },
-            { title: 'embedding...', },
-            { title: 'save/download...' },
+            { title: 'embedding...', action: ()=>{ this.embed_dialog=true;} },
+            { title: 'save/download...', action: ()=>{ this.download_dialog=true;} },
             { title: 'export migration' },
             { title: 'export as openapi spec' },
           ]

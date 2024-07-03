@@ -5,11 +5,13 @@ import i18n from './i18n.js';
 import theme from './theme.js';
 
 export default {
-    libs: {
-        pinia,
-        vuetify,
-        vuerouter,
-    },
+    i18n,
+    theme,
+    pinia,
+    vuetify,
+    vuerouter,
+    // libs: {
+    // },
     register(app) {
         return app
             .use(vuetify)
@@ -17,5 +19,12 @@ export default {
             .use(vuerouter)
             .use(theme)
             .use(i18n)
+    },
+    register_embed(app) {
+        return app
+            .use(vuetify)
+            .use(pinia)
+            .use(theme)
+            .use(i18n);
     }
 }

@@ -1,8 +1,8 @@
 <template>
   <v-card>
-    <v-toolbar :color="$thx.color.info">
+    <v-toolbar>
       <v-toolbar-title>
-        <v-icon>mdi-information</v-icon>
+        <v-icon :color="$thx.color.info">mdi-information</v-icon>
         Project info
         <v-divider vertical />
         {{ project.name }}
