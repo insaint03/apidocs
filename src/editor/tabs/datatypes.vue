@@ -71,7 +71,6 @@ export default {
   },
   methods: {
     changes($ev) {
-      console.log($ev.target.name, $ev.target.value);
       return this.updates($ev.target.name, $ev.target.value);
     },
     ...mapActions(useDatatypeStore, [
@@ -102,7 +101,6 @@ export default {
         : [];
     },
     datatype_items() {
-      // console.log('origins', Datatype.origins)
       return this.origins.map((origintype)=>({
           title: origintype,
           value: `origin-${origintype}`,

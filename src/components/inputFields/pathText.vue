@@ -83,7 +83,6 @@ export default {
         .reduce((rs, m)=>m===this.mode ? '' : (rs=='null'?null:m), null);
     },
     edit(frag, index) {
-      console.log('edit', frag, index);
     },
     append() {
       this.value += '/';

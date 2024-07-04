@@ -35,7 +35,6 @@ export default {
   },
   methods: {
     scrolls(e) {
-      console.log('scroll', e, arguments);
     },
     moment(timestamp) {
       return (new Date(timestamp)).toLocaleString();

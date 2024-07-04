@@ -87,7 +87,6 @@ export default {
   },
   methods: {
     toggle_expand(ii) {
-      console.log('items', this.modelValue);
       this.expended[ii] = !this.expended[ii];
     },
     // item_children(it) {

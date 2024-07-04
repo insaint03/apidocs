@@ -27,12 +27,12 @@ export default class Template extends Descriptable {
         // request data
         this._request = {
             ...Request.option(),
-            ...(base.request || {}),
+            ...base.request,
         }
         // response data
         this._response = {
             ...Response.option(),
-            ...(base.response || {}),
+            ...base.response,
         }
 
         // write on store
@@ -100,6 +100,12 @@ export default class Template extends Descriptable {
 
     set response(value) {
         this._response = Object.assign(this._response, value);
+        if(value.body) {
+            const body_constraints = Array.isArray(value.body)
+                ? value.body : value.body.split('\n');
+            this._response.body = body_constraints
+                .map(Patterns.type_constraint_parse);
+        }
     }
 
     get datatypes() {

@@ -27,7 +27,6 @@ export default {
   methods: {
     update_value(key, val) {
       this.$emit('edit', [key, val || this.value[key]]);
-      // console.log('value updated', arguments);
       // this.$emit('edit', [key, current_value], old_value);
       // this.$emit('update:model-value', this.value);
     }

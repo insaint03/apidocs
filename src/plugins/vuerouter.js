@@ -27,7 +27,6 @@ const router = createRouter({
   routes,
 });
 router.beforeResolve = async (to)=>{
-  // console.log('router.afterEach', {to, from})
   gtm.push('pageview', {page: to.path});
 };
 export default router

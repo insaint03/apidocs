@@ -67,11 +67,7 @@ export default {
       this.show_tmpl = !this.show_tmpl;
     },
     add_entity(option) {
-      console.log(option);
       this.entities.push({
-        // request: new Request(option.request),
-        // response: new Response(option.response),
-        // templates: option.templates,
       });
     },
     remove_entities(...ents) {

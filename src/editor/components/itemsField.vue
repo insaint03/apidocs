@@ -94,7 +94,7 @@ export default {
       // 
       this.puts.summary_editable = dtype.is_primitive;
       this.puts.summary = dtype.summary;
-      // console.log(this.puts);
+    
       // auto add 
       if(this.autopush) {
         this.add_object_item({ctrlKey:true, shiftKey:true});
@@ -102,7 +102,6 @@ export default {
     },
     add_item(val) {
       if(this.is_array) {
-        console.log('add_item', val);
         const value = this.items.concat(this.findtype(val));
         this.update_values(value);
         // clear selection
@@ -243,9 +242,6 @@ export default {
           vals = Datatype.parse_items(this.origintype, ...tokens)
         }
         this.updates('items', vals);
-
-        // console.log('text updated', values);
-        // this.$emit('update:modelValue', values);
 
       },
     },

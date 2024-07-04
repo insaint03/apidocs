@@ -70,7 +70,7 @@ templates:
     request:
       path: /api/v1
     response:
-      serializer: json
+      mimetype: application/json
   _foundation.auth:
     extend: _foundation.root
     description: |-
@@ -86,7 +86,7 @@ templates:
       method: GET
     response:
       body:
-        - origin:items
+        - /array
   _foundation.get:
     extend: _foundation.root
     description: |-
@@ -94,7 +94,8 @@ templates:
     request:
       method: GET
     response:
-      body: object
+      body: 
+        - /object
   _foundation.create:
     extend: _foundation.auth
     description: |-
@@ -102,7 +103,8 @@ templates:
     request:
       method: POST
     response:
-      body: object
+      body: 
+        - /object
   _foundation.update:
     extend: _foundation.auth
     description: |-
@@ -110,7 +112,8 @@ templates:
     request:
       method: PUT
     response:
-      body: object
+      body: 
+        - /object
   _foundation.delete:
     extend: _foundation.auth
     description: |-
@@ -118,7 +121,8 @@ templates:
     request:
       method: DELETE
     response:
-      body: object
+      body: 
+        - /object
   item:
     tagname: Item
     description: |-

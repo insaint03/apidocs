@@ -175,12 +175,13 @@ export default class Patterns {
     };
     static type_constraint_parse(token) {
         token = token || '';
-        return Object.entries(Patterns.type_constraint_prefixs)
+        const ret = Object.entries(Patterns.type_constraint_prefixs)
             .reduce((agg, [prefix, type])=>{
                 return agg==null && token.startsWith(prefix)
                     ? ({[type]: token.replace(prefix, '')})
                     : agg;
             }, null);
+        return ret;
     }
     static type_constraint_serialize(entry) {
         entry = entry || {};
@@ -189,6 +190,6 @@ export default class Patterns {
                 return agg==null && entry[type]!=null
                     ? `${prefix}${entry[type]}`
                     : agg;
-            }, null);            
+            }, null);
     }
 }

@@ -129,7 +129,6 @@ export default {
       // 
       this.puts.summary_editable = dtype.is_primitive;
       this.puts.summary = dtype.summary;
-      // console.log(this.puts);
       // auto add 
       if(this.autopush) {
         this.add_object_item({ctrlKey:true, shiftKey:true});
@@ -255,9 +254,6 @@ export default {
           vals = Datatype.parse_items(this.origintype, ...tokens)
         }
         this.updates('items', vals);
-
-        // console.log('text updated', values);
-        // this.$emit('update:modelValue', values);
 
       },
     },

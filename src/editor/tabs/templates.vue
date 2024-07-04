@@ -23,7 +23,7 @@
         <!-- common setup -->
         <v-row>
           <v-col>
-            <v-text-field v-model="tmpl.name" label="name" v-bind="$thx.field" />
+            <v-text-field v-model="tmpl.name" label="name" v-bind="$thx.field" :disabled="has_selection" />
           </v-col>
 
           <v-col>
@@ -39,47 +39,7 @@
           label="datatypes"
           multiple chips :items="datatypes"
           v-bind="$thx.field" />
-        <!-- request -->
-        <v-row>
-          <v-col>
-            <v-divider><v-label>Req.</v-label></v-divider>
-            <v-row>
-              <v-col>
-                <v-text-field v-model="tmpl.request.method" label="method" v-bind="$thx.field" />
-              </v-col>
-              <v-col>
-                <v-text-field :model-value="tmpl.request.pathname" label="pathname" v-bind="$thx.field" />
-              </v-col>
-            </v-row>
-            <v-textarea v-model="tmpl.request.desc" label="description" v-bind="$thx.field" />
-            <v-textarea label="query" :model-value="tmpl.request.query_texts" @change="($ev)=>tmpl.queries=$ev.taget.value" v-bind="$thx.field" />
-            <v-textarea label="cookie" :model-value="tmpl.request.cookie_texts" @change="($ev)=>tmpl.cookies=$ev.taget.value" v-bind="$thx.field" />
-            <v-textarea label="header" :model-value="tmpl.request.header_texts" @change="($ev)=>tmpl.headers=$ev.taget.value" v-bind="$thx.field" />
-            <v-textarea label="body constraints" :model-value="tmpl.request.body" 
-              :items="datatypes" item-title="name" response-object v-bind="$thx.field" />
-          </v-col>
-          <v-divider vertical>
-            <v-icon size="small">mdi-chevron-triple-right</v-icon>
-          </v-divider>
-          <v-col>
-            <v-divider><v-label>Resp.</v-label></v-divider>
-            <v-row>
-              <v-col>
-                <v-text-field v-model="tmpl.response.status_title" label="status" v-bind="$thx.field" />
-              </v-col>
-              <v-col>
-                <v-text-field v-model="tmpl.response.mimetype" label="mimetype" v-bind="$thx.field" />
-              </v-col>
-            </v-row>
-            <v-textarea v-model="tmpl.response.desc" label="description" v-bind="$thx.field" />
-            <v-textarea label="query" :model-value="tmpl.response.query_texts" @change="($ev)=>tmpl.queries=$ev.taget.value" v-bind="$thx.field" />
-            <v-textarea label="cookie" :model-value="tmpl.response.cookie_texts" @change="($ev)=>tmpl.cookies=$ev.taget.value" v-bind="$thx.field" />
-            <v-textarea label="header" :model-value="tmpl.response.header_texts" @change="($ev)=>tmpl.headers=$ev.taget.value" v-bind="$thx.field" />
-            <v-textarea label="body constraints" :model-value="tmpl.response.body" 
-              :items="datatypes" item-title="name" response-object v-bind="$thx.field" />
-          </v-col>
-        </v-row>
-
+        <edit-message v-show="has_selection" v-model="tmpl" mode-template />
       </v-form>
     </v-card-text>
 
@@ -99,11 +59,13 @@ import { mapActions, mapState, mapWritableState } from 'pinia';
 import { useTemplateStore } from '@/stores/template';
 
 import markdownField from '@/components/markdownField.vue';
+import editMessage from '@/editor/components/editMessage.vue';
 
 export default {
   name: 'templateEditor',
   components: {
     markdownField,
+    editMessage,
   },
   watch: {
     selected() {
@@ -119,7 +81,9 @@ export default {
 
   },
   computed: {
-
+    has_selection() {
+      return this.selected !=null;
+    },
     // tmpl() {
     //   return this.selected || this.values;
     // },
@@ -135,6 +99,8 @@ export default {
   },
   data() {
     return {
+      show_request: false,
+      show_response: false,
       tmpl: {
         request: {},
         response: {},

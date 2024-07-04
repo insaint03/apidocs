@@ -62,7 +62,6 @@ export default {
     },
     save() {
       this.value = this.value.concat([Object.assign({}, this.item)]);
-      console.log(this.value);
       this.$emit('update:modelValue', this.value);
       this.$emit('change', this.value);
       this.item = null;

@@ -27,7 +27,7 @@
       </span>
     </template>
     <template #item.response="{ item }">
-      <v-chip size="x-small" class="ma-1">{{ item.response.body.name }}</v-chip>
+      <v-chip size="x-small" class="ma-1">{{ (item.response.body||{}).name }}</v-chip>
       {{ item.response.mimetype }}
       <v-btn text flat size="x-small" class="ma-1"
         :color="$thx.color.http_status(item.response.status_code)">{{ item.response.status_title }}</v-btn>

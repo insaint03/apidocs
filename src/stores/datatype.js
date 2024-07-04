@@ -138,7 +138,6 @@ export const useDatatypeStore = defineStore('datatype', {
             }
         },
         updates(key, value) {
-            console.log('try to update', this.selection, key, value);
             // multiple update
             this.selection.map((it)=>this.datatypes[it])
                 .filter((dt)=>dt!=null)
@@ -146,7 +145,6 @@ export const useDatatypeStore = defineStore('datatype', {
         },
         create_search() {
             const name = this.search_query;
-            // console.log('try to create', this.search);
             if(name && 0<name.length && Datatype.find(name)==null) {
                 this.project.datatypes[name] = Datatype.create(name, 'object');
                 this.selection = [name];

@@ -477,13 +477,17 @@ export default class Datatype extends Descriptable {
                 && datatype.items.reduce((g,it)=>g || it.key === c, false)),
     }
     static suggest(among_types, constraints) {
+        if(!constraints || constraints.length<=0) {
+            return [];
+        }
+
         const filters = constraints.map((ce)=>{
             return Object.entries(Datatype.constraint_fielters)
                 .reduce((agg, [ctype, cbuilder])=>agg || (ce[ctype]
                     ? cbuilder(ce[ctype]) : null), null);
         });
         return Datatype.finds(...among_types).filter((t)=>
-            filters.reduce((pass, filter)=>pass && filter(t), true));
+            filters.reduce((pass, fl)=>pass && fl(t), true));
         
     }
 }

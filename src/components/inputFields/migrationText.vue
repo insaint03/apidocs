@@ -19,7 +19,6 @@ export default {
   },
   methods: {
     exports() {
-      console.log('export migration', this.value);
     },
   },
   props: {

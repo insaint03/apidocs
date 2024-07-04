@@ -65,7 +65,6 @@ export default {
         return this.expanding.length === this.items.length
       },
       set(v) {
-        // console.log('expand_all',v, this.expanding);
         this.expanding = !v ? [] 
           : [].concat(this.items);
         //
