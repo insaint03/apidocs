@@ -345,6 +345,7 @@ export default class Datatype extends Descriptable {
     // custom derivatives
     static inheriteds(type) { return Datatype.all.filter((d)=>d.origin === type);}
     
+    
     // object basis types
     static get objects() { return Datatype.inheriteds('object'); }
     // array basis types
@@ -458,5 +459,31 @@ export default class Datatype extends Descriptable {
         return the_type ? the_type[propname] : null;
     }
 
-
+    /**
+     * 4 types of constraints:
+     *  - {inherits: datatype} - the datatype i.e. 'uuid' for '/string'
+     *  - {contains: datatype} - contains the datatype in items property
+     *  - {fixed: datatype} - exact type
+     *  - {keyname: keyname}  - contains the keyname in items property
+     * @param {*} constraints 
+     * @param  {...any} templates 
+     */
+    static constraint_filters = {
+        inherits:(c)=>((datatype)=>datatype.is_descendant_of(c)),
+        contains:(c)=>((datatype)=> datatype.items
+                && datatype.items.reduce((g,it)=>g || it.datatype === c, false)),
+        fixed:(c)=>((datatype)=>datatype.name === c),
+        keyname:(c)=>((datatype)=> datatype.items
+                && datatype.items.reduce((g,it)=>g || it.key === c, false)),
+    }
+    static suggest(among_types, constraints) {
+        const filters = constraints.map((ce)=>{
+            return Object.entries(Datatype.constraint_fielters)
+                .reduce((agg, [ctype, cbuilder])=>agg || (ce[ctype]
+                    ? cbuilder(ce[ctype]) : null), null);
+        });
+        return Datatype.finds(...among_types).filter((t)=>
+            filters.reduce((pass, filter)=>pass && filter(t), true));
+        
+    }
 }

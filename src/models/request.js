@@ -19,8 +19,8 @@ export default class Request extends Message {
     static path_delimiter = '/';
     static path_separator = '\n';
 
-    constructor({method, path, queries, cookies, headers, body}) {
-        super({cookies, headers, body});
+    constructor({method, path, queries, cookies, headers, body}, ...templates) {
+        super({cookies, headers, body}, ...templates);
         this.method = (method||'GET').toUpperCase();
         this.path = path;
         this._path_matches = null;
@@ -156,10 +156,12 @@ export default class Request extends Message {
             queries: {},
             cookies: [],
             headers: [],
-            body: null,
+            // body constaints
+            body: [],
         }
     }
 
+    // object request options to derive final
     static merge(...reqs) {
         return reqs.reduce((agg, req)=>{
             return {
@@ -173,7 +175,7 @@ export default class Request extends Message {
                     .filter((c,i,a)=>a.indexOf(c)===i), // unique
                 headers: (agg.headers || []).concat(req.headers || [])
                     .filter((h,i,a)=>a.indexOf(h)===i), // unique
-                body: agg.body || req.body,
+                body: agg.body.concat(req.body||[]),
             }
         }, Request.option());
     }

@@ -69,13 +69,30 @@ export default class Template extends Descriptable {
     }
     
     get request() {
-        return this._request;
+        return this._request || {};
     }
 
     set request(value) {
         this._request = Object.assign(this._request, value);
     }
 
+    get_body_constraints(of_message) {
+        return (this[of_message].body||[])
+            .map(Patterns.type_constraint_serialize)
+            .join('\n');
+    }
+
+    set_body_constraints(of_message, value) {
+        this[of_message] = {body: value.split('\n')
+            .map(Patterns.type_constraint_parse)
+            .filter((t)=>t!=null)};
+    }
+
+    // stringify request body constraints
+    get request_body() { return this.get_body_constraints('request'); }
+    set request_body(value) { this.set_body_constraints('request', value); }
+    get response_body() { return this.get_body_constraints('response'); }
+    set response_body(value) { this.set_body_constraints('response', value);}
 
     get response() {
         return this._response

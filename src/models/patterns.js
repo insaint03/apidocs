@@ -157,4 +157,38 @@ export default class Patterns {
         ].join(' ');
     }
     static liner_items = {itemTitle: 'title', itemSubtitle: 'keytype', itemLinks: 'links', itemDesc: 'description', };
+
+    /** 
+     * http message body type constraints on template
+     **/
+    static type_constraint_prefixs = {
+        // inherits the type
+        '/': 'inherits',
+        // contains the type as items property
+        //  ; should be collective (object, array)
+        '@': 'contains',
+        // exact type specification
+        '!': 'fixed',
+        // has keyname
+        //  ; must be object or enum
+        '#': 'keyname',
+    };
+    static type_constraint_parse(token) {
+        token = token || '';
+        return Object.entries(Patterns.type_constraint_prefixs)
+            .reduce((agg, [prefix, type])=>{
+                return agg==null && token.startsWith(prefix)
+                    ? ({[type]: token.replace(prefix, '')})
+                    : agg;
+            }, null);
+    }
+    static type_constraint_serialize(entry) {
+        entry = entry || {};
+        return Object.entries(Patterns.type_constraint_prefixs)
+            .reduce((agg, [prefix, type])=>{
+                return agg==null && entry[type]!=null
+                    ? `${prefix}${entry[type]}`
+                    : agg;
+            }, null);            
+    }
 }

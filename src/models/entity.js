@@ -54,7 +54,7 @@ export default class Entity extends Descriptable {
         return new Request({
             ...Request.merge(...this.templates.map((tmpl)=>tmpl.request)),
             ...this._request,
-        });
+        }, ...this.templates);
     }
     set request(value) {
         this._request = value;
@@ -68,7 +68,7 @@ export default class Entity extends Descriptable {
         return new Response({
             ...Response.merge(...this.templates.map((tmpl)=>tmpl.response)),
             ...this._response,
-        });
+        }, ...this.templates);
     }
 
     get response_raw() {

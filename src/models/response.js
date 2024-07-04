@@ -84,8 +84,8 @@ export default class Response extends Message {
         return Object.entries(Response.statuses).map(([code, data])=>({code: parseInt(code), ...data}));
     }
 
-    constructor({mimetype, status, headers, cookies, body}) {
-        super({headers, cookies, body});
+    constructor({mimetype, status, headers, cookies, body}, ...templates) {
+        super({headers, cookies, body}, ...templates);
         this._mtype = mimetype || 'application/json';
         this.status = status || '200';
     }
@@ -133,7 +133,8 @@ export default class Response extends Message {
             status: null,
             headers: [],
             cookies: {},
-            body: null,
+            // body type constraints
+            body: [],
         };
     }
 
@@ -145,7 +146,7 @@ export default class Response extends Message {
                 headers: (agg.headers || []).concat(resp.headers || [])
                     .filter((h,i,a)=>a.indexOf(h)===i), // unique
                 cookies: {...agg.cookies, ...resp.cookies},
-                body: agg.body || resp.body,
+                body: agg.body.concat(resp.body||[]),
             }
         }, Response.option());
     }
