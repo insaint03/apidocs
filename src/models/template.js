@@ -3,6 +3,7 @@ import Descriptable from './descriptable';
 import Request from './request';
 import Response from './response';
 import Datatype from './datatype';
+import Entity from './entity';
 
 export default class Template extends Descriptable {
     static _store = {};
@@ -150,7 +151,16 @@ export default class Template extends Descriptable {
     }
 
     static clear() {
-        Template._store = {};
+        Template._store = [
+            // defaults
+            {name: '_foundation.root', request: {}, response: {mimetype: 'application/json'}},
+            {name: '_foundation.auth', extend: '_foundation.root', request: {}, response: {}},
+            {name: '_foundation.list', extend: '_foundation.root', request: {method: 'GET'}, response: {body: [{inherit: 'array'}]} },
+            {name: '_foundation.get', extend: '_foundation.root', request: {method: 'GET'}, response: {body: [{inherit: 'object'}]} },
+            {name: '_foundation.create', extend: '_foundation.root', request: {method: 'POST'}, response: {body: [{inherit: 'object'}]} },
+            {name: '_foundation.update', extend: '_foundation.root', request: {method: 'PUT'}, response: {body: [{inherit: 'object'}]} },
+            {name: '_foundation.delete', extend: '_foundation.root', request: {method: 'DELETE'}, response: {body: [{inherit: 'object'}]} },
+        ].map(Template.setup).reduce((agg, tmpl)=>{agg[tmpl.name] = tmpl; return agg;}, {});
     }
 
     static merge(prev, next) {
@@ -171,11 +181,30 @@ export default class Template extends Descriptable {
         //     response: Response.option(),
         // };
         const tmpls = Template.finds(...names);
-        return {
+        return Entity.setup({
             templates: Template.names(...names),
             description: tmpls.reduce((agg,tmpl)=>`${agg}\n${tmpl.description}`.trim(), ''),
             request: Request.merge(...tmpls.map((tmpl)=>tmpl.request)),
             response: Response.merge(...tmpls.map((tmpl)=>tmpl.response)),
-        };
+        });
+    }
+
+    /** mixture entities */
+    static mixture(lines) {
+        return lines
+            .filter((ln)=>Array.isArray(ln)&&0<ln.length)
+            .reduce((prev,line)=>{
+            // cartesian product lines
+            return prev.map((curr)=>line.map((name)=>curr.concat(name))).flat();
+        }, [[]]).map((args)=>Template.build(...args));
+    }
+
+    static default_mixline() {
+        return Template.finds(
+            '_foundation.list', 
+            '_foundation.get',
+            '_foundation.create',
+            '_foundation.update',
+            '_foundation.delete',);
     }
 }

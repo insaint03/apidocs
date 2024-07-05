@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { useProjectStore } from './project'
 
+import Entity from '@/models/entity'
 import Template  from '@/models/template'
 
 const fields = [
@@ -29,11 +30,18 @@ export const useTemplateStore = defineStore('templates', {
         datatypes() {
             return Object.values(this.project.datatypes)
                 .map((d)=>d.name);
+        },
+        default_mix() {
+            return Template.names(...Template.default_mixline());
         }
     },
     actions: {
         create_new(name, extend) {
             this.project.templates[name] = new Template(name, extend);
+        },
+        builds(...lists) {
+            this.project.entities = this.project.entities
+                .concat(Template.mixture(...lists));
         }
     },
 });

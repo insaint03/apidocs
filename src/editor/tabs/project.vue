@@ -1,15 +1,12 @@
 <template>
   <v-card>
-    <v-toolbar>
-      <v-toolbar-title>
-        <v-icon :color="$thx.color.info">mdi-information</v-icon>
-        Project info
-        <v-divider vertical />
-        {{ project.name }}
-      </v-toolbar-title>
-      <v-spacer />
-      <v-chip size="small">v{{ project.version }}</v-chip>
-    </v-toolbar>
+    <tab-header icon="mdi-information" :color="$thx.color.info">
+      <template #title>
+        {{ project.name || 'project info' }}
+        &nbsp;
+        <v-chip size="small">v{{ project.version }}</v-chip>
+      </template>
+    </tab-header>
     <v-card-subtitle>{{ project.summary }}</v-card-subtitle>
     <!-- form -->
     <v-card-text>
@@ -53,20 +50,21 @@
   </v-card>
 </template>
 <script>
-// import Project from '@/models/project';
 
 import { mapWritableState } from 'pinia';
 import { useProjectStore } from '@/stores/project';
 
+import tabHeader from '@/editor/components/tabHeader.vue';
 import singleLinerField from '@/editor/components/singleLinerField.vue';
 import multiLinerFields from '@/editor/components/multiLinerFields.vue';
-// import keywordField from '@/editor/components/keywordField.vue';
 import historyField from '@/editor/components/historyField.vue';
 import markdownField from '@/components/markdownField.vue';
+
 
 export default {
   name: 'projectEditor',
   components: {
+    tabHeader,
     singleLinerField,
     multiLinerFields,
     // keywordField,

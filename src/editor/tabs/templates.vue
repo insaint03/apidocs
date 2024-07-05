@@ -1,19 +1,18 @@
 <template>
+  <tab-header :icon="$thx.icon.tag" :color="$thx.color.tag" :menus="menus">
+    <template #title>
+      {{ tmpl.name || 'Template' }}
+    </template>
+  </tab-header>
   <v-card flat>
     <v-card-item>
-      <v-card-actions>
-        <v-spacer />
-        <v-btn text flat v-bind="$thx.btn" color="primary">
-          {{ selected ? 'save' : 'create' }}
-        </v-btn>
-      </v-card-actions>
-      <v-card-title>
+      <!-- <v-card-title>
         {{ tmpl.name }}
         &nbsp;
         <v-chip v-if="tmpl.tagname" readonly :color="$thx.color.tag" :title="`#${tmpl.tagname}`">
           <v-icon size="small">{{ $thx.icon.tag }}</v-icon>{{ tmpl.tagname }}
         </v-chip>
-      </v-card-title>
+      </v-card-title> -->
       <v-card-subtitle v-if="tmpl.extends">
         / {{ tmpl.extends }}
       </v-card-subtitle>
@@ -58,14 +57,18 @@
 import { mapActions, mapState, mapWritableState } from 'pinia';
 import { useTemplateStore } from '@/stores/template';
 
+import tabHeader from '../components/tabHeader.vue';
 import markdownField from '@/components/markdownField.vue';
 import editMessage from '@/editor/components/editMessage.vue';
+// import templateMixDialog from '@/editor/components/templateMixDialog.vue';
 
 export default {
   name: 'templateEditor',
   components: {
+    tabHeader,
     markdownField,
     editMessage,
+    // templateMixDialog,
   },
   watch: {
     selected() {
@@ -73,6 +76,22 @@ export default {
     }
   },
   methods: {
+    clear() {
+      this.selected = [];
+      this.tmpl = {
+        request: {},
+        response: {},
+      }
+    },
+    derives() {
+      const basename = this.tmpl.name;
+      this.selected = [];
+      this.tmpl = {
+        extend: basename,
+        request: {},
+        response: {},
+      }
+    },
     ...mapActions(useTemplateStore, [
       'create_new',
     ])
@@ -101,6 +120,11 @@ export default {
     return {
       show_request: false,
       show_response: false,
+      // show_mix: false,
+      menus: [
+        // { id: 'derive', title: 'derive', callback: this.derives},
+        // { id: 'mix', title: 'template mix', callback: ()=>{this.show_mix=true;}},
+      ],
       tmpl: {
         request: {},
         response: {},

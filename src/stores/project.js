@@ -2,6 +2,9 @@ import { defineStore } from "pinia";
 
 // import { ref } from "vue";
 
+import Project from '@/models/project';
+import Template from '@/models/template';
+
 import models from '@/models';
 import gtm from '@/gtm.js';
 const storage_key = 'apidocs';
@@ -97,7 +100,10 @@ export const useProjectStore = defineStore('project', {
             models.clear();
             this.$state = {
                 ...models.state,
+                project: new Project({name: 'new project'}),
+                templates: Template.all,
             }
+            // this.$state.project = new Project({name: 'new project'});
             return models.state;
         },
         // cache current state into sessionStorage

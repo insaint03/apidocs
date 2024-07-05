@@ -1,0 +1,469 @@
+location: >-
+  https://raw.githubusercontent.com/insaint03/apidocs/main/data/simple.native.yaml
+project:
+  _summary: This project is a simple example of a api documentation.
+  _desc: ''
+  _name: The simplest example
+  _version: 1.0.0
+  _links:
+    - keytype: github
+      title: Repository
+      links: []
+      description: ''
+    - keytype: issues
+      title: Issues
+      links: []
+      description: ''
+    - keytype: wiki
+      title: QuickStart
+      links: []
+      description: ''
+  _license:
+    keytype: MIT
+    title: MIT License
+    links:
+      - href: https://opensource.org/licenses/MIT
+        anchor: https://opensource.org/licenses/MIT
+    description: ''
+  _contributors:
+    - keytype: owner
+      title: John Doe
+      links: []
+      description: ''
+  _keywords:
+    - example
+datatypes:
+  item:
+    _summary: The item instance
+    _desc: |-
+      contains:
+        - id
+        - sku
+        - name
+        - price
+    _name: item
+    _basistype: object
+    _origintype: object
+    _defaults: null
+    _items:
+      - key: id
+        datatype: item.id
+        required: true
+      - key: sku
+        datatype: item.sku
+        required: true
+      - key: name
+        datatype: item.name
+        required: false
+      - key: price
+        datatype: item.price
+        required: false
+    _migration: items
+  item.id:
+    _summary: unique identifier for a target item
+    _desc: ''
+    _name: item.id
+    _basistype: uuid
+    _origintype: string
+    _defaults: null
+    _items: null
+    _examples:
+      - 5c10fade-1c9e-4d6c-8275-c52c36731d3c
+  item.sku:
+    _summary: stock keeping unit
+    _desc: ''
+    _name: item.sku
+    _basistype: string
+    _origintype: string
+    _defaults: null
+    _items: null
+    _examples:
+      - XC11111
+      - XC22222
+  item.name:
+    _summary: name of the item
+    _desc: ''
+    _name: item.name
+    _basistype: string
+    _origintype: string
+    _defaults: null
+    _items: null
+    _examples:
+      - Item 1
+      - Item 2
+  item.price:
+    _summary: price of the item in KRW
+    _desc: ''
+    _name: item.price
+    _basistype: number
+    _origintype: number
+    _defaults: null
+    _items: null
+    _examples:
+      - 1000
+      - 2000
+  items:
+    _summary: item array
+    _desc: ''
+    _name: items
+    _basistype: array
+    _origintype: array
+    _defaults: null
+    _items:
+      - item
+  access_token:
+    _summary: access token
+    _desc: ''
+    _name: access_token
+    _basistype: string
+    _origintype: string
+    _defaults: null
+    _items: null
+    _examples:
+      - 5c10fade-1c9e-4d6c-8275-c52c36731d3c
+templates:
+  _foundation.root:
+    _summary: The root of the api
+    _desc: determines request path prefix, and response serializer
+    _name: _foundation.root
+    _tagname: null
+    _datatypes: []
+    _request:
+      method: null
+      path: /api/v1
+      queries: &ref_0 {}
+      cookies: &ref_1 []
+      headers: &ref_6 []
+      body: &ref_2 []
+    _response:
+      mimetype: application/json
+      status: null
+      headers: &ref_3 []
+      cookies: &ref_4 {}
+      body: &ref_5 []
+  _foundation.auth:
+    _summary: Common authenticated packets
+    _desc: ''
+    _name: _foundation.auth
+    _extends: _foundation.root
+    _tagname: null
+    _datatypes: []
+    _request:
+      method: null
+      path: /api/v1
+      queries: *ref_0
+      cookies: *ref_1
+      headers: &ref_7
+        - '!Authorization:access_token'
+      body: *ref_2
+    _response:
+      mimetype: application/json
+      status: null
+      headers: *ref_3
+      cookies: *ref_4
+      body: *ref_5
+  _foundation.list:
+    _summary: Common listing template
+    _desc: ''
+    _name: _foundation.list
+    _extends: _foundation.root
+    _tagname: null
+    _datatypes: []
+    _request:
+      method: GET
+      path: /api/v1
+      queries: *ref_0
+      cookies: *ref_1
+      headers: *ref_6
+      body: *ref_2
+    _response:
+      mimetype: application/json
+      status: null
+      headers: *ref_3
+      cookies: *ref_4
+      body:
+        - &ref_8
+          inherits: array
+  _foundation.get:
+    _summary: Common get template
+    _desc: ''
+    _name: _foundation.get
+    _extends: _foundation.root
+    _tagname: null
+    _datatypes: []
+    _request:
+      method: GET
+      path: /api/v1
+      queries: *ref_0
+      cookies: *ref_1
+      headers: *ref_6
+      body: *ref_2
+    _response:
+      mimetype: application/json
+      status: null
+      headers: *ref_3
+      cookies: *ref_4
+      body:
+        - &ref_9
+          inherits: object
+  _foundation.create:
+    _summary: Common create template
+    _desc: ''
+    _name: _foundation.create
+    _extends: _foundation.auth
+    _tagname: null
+    _datatypes: []
+    _request:
+      method: POST
+      path: /api/v1
+      queries: *ref_0
+      cookies: *ref_1
+      headers: *ref_7
+      body: *ref_2
+    _response:
+      mimetype: application/json
+      status: null
+      headers: *ref_3
+      cookies: *ref_4
+      body:
+        - &ref_10
+          inherits: object
+  _foundation.update:
+    _summary: Common update template
+    _desc: ''
+    _name: _foundation.update
+    _extends: _foundation.auth
+    _tagname: null
+    _datatypes: []
+    _request:
+      method: PUT
+      path: /api/v1
+      queries: *ref_0
+      cookies: *ref_1
+      headers: *ref_7
+      body: *ref_2
+    _response:
+      mimetype: application/json
+      status: null
+      headers: *ref_3
+      cookies: *ref_4
+      body:
+        - &ref_11
+          inherits: object
+  _foundation.delete:
+    _summary: Common delete template
+    _desc: ''
+    _name: _foundation.delete
+    _extends: _foundation.auth
+    _tagname: null
+    _datatypes: []
+    _request:
+      method: DELETE
+      path: /api/v1
+      queries: *ref_0
+      cookies: *ref_1
+      headers: *ref_7
+      body: *ref_2
+    _response:
+      mimetype: application/json
+      status: null
+      headers: *ref_3
+      cookies: *ref_4
+      body:
+        - &ref_12
+          inherits: object
+  item:
+    _summary: Item relavant apis
+    _desc: ''
+    _name: item
+    _tagname: Item
+    _datatypes:
+      - item
+    _request:
+      method: null
+      path: /api/v1/items
+      queries: {}
+      cookies: []
+      headers: []
+      body: []
+    _response:
+      mimetype: null
+      status: null
+      headers: []
+      cookies: {}
+      body: []
+entities:
+  - _summary: List items
+    _desc: It will list item instances
+    _tmpls:
+      - _foundation.list
+      - item
+    _templates: null
+    _trails: null
+    _request:
+      path: /api/v1/items
+      queries:
+        name: item.name
+    _response:
+      body: items
+  - _summary: Get item
+    _desc: It will get item instance
+    _tmpls:
+      - _foundation.get
+      - item
+    _templates: null
+    _trails: null
+    _request:
+      path: /api/v1/items/<item.id>
+    _response:
+      body: item
+  - _summary: Create item
+    _desc: |-
+      It will create item instance.
+      access token required
+    _tmpls:
+      - _foundation.create
+      - item
+    _templates: null
+    _trails: null
+    _request:
+      path: /api/v1/items
+      body: item
+    _response:
+      body: item
+  - _summary: Update item
+    _desc: |-
+      It will update item instance.
+      access token required
+    _tmpls:
+      - _foundation.update
+      - item
+    _templates: null
+    _trails: null
+    _request:
+      path: /api/v1/items/<item.id>
+      body: item
+    _response:
+      body: item
+  - _summary: Delete item
+    _desc: |-
+      It will delete item instance.
+      access token required
+    _tmpls:
+      - _foundation.delete
+      - item
+    _templates: null
+    _trails: null
+    _request:
+      path: /api/v1/items/<item.id>
+    _response:
+      body: item
+  - _summary: Item relavant apis
+    _desc: Common listing template
+    _tmpls:
+      - item
+      - _foundation.list
+    _templates: null
+    _trails: null
+    _request:
+      method: GET
+      path: /api/v1/items
+      queries: {}
+      cookies: []
+      headers: []
+      body: []
+    _response:
+      mimetype: application/json
+      status: null
+      headers: []
+      cookies: {}
+      body:
+        - *ref_8
+  - _summary: Item relavant apis
+    _desc: Common get template
+    _tmpls:
+      - item
+      - _foundation.get
+    _templates: null
+    _trails: null
+    _request:
+      method: GET
+      path: /api/v1/items
+      queries: {}
+      cookies: []
+      headers: []
+      body: []
+    _response:
+      mimetype: application/json
+      status: null
+      headers: []
+      cookies: {}
+      body:
+        - *ref_9
+  - _summary: Item relavant apis
+    _desc: Common create template
+    _tmpls:
+      - item
+      - _foundation.create
+    _templates: null
+    _trails: null
+    _request:
+      method: POST
+      path: /api/v1/items
+      queries: {}
+      cookies: []
+      headers:
+        - '!Authorization:access_token'
+      body: []
+    _response:
+      mimetype: application/json
+      status: null
+      headers: []
+      cookies: {}
+      body:
+        - *ref_10
+  - _summary: Item relavant apis
+    _desc: Common update template
+    _tmpls:
+      - item
+      - _foundation.update
+    _templates: null
+    _trails: null
+    _request:
+      method: PUT
+      path: /api/v1/items
+      queries: {}
+      cookies: []
+      headers:
+        - '!Authorization:access_token'
+      body: []
+    _response:
+      mimetype: application/json
+      status: null
+      headers: []
+      cookies: {}
+      body:
+        - *ref_11
+  - _summary: Item relavant apis
+    _desc: Common delete template
+    _tmpls:
+      - item
+      - _foundation.delete
+    _templates: null
+    _trails: null
+    _request:
+      method: DELETE
+      path: /api/v1/items
+      queries: {}
+      cookies: []
+      headers:
+        - '!Authorization:access_token'
+      body: []
+    _response:
+      mimetype: application/json
+      status: null
+      headers: []
+      cookies: {}
+      body:
+        - *ref_12
+timestamp: 1720171988947

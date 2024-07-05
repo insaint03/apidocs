@@ -1,14 +1,15 @@
 <template>
+  <tab-header :icon="$thx.icon.datatype" :color="$thx.color.datatype">
+    <template #title>{{ title }}</template>
+    <!--
+    <template #items>
+      <v-btn text flat v-bind="$thx.btn" :color="$thx.color.primary" 
+        :disabled="!values.name"
+        @click="appends(values)">add</v-btn>
+    </template>
+    -->
+  </tab-header>
   <v-card flat>
-    <v-toolbar flat>
-      <v-toolbar-title>
-        {{ title }}
-      </v-toolbar-title>
-      <v-spacer />
-      <v-chip text :disabled style="text-transform: none;">
-        {{ values.origintype }}
-      </v-chip>
-    </v-toolbar>
     <v-card-text>
       <v-form>
         <v-row>
@@ -48,29 +49,20 @@ import Datatype from '@/models/datatype';
 import { mapActions, mapState, mapWritableState } from 'pinia';
 import { useDatatypeStore } from '@/stores/datatype';
 
+import tabHeader from '../components/tabHeader.vue';
 import markdownField from '@/components/markdownField.vue';
 import itemsField from '../components/itemsField.vue';
-
-// const datatype_properties = [
-//   'name',
-//   'basistype',
-//   'origintype',
-//   'description',
-//   'items',
-//   'migration',
-//   'defaults',
-//   'validation',
-//   'examples',
-// ];
 
 export default {
   name: 'datatypeEditor',
   components: {
+    tabHeader,
     markdownField,
     itemsField,
   },
   methods: {
     changes($ev) {
+      console.log('changes', $ev.target.name, $ev.target.value);
       return this.updates($ev.target.name, $ev.target.value);
     },
     ...mapActions(useDatatypeStore, [
@@ -127,6 +119,10 @@ export default {
   },
   data() {
     return {
+      menus: [
+        { id: 'create', title: 'create_new', callback: function(){ window.alert('new datatype'); }, },
+        { id: 'inherit', title:'inherit_new', callback: function(){ window.alert('inherits datatype'); }, },
+      ]
       // properties: datatype_properties,
     };
   }

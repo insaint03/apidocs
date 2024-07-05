@@ -1,4 +1,14 @@
 <template>
+  <tab-header :icon="$thx.icon.endpoint" :color="$thx.color.endpoint">
+    <template #items>
+      <v-btn text flat @click="show_mix=true" :color="$thx.color.primary">mix</v-btn>
+      <v-divider vertical />
+      <v-btn text flat @click="append">
+        <v-icon>mdi-plus</v-icon>
+      </v-btn>
+    </template>
+  </tab-header>
+  <template-mix-dialog v-model="show_mix" />
   <v-data-table 
     density="compact"
     item-value="index"
@@ -12,9 +22,10 @@
 
     </template>
     <template #item.tags="{ item }">
-      <v-chip v-for="(tag, i) in item.tagnames" :key="i" size="x-small" class="ma-1">
-        {{ tag }}
-      </v-chip>
+      <v-chip-group>
+        <v-chip v-for="(tag, i) in item.tagnames" :key="`endpoint-tags-${item.index}.${tag}.${i}`"
+          class="endpoint-tags" size="x-small" readonly :color="$thx.color.tag" :prepend-icon="$thx.icon.tag">{{ tag }}</v-chip>
+      </v-chip-group>
     </template>
     <template #item.request.method="{ item }">
       <v-btn text flat size="x-small" readonly :color="$thx.color.http_method[item.request.method]" class="mx-1">
@@ -27,15 +38,17 @@
       </span>
     </template>
     <template #item.response="{ item }">
-      <v-chip size="x-small" class="ma-1">{{ (item.response.body||{}).name }}</v-chip>
-      {{ item.response.mimetype }}
-      <v-btn text flat size="x-small" class="ma-1"
+      <v-btn text flat size="x-small" class="ma-1" readonly
         :color="$thx.color.http_status(item.response.status_code)">{{ item.response.status_title }}</v-btn>
+      {{ item.response.mimetype }}
+      <v-chip size="x-small" class="ma-1">{{ (item.response.body||{}).name }}</v-chip>
+      <v-divider vertical />
     </template>
     <template #expanded-row="{index, item, toggleSelect, columns}">
       <tr>
         <td :colspan="columns.length">
           <v-sheet theme="dark" class="my-2 pa-2 rounded">
+            
             <v-row>
               <v-col>
                 <v-autocomplete v-model="item.entity.template_names" label="templates" multiple chips :items="template_list" item-title="name" item-value="name" v-bind="$thx.field" />
@@ -71,17 +84,31 @@
                   label="responses" :items="datatype_list" item-title="name" response-object v-bind="$thx.field" />
               </v-col>
             </v-row>
+            <v-row>
+              <v-col>
+                <v-btn flat @click="subtract(index)" :color="$thx.color.danger">
+                  <v-icon>mdi-close</v-icon> delete
+                </v-btn>
+              </v-col>
+            </v-row>
           </v-sheet>
         </td>
       </tr>
     </template>
   </v-data-table>
+  <v-divider />
+  <v-form>
+
+  </v-form>
 </template>
 <script>
 import { mapActions, mapState, mapWritableState } from 'pinia';
 import { useProjectStore } from '@/stores/project';
 
+import tabHeader from '../components/tabHeader.vue';
 import markdownField from '@/components/markdownField.vue';
+import templateMixDialog from '../components/templateMixDialog.vue';
+
 import Request from '@/models/request';
 import Response from '@/models/response';
 
@@ -96,9 +123,20 @@ const columns = [
 export default {
   name: 'endpointsTab',
   components: {
+    tabHeader,
     markdownField,
+    templateMixDialog,
   },
   methods: {
+    append() {
+      this.entities.push({
+        request: {},
+        response: {},
+      });
+    },
+    subtract(index) {
+      this.entities.splice(index,1);
+    },
     ...mapActions(useProjectStore, [
       // 'addEndpoint',
       // 'removeEndpoint',
@@ -112,6 +150,7 @@ export default {
       return this.entities.map((e,i)=>({
         index: i+1,
         entity: e,
+        tagnames: e.tagnames,
         request: e.request,
         response: e.response,
         // ...e,
@@ -140,6 +179,8 @@ export default {
       columns,
       methods: Request.methods,
       mimetypes: Response.mimetypes,
+
+      show_mix: false,
       // statuses: Response.statuses,
 
     };
