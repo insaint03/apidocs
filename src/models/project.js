@@ -20,20 +20,20 @@ export default class Project extends Descriptable {
     get version() { return this._version; }
     set version(value) { this._version = value; }
 
-    get links() { return this._links }
-    get links_string() { return this._links.map(Patterns.liner_serialize).join('\n'); }
+    get links() { return this._links  || []}
+    get links_text() { return this.links.map(Patterns.liner_serialize).join('\n'); }
     set links(value) { 
         const stringify = Array.isArray(value)? value.join('\n'): (value || '');
         this._links = stringify.split('\n').map(Patterns.liner_parse); 
     }
 
-    get license() { return this._license; }
-    get license_string() { return Patterns.liner_serialize(this._license); }
+    get license() { return this._license || []; }
+    get license_text() { return Patterns.liner_serialize(this._license); }
     set license(value) { this._license = Patterns.liner_parse(value.trim()); }
 
-    get contributors() { return this._contributors; }
-    get contributors_string() { 
-        return this._contributors.map(Patterns.liner_serialize).join('\n'); }
+    get contributors() { return this._contributors || []; }
+    get contributors_text() { 
+        return this.contributors.map(Patterns.liner_serialize).join('\n'); }
     
     set contributors(value) { 
         const stringify = Array.isArray(value)? value.join('\n'): (value || '');
@@ -42,6 +42,13 @@ export default class Project extends Descriptable {
 
     // history contains: version, date, items (single-liner)
     get history() { return this._history || []; }
+    get history_text() {
+        return this.history.map(({version, date, items})=>({
+            version,
+            date,
+            items: (items||[]).map(Patterns.liner_serialize).join('\n'),
+        }));
+    }
     set history(value) { 
         if(value) {
             this.history_log(value); 
@@ -53,10 +60,10 @@ export default class Project extends Descriptable {
             name: this.name,
             // description: this.description,
             version: this.version,
-            history: this.history,
-            links: this.links_string,
-            license: this.license_string,
-            contributors: this.contributors_string,
+            history: this.history_text,
+            links: this.links_text,
+            license: this.license_text,
+            contributors: this.contributors_text,
             keywords: this.keywords,
             ...super.serialized,
         }
@@ -78,8 +85,9 @@ export default class Project extends Descriptable {
         // overwrite the date if needed
         it.date = date || new Date().toISOString();
         it.items = (it.items || [])
-            .concat((items instanceof Array?items:(items||'').split('\n'))
-                .map((ln)=>ln instanceof String?Patterns.liner_parse(ln):ln));
+            .concat(
+                (items instanceof Array?items:(items||'').split('\n'))
+                .map(Patterns.liner_parse));
         // 
         if(created) {
             this._history = this.history.concat([it]);

@@ -16,6 +16,7 @@
           hide-details solo
           append-inner-icon="mdi-plus-circle" clearable
           prepend-inner-icon="mdi-magnify"
+          @click.stop
           @click:append-inner="create_search"
           @keyup.ctrl.enter="create_search" />
           

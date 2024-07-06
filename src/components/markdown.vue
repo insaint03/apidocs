@@ -1,6 +1,6 @@
 <template>
   <v-label v-if="label">{{ label }}</v-label>
-  <v-sheet class="markdown pt-0 pb-2 px-4 mb-4 border rounded-lg"
+  <v-sheet class="markdown pt-0 pb-2 px-4 mb-4 border"
     :color="$thx.color.markdown">
     <div class="pa-4" v-html="htmls"></div>
   </v-sheet>

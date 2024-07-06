@@ -9,10 +9,13 @@
         placeholder="(keytype) title <link1,link2|anchor> and optional longlong description"
         hint="(keytype) title <link> desc; keytype and title are required"
         @change="$emit('update:modelValue', parsed)"
+        @focus="focused=true" @blur="focused=false"
        />
     </v-list-item>
-    <v-divider />
-    <liner-list-group :items="[parsed]" :icons="icons" editable />
+    <div v-show="focused">
+      <v-divider>preview</v-divider>
+      <liner-list-group :items="[parsed]" :icons="icons" editable />
+    </div>
   </v-list>
 </template>
 <script>
@@ -39,6 +42,10 @@ export default {
           || `keytype must be one of ${this.keytypes.join(',')}`;
       }
     },
+    setfocus($ev) {
+      console.log('focused', $ev.returnValue);
+
+    }
   },
   props: {
     modelValue: {type: Object},
@@ -51,13 +58,14 @@ export default {
       get() {
         return Patterns.liner_parse(this.value || '');
       },
-      set(value) {
-        // TODO
-      }
+      // set(value) {
+      //   // TODO
+      // }
     }
   },
   data() {
     return {
+      focused: false,
       checked: [],
       value: Patterns.liner_serialize(this.modelValue),
     }

@@ -1,18 +1,18 @@
 <template>
-  <v-tooltip location="bottom">
-    <template #activator="{ props }">
-      <v-textarea v-model:model-value="value"
-        :label="$props.label"
-        hint="first line is summary, rests are long markdown description"
-        v-bind="{...props, ...$thx.field}"
-        @change="$emit('change', value)"  />
-    </template>
+  <v-textarea v-model:model-value="value"
+    :label="$props.label"
+    hint="first line is summary, rests are long markdown description"
+    v-bind="{...props, ...$thx.field}"
+    @change="$emit('change', value)"  
+    @focus="focused=true" @blur="focused=false"
+  />
+  <div v-show="focused">
     <v-divider>preview</v-divider>
-    <v-card>
+    <v-card flat class="border-thin">
       <v-card-title>{{ summary }}</v-card-title>
       <mark-down v-model="desc" />
     </v-card>
-  </v-tooltip>
+  </div>
 </template>
 
 <script>
@@ -37,6 +37,7 @@ export default {
   },
   data() {
     return {
+      focused: false,
       // value: this.modelValue,
     };
   },

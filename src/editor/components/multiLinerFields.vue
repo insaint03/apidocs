@@ -8,9 +8,12 @@
         placeholder="(keytype) title <link1,link2|anchor> and optional longlong description"
         hint="(keytype) title <link> desc; keytype and title are required"
         @change="$emit('update:modelValue', parsed)"
+        @focus="focused=true" @blur="focused=false"
       />
-      <v-divider />
-      <liner-list-group :items="parsed" :icons="icons" editable />
+      <div v-show="focused">
+        <v-divider>preview</v-divider>
+        <liner-list-group :items="parsed" :icons="icons" editable />
+      </div>
     </v-list-item>
   </v-list>
 </template>
@@ -68,6 +71,7 @@ export default {
   },
   data() {
     return {
+      focused: false,
       value: (this.modelValue||[]).map(Patterns.liner_serialize).join('\n'),
     }
   }

@@ -2,7 +2,8 @@
   <v-list-subheader v-if="label">{{ label }}</v-list-subheader>
   <v-list-item v-for="(item,ii) in items" :key="`liner-${label}.${ii}`"
     :title="item.title" :subtitle="item.description"
-    :active="editable">
+    :active="editable"
+    tabindex="-1">
     <template #prepend>
       <v-btn :title="item.keytype" flat readonly style="background:inherit;color:inherit">
         <v-icon v-if="icons && icons[item.keytype]">{{ icons[item.keytype] }}</v-icon>
@@ -47,13 +48,14 @@ export default {
     label: String,
     items: Array,
     icons: { type: Object,required: false },
-    editable: { type: Boolean, required: false, default: false },
+    // editable: { type: Boolean, required: false, default: false },
   },
   computed: {
 
   },
   data() {
     return {
+      editable: false,
       open: this.items.map(()=>false),
       value: this.items.filter((t)=>t),
     };

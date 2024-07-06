@@ -37,7 +37,9 @@ export const useTemplateStore = defineStore('templates', {
     },
     actions: {
         create_new(name, extend) {
-            this.project.templates[name] = new Template(name, extend);
+            const newtype = new Template(name, extend);
+            this.project.templates = Object.assign({}, this.project.templates, {[name]:newtype});
+            this.selected = newtype;
         },
         builds(...lists) {
             this.project.entities = this.project.entities

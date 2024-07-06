@@ -12,8 +12,9 @@
       <v-text-field v-model="search" label="Search & Create" outlined v-bind="$thx.field"
         prepend-inner-icon="mdi-magnify"
         append-inner-icon="mdi-plus-circle"
+        @click.stop
         @click:append-inner="create_new(search)"
-        @keyup.ctrl.enter="create_new(search)" />
+        @keyup.enter.ctrl="create_new(search)" />
       <!-- migration items -->
       <v-list-item v-for="tmpl,ti in tags" :key="`template-tab.${tmpl.name}.${ti}`"
         :active="selected==tmpl"

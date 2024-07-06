@@ -12,7 +12,7 @@
     <v-card-text>
       <v-row>
         <!-- -->
-        <v-col xl="4" md="6" sm="12">
+        <v-col md="6" sm="12">
           <!-- project title -->
           <v-text-field v-model="project.name" label="name" v-bind="$thx.field" />
           <!-- project version -->
@@ -23,14 +23,14 @@
           
         </v-col>
         
-        <v-col xl="4" md="6" sm="12">
+        <v-col md="6" sm="12">
           <markdown-field 
             v-model="project.description" 
             label="description"
             @change="describe"
             v-bind="$thx.field" />
         </v-col>
-        <v-col xl="4" md="6" sm="12">
+        <v-col md="6" sm="12">
           <!-- project license -->
           <single-liner-field v-model="project.license" label="license" />
           <!-- project contributors -->
@@ -41,7 +41,7 @@
           <keyword-field v-model="project.keywords" label="keywords" />
           -->
         </v-col>
-        <v-col xl="4" md="6" sm="12">
+        <v-col md="6" sm="12">
           <!-- TODO: document history -->
           <history-field :project="project" />
         </v-col>
