@@ -117,6 +117,18 @@ export default class Template extends Descriptable {
         this._datatypes = Datatype.names(...values);
     }
 
+    get serialized() {
+        // const req_options = this.request
+        return {
+            name: this.name,
+            tagname: this.tagname,
+            datatypes: this.datatypes,
+            request: Request.option_serialize(this.request),
+            response: Response.option_serialize(this.response),
+            ...super.serialized,
+        }
+    }
+
     static get all() {
         return Object.values(Template._store);
     }

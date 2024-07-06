@@ -79,6 +79,16 @@ export default class Entity extends Descriptable {
         this._response = {...this._response, ...value};
     }
 
+    get serialized() {
+        return {
+            templates: this.template_names,
+            description: this.description,
+            request: this.request.serialized,
+            response: this.response.serialized,
+            ...super.serialized,
+        }
+    }
+
     static setup({templates, description, request, response}) {
         return new Entity({templates, description, request, response});
     }

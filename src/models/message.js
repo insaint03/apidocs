@@ -108,4 +108,18 @@ export default class Message extends Descriptable {
 
         this._body = value;
     }
+
+    get serialized() {
+        const ret = {...super.serialized};
+        if(0<this.headers.length) {
+            ret.headers = this.header_texts;
+        }
+        if(0<this.cookies.length) {
+            ret.cookies = this.cookie_texts;
+        }
+        if(this.body) {
+            ret.body = this.body.name;
+        }
+        return ret;
+    }
 }

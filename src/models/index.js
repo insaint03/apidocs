@@ -11,6 +11,20 @@ const yaml_stringify = YAML.dump;
 const recent_key = '_recents';
 const recent_max = 5;
 
+const serialized = ({location,project,datatypes,templates,entities,timestamp}) => {
+    const serialize_obj = ((obj)=>Object.fromEntries(
+        Object.entries(obj).map(([k,v])=>[k,v.serialized])
+    ));
+    return {
+        location,
+        project:project.serialized,
+        datatypes: serialize_obj(datatypes),
+        templates: serialize_obj(templates),
+        entities: entities.map((e)=>e.serialized),
+        timestamp: timestamp || Date.now(),
+    };
+};
+
 
 export default {
     location: null,
@@ -162,17 +176,12 @@ export default {
         this.timestamp = values.timestamp || Date.now();
     },
 
+    
+
     // serialize data (defaults current state) to json
     async serialize_json(loads) {
         loads = loads || this.state;
-        return JSON.stringify({
-            location: loads.location,
-            project: loads.project,
-            datatypes: loads.datatypes,
-            templates: loads.templates,
-            entities: loads.entities,
-            timestamp: loads.timestamp || Date.now(),
-        });
+        return JSON.stringify(serialized(loads));
     },
 
     // deserialize json to object. state change not provided
@@ -188,17 +197,9 @@ export default {
         }
     },
 
-    //TODO: serialize data (defaults current state) to yaml
     async serialize_yaml(loads) {
         loads = loads || this.state;
-        return yaml_stringify({
-            location: loads.location,
-            project: loads.project,
-            datatypes: loads.datatypes,
-            templates: loads.templates,
-            entities: loads.entities,
-            timestamp: loads.timestamp || Date.now(),
-        });
+        return yaml_stringify(serialized(loads));
     },
 
     // TODO: deserialize yaml to object. state change not provided

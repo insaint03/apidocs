@@ -248,6 +248,23 @@ export default class Datatype extends Descriptable {
             .filter((d,i,a)=>a.indexOf(d) === i);
     }
 
+    get serialized() {
+        // required props
+        const ret = {
+            name: this.name,
+            basistype: this.basistype,
+            ...super.serialized,
+        };
+        // optional
+        ['validation', 'defaults', 'items', 'migration', 'examples']
+            .forEach((prop)=>{
+                if(this[prop]&& this[prop]!==false) {
+                    ret[prop] = this[prop];
+                }
+            });
+        return ret;
+    }
+
 
     static default_basis = 'string';
     static _type = 'Datatype'

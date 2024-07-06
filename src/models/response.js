@@ -127,15 +127,39 @@ export default class Response extends Message {
         this._mtype = value;
     }
 
+    get serialized() {
+        return {
+            mimetype: this.mimetype,
+            status: this.status,
+            ...super.serialized,
+        }
+    }
+
     static option() {
         return {
             mimetype: null,
             status: null,
             headers: [],
-            cookies: {},
+            cookies: [],
             // body type constraints
             body: [],
         };
+    }
+
+    static option_serialize(loads) {
+        const {
+            mimetype, status,
+        } = loads;
+        const ret = {
+            mimetype,
+            status,
+        };
+        ['headers', 'cookies', 'body'].forEach((key)=>{
+            if(loads[key] && loads[key].length>0) {
+                ret[key] = loads[key];
+            }
+        });
+        return ret;
     }
 
     static merge(...resps) {

@@ -61,6 +61,7 @@ export default class Request extends Message {
             return agg && passes[obj.type](obj, frag);
         }, true);
     }
+
     
     // parsing queries input
     //  the value should match one of the followings:
@@ -149,16 +150,56 @@ export default class Request extends Message {
         return this._queries.find((q)=>q.key===key) || {};
     }
 
+    
+    get serialized() {
+        // all props
+        const ret = {
+            method: this.method,
+            path: this.pathname,
+            queries: this.query_texts,
+            ...super.serialized,
+        };
+        // remove empty queries
+        ['queries'].forEach((key)=>{        
+            if(ret[key] && ret[key].length===0) {
+                delete ret[key];
+            }
+        });
+        return ret;
+
+    }
+
     static option() {
         return {
             method: null,
             path: null,
             queries: {},
-            cookies: [],
             headers: [],
+            cookies: [],
             // body constaints
             body: [],
         }
+    }
+
+    static option_serialize(loads) {
+        // variate loads
+        const {
+            method, path, queries
+        } = loads;
+        const ret = {
+            method,
+            path,
+        };
+        if(queries && Object.values(queries).filter((q)=>q!=null).length>0) {
+            ret.queries = queries;
+        }
+        ['headers', 'cookies', 'body'].forEach((key)=>{
+            const vs = loads[key];
+            if(vs && vs.length>0) {
+                ret[key] = vs;
+            }
+        });
+        return ret;
     }
 
     // object request options to derive final

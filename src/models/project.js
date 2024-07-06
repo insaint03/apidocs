@@ -47,6 +47,21 @@ export default class Project extends Descriptable {
             this.history_log(value); 
         }
     }
+
+    get serialized() {
+        return {
+            name: this.name,
+            // description: this.description,
+            version: this.version,
+            history: this.history,
+            links: this.links_string,
+            license: this.license_string,
+            contributors: this.contributors_string,
+            keywords: this.keywords,
+            ...super.serialized,
+        }
+    }
+
     // history only appends
     history_log({version, date, items}) { 
         // single_history: {version:str, date:str(ISO Format), items:array(liners)}

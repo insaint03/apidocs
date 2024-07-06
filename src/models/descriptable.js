@@ -29,6 +29,12 @@ export default class Descriptable {
         this._desc = Descriptable.get_desc(value);
     }
 
+    get serialized() {
+        return {
+            description: this.description,
+        }
+    }
+
     static get_summary(text) {
         return (text || '').split('\n')
             .shift();
