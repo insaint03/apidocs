@@ -19,11 +19,11 @@
   </v-bottom-navigation>
 </template>
 <script>
-import { mapWritableState, mapActions } from 'pinia';
+import { mapWritableState } from 'pinia';
 import { useProjectStore } from '@/stores/project';
 import { useDatatypeStore } from '@/stores/datatype';
 
-import Project from '@/models/project';
+// import Project from '@/models/project';
 import tabs from './index.js';
 
 import datatypeNav from '@/editor/components/datatypeTab.vue';
@@ -44,13 +44,6 @@ export default {
   watch: {
   },
   props: {
-    // project: Project,
-    // datatypes: Object,
-    // templates: Object,
-    // entities: Array,
-    // endpoints: Object,
-    // tags: Array,
-    // timestamp: Number,
   },
   computed: {
     show_datatype_tab() {

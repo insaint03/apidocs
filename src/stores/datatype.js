@@ -44,6 +44,11 @@ export const useDatatypeStore = defineStore('datatype', {
                 return agg;
                 }, init);
         },
+        // value_texts() {
+        //     return this.values.origintype ?
+        //         Datatype.serialize_items(this.values.origintype, ...this.values.items || [])
+        //         : '';
+        // },
         types() {
             return Object.values(this.project.datatypes);
         },
@@ -142,6 +147,26 @@ export const useDatatypeStore = defineStore('datatype', {
             this.selection.map((it)=>this.datatypes[it])
                 .filter((dt)=>dt!=null)
                 .forEach((dt)=>dt[key] = value);
+        },
+        update_items(texts) {
+            // split values
+            this.selection.map((it)=>this.datatypes[it])
+                .filter((dt)=>dt!=null)
+                .forEach((dt)=>{
+                    dt.items = texts;
+                });
+            // update new createds
+            if(this.values.origintype==='object') {
+                this.project.datatypes = Object.assign(this.project.datatypes, 
+                    Object.fromEntries(Datatype.customs
+                        .filter((t)=>!this.datatypes[t.name])
+                        .map((t)=>[
+                            t.name,
+                            t,
+                        ])
+                    )
+                );
+            }
         },
         create_search() {
             const name = this.search_query;

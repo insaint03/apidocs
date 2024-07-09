@@ -1,14 +1,6 @@
 <template>
   <v-main app>
-    <edit-view v-if="project_ready" 
-      :project="project"
-      :datatypes="datatypes"
-      :templates="templates"
-      :entities="entities"
-      :endpoints="endpoints"
-      :tags="tags"
-      :timestamp="timestamp"
-    />
+    <edit-view v-if="project_ready" />
     <empty-view v-else />
   </v-main>
 </template>

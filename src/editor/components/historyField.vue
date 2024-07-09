@@ -20,7 +20,7 @@
           hint="(keytype) title <link> desc; keytype and title are required"
           @keyup.enter.ctrl="append" @keyup.tab="append"
           @change="append" />
-      </div>git
+      </div>
     </v-card-text>
   </v-card>
 </template>

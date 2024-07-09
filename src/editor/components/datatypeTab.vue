@@ -66,13 +66,10 @@ export default {
     ]),
   },
   props: {
-    modelValue: {
-      type: Array,
-      required: true,
-    },
     show: {
       type: Boolean,
-      required: true,
+      required: false,
+      default: ()=>true,
     },
   },
   computed: {

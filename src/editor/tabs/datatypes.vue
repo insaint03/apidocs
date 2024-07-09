@@ -28,17 +28,22 @@
           </v-col>
           <v-col cols="3">
             <v-text-field :disabled="values.origintype!='object'" :model-value="values.migration" label="migration" v-bind="$thx.field" 
-              name="desc" @change="changes"/>
+              name="migration" @change="changes"/>
           </v-col>
         </v-row>
-        
-        <markdown-field :model-value="values.description" label="description" v-bind="$thx.field" />
-        <items-field v-if="values.items" label="items" name="items" @change="changes" />
+        <v-row>
+          <v-col>
+            <markdown-field :model-value="values.description" label="description" name="description" @change="changes" />
+            <v-text-field disabled :model-value="values.validation" label="validation" v-bind="$thx.field" name="validation" @change="changes" />
+            <v-textarea disabled :model-value="values.defaults" label="defaults" v-bind="$thx.field" name="defaults" @change="changes" />
+          </v-col>
+          <v-col>
+            <items-field v-if="values.items" label="items" name="items" @change="update_items" />
+          </v-col>
+        </v-row>
         <v-divider>details</v-divider>
+          <v-text-field disabled label="examples" v-bind="$thx.field" name="examples" @change="changes" /> <!-- TODO: examples -->
         
-        <v-text-field disabled :model-value="values.defaults" label="defaults" v-bind="$thx.field" name="defaults" @change="changes" />
-        <v-text-field disabled :model-value="values.validation" label="validation" v-bind="$thx.field" name="validation" @change="changes" />
-        <v-text-field disabled label="examples" v-bind="$thx.field" name="examples" @change="changes" /> <!-- TODO: examples -->
       </v-form>
     </v-card-text>
   </v-card>
@@ -62,11 +67,11 @@ export default {
   },
   methods: {
     changes($ev) {
-      console.log('changes', $ev.target.name, $ev.target.value);
       return this.updates($ev.target.name, $ev.target.value);
     },
     ...mapActions(useDatatypeStore, [
       'updates',
+      'update_items',
       'appends',
     ]),
   },
@@ -91,16 +96,6 @@ export default {
       return this.values.basistype
         ? Datatype.typeprop(this.values.basistype, 'inherits')
         : [];
-    },
-    datatype_items() {
-      return this.origins.map((origintype)=>({
-          title: origintype,
-          value: `origin-${origintype}`,
-          children: this.items[origintype]
-            // custom type first
-            .sort((l,r)=>!l.is_primitive && r.is_primitive ? -1 : 1)
-            .map((ch)=>ch.name),
-        }));
     },
     ...mapState(useDatatypeStore, [
       'keynames',

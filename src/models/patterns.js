@@ -17,13 +17,15 @@ export default class Patterns {
     // items of !key:datatype=defaults
     static item = /^(?<required>!)?(?<key>[^:]+):(?<datatype>[^=/]+)(=(?<defaults>[^/]+?))?(\/{2,}(?<comment>.*))?$/;
     static item_parse(token) {
-        const match = token.match(Patterns.item).groups;
+        const match = token.match(Patterns.item);
+        if(!match) { return null; }
+        const grp = match.groups || {};
         return {
-            key: match.key,
-            datatype: match.datatype,
-            defaults: match.defaults,
-            required: !!match.required,
-            comment: match.comment || undefined,
+            key: grp.key,
+            datatype: grp.datatype,
+            defaults: grp.defaults,
+            required: !!grp.required,
+            comment: grp.comment || undefined,
         }
     }
     static _item_enum_split = /^(?<value>[^\s])\s+(?<desc>.*)$/

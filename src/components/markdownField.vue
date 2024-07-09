@@ -2,8 +2,9 @@
   <v-textarea v-model:model-value="value"
     :label="$props.label"
     hint="first line is summary, rests are long markdown description"
-    v-bind="{...props, ...$thx.field}"
-    @change="$emit('change', value)"  
+    :name="name"
+    v-bind="{...$thx.field}"
+    @change="($ev)=>$emit('change', $ev)"  
     @focus="focused=true" @blur="focused=false"
   />
   <div v-show="focused">
@@ -19,7 +20,11 @@
 import Descriptable from '@/models/descriptable';
 export default {
   name: 'markdownField',
+  emits: ['update:modelValue', 'change'],
   props: {
+    readonly: Boolean,
+    variant: String,
+    name: String,
     label: String,
     modelValue: String,
   },
