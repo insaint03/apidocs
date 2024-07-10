@@ -1,17 +1,10 @@
 <template>
   <tab-header :icon="$thx.icon.datatype" :color="$thx.color.datatype">
-    <template #title>{{ title }}</template>
-    <!--
-    <template #items>
-      <v-btn text flat v-bind="$thx.btn" :color="$thx.color.primary" 
-        :disabled="!values.name"
-        @click="appends(values)">add</v-btn>
-    </template>
-    -->
+    <template #title>{{ title }}</template>   
   </tab-header>
   <v-card flat>
     <v-card-text>
-      <v-form>
+      <v-form v-if="has_select">
         <v-row>
           <v-col cols="3">
             <v-text-field :model-value="values.name" label="name" v-bind="$thx.field"
@@ -45,6 +38,28 @@
           <v-text-field disabled label="examples" v-bind="$thx.field" name="examples" @change="changes" /> <!-- TODO: examples -->
         
       </v-form>
+      <v-form v-else>
+        <v-row>
+          <v-col cols="3">
+            <v-textarea v-model="newtype.names" label="names" v-bind="$thx.field"
+              :rules="[typename_duplication]"
+              hint="separated by newline"
+              name="name" />
+          </v-col>
+          <v-col cols="3">
+            <v-autocomplete v-model="newtype.basistype" label="basistype" v-bind="$thx.field" 
+              :items="alltypes" item-title="name" item-value="name"
+              name="basistype" @change="changes" />
+          </v-col>
+          <v-col cols="3">
+            <v-checkbox model-value="values.is_primitive" label="is_primitive" v-bind="$thx.field"
+              name="is_primitive" @change="changes" />
+          </v-col>
+          <v-col cols="3">
+            <v-btn flat text @click="create_newtype" :disabled="!can_save" :color="$thx.color.datatype">save</v-btn>
+          </v-col>
+        </v-row>
+      </v-form>
     </v-card-text>
   </v-card>
 </template>
@@ -69,10 +84,43 @@ export default {
     changes($ev) {
       return this.updates($ev.target.name, $ev.target.value);
     },
+    typename_duplication() {
+      const dupline = this.newtype_names.reduce((agg, ln, li)=>{
+          return agg || (Datatype.name_exists(ln) ? {l:li+1, n:ln} : null);
+      }, false);
+      
+      return dupline ? `typename ${dupline.l}: ${dupline.n}` : null;
+    },
+    create_newtype() {
+      if(this.newtype_names.length<=0) {
+        return null;
+      }
+      // create new datatypes
+      this.create_new(...this.newtype_names.map((name)=>({name, ...this.newtype})));
+      // then clear newtype data
+      this.newtype = {
+        names: '',
+        basistype: 'object',
+        is_primitive: false,
+      }
+    },
+    // create_new() {
+    //   if(this.can_save) {
+    //     this.appends(this.newtype);
+    //     // update selection
+    //     this.selection = [Datatype.find(this.newtype.name)];
+    //     // re-initialize newtype
+    //     this.newtype = {
+    //       name: '',
+    //       basistype: 'object',
+    //     };
+    //   }
+    // },
     ...mapActions(useDatatypeStore, [
       'updates',
       'update_items',
       'appends',
+      'create_new',
     ]),
   },
   props: {
@@ -97,11 +145,22 @@ export default {
         ? Datatype.typeprop(this.values.basistype, 'inherits')
         : [];
     },
+    newtype_names() {
+      return this.has_select ? null :
+        (this.newtype.names || '')
+          .split('\n').map((ln)=>ln.trim())
+          .filter((ln)=>ln!=null && 0<ln.length);
+    },
+    can_save() {
+      return !this.has_select 
+        && 0<this.newtype_names.length
+        && this.typename_duplication()==null
+        && this.newtype.basistype.length;
+    },
     ...mapState(useDatatypeStore, [
       'keynames',
       
       'values',
-      'selection',
       'alltypes',
 
       'has_select',
@@ -109,6 +168,7 @@ export default {
       'items',
     ]),
     ...mapWritableState(useDatatypeStore, [
+      'selection',
       'datatypes',
     ]),
   },
@@ -117,7 +177,12 @@ export default {
       menus: [
         { id: 'create', title: 'create_new', callback: function(){ window.alert('new datatype'); }, },
         { id: 'inherit', title:'inherit_new', callback: function(){ window.alert('inherits datatype'); }, },
-      ]
+      ],
+      newtype: {
+        names: '',
+        basistype: 'object',
+        is_primitive: false,
+      },
       // properties: datatype_properties,
     };
   }

@@ -139,7 +139,8 @@ export const useDatatypeStore = defineStore('datatype', {
             } 
             // single selection
             else {
-                this.selection = [item];
+                this.selection = this.selection.includes(item) && this.selection.length<=1
+                    ? [] : [item];
             }
         },
         updates(key, value) {
@@ -176,6 +177,16 @@ export const useDatatypeStore = defineStore('datatype', {
                 this.search_query = '';
             }
             return null;
+        },
+        create_new(...puts) {
+            const newtypes = Object.fromEntries(puts.map((put)=>{
+                const nt = Datatype.create(put.name, put.basistype);
+                nt.is_primitive = put.is_primitive;
+                return [put.name, nt];
+            }));
+            this.project.datatypes = Object.assign(this.project.datatypes, 
+                newtypes);
+            this.selection = [].concat(Object.keys(newtypes));
         },
         appends(...params) {
             let generates = [];
