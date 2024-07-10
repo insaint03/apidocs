@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 import { useProjectStore } from './project'
 
-import Entity from '@/models/entity'
 import Template  from '@/models/template'
 
 const fields = [
@@ -40,6 +39,12 @@ export const useTemplateStore = defineStore('templates', {
             const newtype = new Template(name, extend);
             this.project.templates = Object.assign({}, this.project.templates, {[name]:newtype});
             this.selected = newtype;
+        },
+        remove_template(name) {
+            if(this.project.templates[name]) {
+                delete Template._store[name];
+                delete this.project.templates[name];
+            }
         },
         builds(...lists) {
             this.project.entities = this.project.entities

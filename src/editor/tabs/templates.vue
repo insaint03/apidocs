@@ -1,7 +1,19 @@
 <template>
-  <tab-header :icon="$thx.icon.tag" :color="$thx.color.tag" :menus="menus">
+  <tab-header :icon="$thx.icon.tag" :color="$thx.color.tag">
     <template #title>
-      {{ tmpl.name || 'Template' }}
+      {{ tmpl.name || 'New Template' }}
+    </template>
+    <template #items>
+      <template v-if="has_selection">
+        <v-btn text flat v-bind="$thx.btn" :color="$thx.color.danger" @click="clear">
+          delete
+        </v-btn>
+      </template>
+      <template v-else>
+        <v-btn flat v-bind="$thx.btn" :color="$thx.color.tag">
+          save
+        </v-btn>
+      </template>
     </template>
   </tab-header>
   <v-card flat>
@@ -38,19 +50,68 @@
           label="datatypes"
           multiple chips :items="datatypes"
           v-bind="$thx.field" />
-        <edit-message v-show="has_selection" v-model="tmpl" mode-template />
+        <!-- request/response options -->
+        <v-table theme="dark" v-show="has_selection">
+          <thead>
+            <tr>
+              <td>&nbsp;</td>
+              <th style="text-align: center;">
+                <v-icon size="small">mdi-airplane-takeoff</v-icon>
+                Request
+              </th>
+              <th style="text-align: center;">
+                Response
+                <v-icon size="small">mdi-airplane-landing</v-icon>
+              </th>
+            </tr>
+          </thead>
+          <!-- base settings -->
+          <tbody>
+            <tr>
+              <th><v-icon title="connect definition">mdi-connection</v-icon></th>
+              <td>
+                <v-select v-model="tmpl.request.method" :items="request_methods"
+                  clearable
+                  name="method" label="http method" v-bind="$thx.field" />
+                <v-text-field v-model="tmpl.request.path"
+                  name="path" label="path" v-bind="$thx.field" />
+                <message-items-field v-model="tmpl.request.queries" label="queries" />
+              </td>
+              <td>
+                <v-select v-model="tmpl.response.status" :items="response_status"
+                  clearable
+                  label="status" placeholder="default: OK (200)"
+                  v-bind="$thx.field" />
+                <v-text-field v-model="tmpl.response.mimetype"
+                  label="mimetype" v-bind="$thx.field" />
+              </td>
+            </tr>
+            <tr>
+              <th><v-icon title="headers/cookies">mdi-dock-top</v-icon></th>
+              <td>
+                <message-items-field v-model="tmpl.request.headers" label="header" />
+                <message-items-field v-model="tmpl.request.cookies" label="cookie" />
+              </td>
+              <td>
+                <message-items-field v-model="tmpl.response.headers" label="header" />
+                <message-items-field v-model="tmpl.response.cookies" label="cookie" />
+              </td>
+            </tr>
+            <tr>
+              <th><v-icon title="body">mdi-dock-bottom</v-icon></th>
+              <td>
+                <constraints-field v-model="tmpl.request.body"
+                  label="body constraints" v-bind="$thx.field" />
+              </td>
+              <td>
+                <constraints-field v-model="tmpl.response.body"
+                  label="body constraints" v-bind="$thx.field" />
+              </td>
+            </tr>
+          </tbody>
+        </v-table>
       </v-form>
     </v-card-text>
-
-    <V-card-actions>
-      <v-btn text flat v-bind="$thx.btn" color="primary">
-          {{ selected ? 'save' : 'create' }}
-        </v-btn>
-      <v-spacer />
-      <v-btn text flat v-bind="$thx.btn" color="danger" :disabled="!selected">
-        delete
-      </v-btn>
-    </V-card-actions>
   </v-card>
 </template>
 <script>
@@ -59,15 +120,21 @@ import { useTemplateStore } from '@/stores/template';
 
 import tabHeader from '../components/tabHeader.vue';
 import markdownField from '@/components/markdownField.vue';
-import editMessage from '@/editor/components/editMessage.vue';
-// import templateMixDialog from '@/editor/components/templateMixDialog.vue';
+import messageItemsField from '@/editor/components/messageItemsField.vue';
+import constraintsField from '@/editor/components/constraintsField.vue';
+
+import Request from '@/models/request';
+import Response from '@/models/response';
 
 export default {
   name: 'templateEditor',
   components: {
     tabHeader,
     markdownField,
-    editMessage,
+    messageItemsField,
+    constraintsField,
+    // itemsField,
+    // editMessage,
     // templateMixDialog,
   },
   watch: {
@@ -77,22 +144,26 @@ export default {
   },
   methods: {
     clear() {
-      this.selected = [];
-      this.tmpl = {
-        request: {},
-        response: {},
+      if(window.confirm(`delete ${this.selected.name}?`)) {
+        this.remove_template(this.selected.name);
+        this.selected = null;
+        this.tmpl = {
+          request: Request.option(),
+          response: Response.option(),
+        }
       }
     },
     derives() {
       const basename = this.tmpl.name;
-      this.selected = [];
+      this.selected = null;
       this.tmpl = {
         extend: basename,
-        request: {},
-        response: {},
+        request: Request.option(),
+        response: Response.option(),
       }
     },
     ...mapActions(useTemplateStore, [
+      'remove_template',
       'create_new',
     ])
   },
@@ -126,10 +197,20 @@ export default {
         // { id: 'mix', title: 'template mix', callback: ()=>{this.show_mix=true;}},
       ],
       tmpl: {
-        request: {},
-        response: {},
+        request: Request.option(),
+        response: Response.option(),
       },
+      request_methods: Request.methods,
+      response_status: Response.status_all,
     };
   }
 }
 </script>
+<style scoped>
+table thead th {
+  text-align: center;
+}
+table tbody td {
+  vertical-align: top;
+}
+</style>
