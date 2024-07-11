@@ -119,6 +119,29 @@ export default class Patterns {
     static liner_spliter = /(\([^)]*\)|<[^><]*>)/g;
     static liner_keytype = /\((?<keytype>[^)]*)\)/;
     static liner_links = /<(?<links>[^><]*)>/;
+
+    static get_multiliner(key) {
+        return ()=>(this[`_${key}`] || []);
+    }
+    static get_multiliner_text(key) {
+        return ()=>this.get_multiliner(key).join('\n');
+    }
+    static get_multiliner_items(key) {
+        return ()=>this.get_multiliner(key).map(Patterns.liner_parse);
+    }
+
+    // TODO
+    static set_multiliner(key) {
+        return (value)=>(this[`_${key}`] = value);
+    }
+    static set_multiliner_text(key) {
+        return (value)=>this.set_multiliner(key)((value||'').split('\n'));
+    }
+    static set_multiliner_items(key) {
+        return (value)=>this.set_multiliner(key)(value.map(Patterns.liner_serialize));
+    }
+
+
     // static singleliner = /(\((?<keytype>[^)]+)\))?(?<title>[^<]+)(<(?<links>[^><]+)>)?(?<desc>[^><]+)?/;
     // static singleliner_links = /^(?<href>[^|]+)(\|(?<title>[^,]+))?$/;
     static liner_parse(line) {

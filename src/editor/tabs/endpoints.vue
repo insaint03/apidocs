@@ -48,49 +48,86 @@
       <tr>
         <td :colspan="columns.length">
           <v-sheet theme="dark" class="my-2 pa-2 rounded">
-            
+            <div class="d-flex justify-between">
+              <v-autocomplete v-model="item.entity.templates" label="templates" multiple chips :items="template_list" item-title="name" item-value="name" v-bind="$thx.field" />
+              <v-btn flat @click="subtract(index)" :color="$thx.color.danger">
+                <v-icon>mdi-close</v-icon> delete endpoint
+              </v-btn>
+            </div>
             <v-row>
               <v-col>
-                <v-autocomplete v-model="item.entity.template_names" label="templates" multiple chips :items="template_list" item-title="name" item-value="name" v-bind="$thx.field" />
-                <markdown-field v-model="item.entity.desc" label="description" v-bind="$thx.field" />
+                <markdown-field v-model="item.entity.desc" label="description" v-bind="$thx.field" @change="($ev)=>item.entity.desc=$ev.target.value" />
               </v-col>
             </v-row>
-            <v-row>
-              <v-col>
-                <v-divider>Request</v-divider>
-                <div class="d-flex flex-fill justify-space-around">
-                  <v-autocomplete v-model="item.request.method" label="method" v-bind="$thx.field" :items="methods" />
-                  <v-text-field v-model="item.request.pathname" class="flex-grow px-2" label="pathname" v-bind="$thx.field" />
-                </div>
-                <markdown-field v-model="item.request.desc" label="description" v-bind="$thx.field" />
-                <v-textarea v-model="item.request.query_texts" label="query" v-bind="$thx.field" />
-                <v-textarea v-model="item.request.cookie_texts" label="cookie" v-bind="$thx.field" />
-                <v-textarea v-model="item.request.header_texts" label="header" v-bind="$thx.field" />
-                <v-autocomplete 
-                  :disabled="/^get$/i.test(item.request.method)"
-                  v-model="item.request.body" label="request.body" :items="datatype_list" item-title="name" response-object v-bind="$thx.field" />
-              </v-col>
-              <v-col>
-                <v-divider>Reponse</v-divider>
-                <div class="d-flex flex-fill justify-space-around">
-                  <v-autocomplete v-model="item.response.status" label="method" v-bind="$thx.field" :items="statuses"
-                    item-title="title" item-subtitle="code" item-value="code" />
-                  <v-text-field v-model="item.response.mimetype" class="flex-grow px-2" label="pathname" v-bind="$thx.field" />
-                </div>
-                <markdown-field v-model="item.response.desc" label="description" v-bind="$thx.field" />
-                <v-textarea v-model="item.response.cookie_texts" label="cookie" v-bind="$thx.field" />
-                <v-textarea v-model="item.response.header_texts" label="header" v-bind="$thx.field" />
-                <v-autocomplete v-model="item.response.body" 
-                  label="responses" :items="datatype_list" item-title="name" response-object v-bind="$thx.field" />
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>
-                <v-btn flat @click="subtract(index)" :color="$thx.color.danger">
-                  <v-icon>mdi-close</v-icon> delete
-                </v-btn>
-              </v-col>
-            </v-row>
+            <v-table>
+              <thead>
+                <tr>
+                  <td>&nbsp;</td>
+                  <th style="text-align: center;">
+                    <v-icon size="small">mdi-airplane-takeoff</v-icon>
+                    Request
+                  </th>
+                  <th style="text-align: center;">
+                    Response
+                    <v-icon size="small">mdi-airplane-landing</v-icon>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- connection base row -->
+                <tr>
+                  <th><v-icon title="connect definition">mdi-connection</v-icon></th>
+                  <td>
+                    <markdown-field v-model="item.entity.request.desc" label="description" v-bind="$thx.field" />
+                    <v-row>
+                      <v-col>
+                        <v-autocomplete v-model="item.entity.request.method" label="method" v-bind="$thx.field" :items="methods" clearable />
+                      </v-col>
+                      <v-col>
+                        <v-text-field :model-value="item.request.pathname" @update:model-value="(v)=>item.request.path=v" class="flex-grow px-2" label="pathname" v-bind="$thx.field" />
+                      </v-col>
+                    </v-row>
+                    <message-items-field v-model="item.entity.request.queries" label="query" />
+                  </td>
+                  <td>
+                    <markdown-field v-model="item.response.desc" label="description" v-bind="$thx.field" />
+                    <v-row>
+                      <v-col>
+                        <v-autocomplete v-model="item.response.status" label="method" v-bind="$thx.field" :items="statuses"
+                          item-title="title" item-subtitle="code" item-value="code" />
+                      </v-col>
+                      <v-col>
+                        <v-text-field v-model="item.response.mimetype" class="flex-grow px-2" label="pathname" v-bind="$thx.field" />
+                      </v-col>
+                    </v-row>
+                  </td>
+                </tr>
+                <tr>
+                  <th><v-icon title="headers/cookies">mdi-dock-top</v-icon></th>
+                  <td>
+                    
+                    <message-items-field :model-value="item.request.headers" label="header" />
+                    <message-items-field :model-value="item.request.cookies" label="cookie" />
+                  </td>
+                  <td>
+                    <message-items-field :model-value="item.response.headers" label="header" v-bind="$thx.field" />
+                    <message-items-field :model-value="item.response.cookies" label="cookie" v-bind="$thx.field" />
+                  </td>
+                </tr>
+                <tr>
+                  <th><v-icon title="body">mdi-dock-bottom</v-icon></th>
+                  <td>
+                    <v-autocomplete 
+                      :disabled="/^get$/i.test(item.request.method)"
+                      v-model="item.request.body" label="request.body" :items="datatype_list" item-title="name" response-object v-bind="$thx.field" />
+                  </td>
+                  <td>
+                    <v-autocomplete v-model="item.response.body" 
+                      label="responses" :items="datatype_list" item-title="name" response-object v-bind="$thx.field" />
+                  </td>
+                </tr>
+              </tbody>
+            </v-table>
           </v-sheet>
         </td>
       </tr>
@@ -108,6 +145,7 @@ import { useProjectStore } from '@/stores/project';
 import tabHeader from '../components/tabHeader.vue';
 import markdownField from '@/components/markdownField.vue';
 import templateMixDialog from '../components/templateMixDialog.vue';
+import messageItemsField from '../components/messageItemsField.vue';
 
 import Request from '@/models/request';
 import Response from '@/models/response';
@@ -126,6 +164,7 @@ export default {
     tabHeader,
     markdownField,
     templateMixDialog,
+    messageItemsField,
   },
   methods: {
     append() {
@@ -187,3 +226,11 @@ export default {
   }
 }
 </script>
+<style scoped>
+table thead th {
+  text-align: center;
+}
+table tbody td {
+  vertical-align: top;
+}
+</style>

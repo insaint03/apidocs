@@ -2,6 +2,7 @@ import Message from './message.js';
 import Patterns from './patterns.js';
 import Datatype from './datatype.js';
 
+import ObjectItems from './meta/objectItems.js';
 
 export default class Request extends Message {
     static methods = [
@@ -24,6 +25,8 @@ export default class Request extends Message {
         this.method = (method||'GET').toUpperCase();
         this.path = path;
         this._path_matches = null;
+        // set query
+        this._queries = new ObjectItems();
         this.queries = queries;
     }
 
@@ -119,44 +122,33 @@ export default class Request extends Message {
         }
     ];
 
-    get queries() {
-        return this._queries || [];
-        // return Object.entries(this._queries || {})
-        //     .map(([key,val])=>Patterns.item_serialize({key, ...val}))
-        //     .join('\n');
+    get queries() { 
+        return Object.fromEntries(this._queries.value.map((q)=>([q.key, q])));
     }
-
-    get query_texts() {
-        return this.queries.map(Patterns.item_serialize);
+    get query_text() { 
+        return this._queries.text; 
     }
-
+    get query_items() { return this._queries.items; }
     set queries(values) {
-        // values = values || [];
-        this._queries = Request._parsing_query_conditions.reduce((agg, {container, separate, items})=>{
-            if(agg!=null || !container(values)) { return agg; }
-            return (agg||[]).concat(...separate(values).map((row)=>
-                items.reduce((inner, {constraint, parse})=>
-                    constraint(row)
-                    ? inner.concat(parse(row))
-                    : inner, [])));
-        }, null);
+        // object
+        if(typeof(values)==='object' && !Array.isArray(values)) {
+            values = Object.entries(values)
+                .map(([key, e])=>typeof(e)==='string'
+                    ? `${key}:${e}`
+                    : {key, ...e});
+        } 
+        this._queries.value = Object.entries(values)
+            .map(([key,e])=>({key, ...e}));
     }
-
-    get query_fragments() {
-        return Object.fromEntries(this._queries.map((q)=>[q.key, q]));
-    }
-
-    query_fragment(key) {
-        return this._queries.find((q)=>q.key===key) || {};
-    }
-
+    set query_text(value) { this._queries.text = value; }
+    set query_items(values) { this._queries.items = values; }
     
     get serialized() {
         // all props
         const ret = {
             method: this.method,
             path: this.pathname,
-            queries: this.query_texts,
+            queries: this.query_text,
             ...super.serialized,
         };
         // remove empty queries

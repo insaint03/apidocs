@@ -18,9 +18,7 @@
           <!-- project version -->
           <v-text-field v-model="project.version" label="version" v-bind="$thx.field" />
           <!-- project links -->
-          <multi-liner-fields v-model="project.links" label="links" :icons="$thx.icon.links" />
-          
-          
+          <multi-liner-fields v-model="project.links_text" :items="project.link_items" label="links" :icons="$thx.icon.links" />
         </v-col>
         
         <v-col md="6" sm="12">
@@ -32,11 +30,11 @@
         </v-col>
         <v-col md="6" sm="12">
           <!-- project license -->
-          <single-liner-field v-model="project.license" label="license" />
+          <single-liner-field v-model="project.license_text" :item="project.license_item" label="license" />
           <!-- project contributors -->
-          <multi-liner-fields v-model="project.contributors" label="contributors" />
+          <multi-liner-fields v-model="project.contributors_text" :items="project.contributor_items" label="contributors" />
           <!-- project terms -->
-          <multi-liner-fields v-model="project.terms" label="terms" />
+          <multi-liner-fields v-model="project.terms_text" :items="project.term_items" label="terms" />
           <!-- project keywords 
           <keyword-field v-model="project.keywords" label="keywords" />
           -->

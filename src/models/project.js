@@ -1,44 +1,71 @@
 import Descriptable from './descriptable';
-import Patterns from './patterns'
+// import Patterns from './patterns'
 
-export default class Project extends Descriptable {    
-    constructor({name, description, version, history, links, license, contributors, keywords}={}) {
+import Name from './meta/name';
+import Liner from './meta/liner';
+import SingleLiner from './meta/singleLiner';
+import MultiLiner from './meta/multiLiner';
+import ArrayItems from './meta/arrayItems';
+
+
+export default class Project extends Descriptable {
+    constructor({name, description, version, history, links, license, terms, contributors, keywords}={}) {
         super({desc: description});
 
-        this.name = name || '';
-        this.version = version;
-        this.history = history;
-        this.links = links || [];
-        this.license = license || '';
-        this.contributors = contributors || [];
-        this.keywords = keywords || [];
+        this._name = new Name(name);
+        this.version = version || '';
+        this._links = new MultiLiner(links);
+        this._license = new SingleLiner(license);
+        this._terms = new MultiLiner(terms);
+        this._contributors = new MultiLiner(contributors);
+        this._keywords = new ArrayItems(keywords);
+        this._history = history || [];
     }
 
-    get name() { return this._name; }
-    set name(value) { this._name = value; }
+    /* name related fields */
+    get name(){ return this._name.value; }
+    get localname() { return this._name.localname; }
+    get namespace() { return this._name.namespace; }
+    set name(value) { this._name.value = value; }
 
-    get version() { return this._version; }
-    set version(value) { this._version = value; }
-
-    get links() { return this._links  || []}
-    get links_text() { return this.links.map(Patterns.liner_serialize).join('\n'); }
-    set links(value) { 
-        const stringify = Array.isArray(value)? value.join('\n'): (value || '');
-        this._links = stringify.split('\n').map(Patterns.liner_parse); 
-    }
-
-    get license() { return this._license || []; }
-    get license_text() { return Patterns.liner_serialize(this._license); }
-    set license(value) { this._license = Patterns.liner_parse(value.trim()); }
-
-    get contributors() { return this._contributors || []; }
-    get contributors_text() { 
-        return this.contributors.map(Patterns.liner_serialize).join('\n'); }
+    /* link: liner items */
+    get links() { return this._links.value }
+    get links_text() { return this._links.text; }
+    get link_items() { return this._links.items; }
+    set links(value) { this._links.value = value; }
+    set links_text(value) { this._links.text = value; }
+    set link_items(value) { this._links.items = value; }
     
-    set contributors(value) { 
-        const stringify = Array.isArray(value)? value.join('\n'): (value || '');
-        this._contributors = stringify.split('\n').map(Patterns.liner_parse); 
-    }
+    /* license: singe-line liner item */
+    get license() { return this._license.value; }
+    get license_text() { return this._license.text; }
+    get license_item() { return this._license.item; }
+    set license(value) { this._license.value = value; }
+    set license_text(value) { this._license.text = value;}
+    set license_item(value) { this._license.item = value; }
+
+    /* terms: liner item */
+    get terms() { return this._terms.value; }
+    get terms_text() { return this._terms.text; }
+    get term_items() { return this._terms.items; }
+    set terms(value) { this._terms.value = value; }
+    set terms_text(value) { this._terms.text = value; }
+    set term_items(value) { this._terms.items = value; }
+
+    /* contributors: liner item */
+    get contributors() { return this._contributors.value; }
+    get contributors_text() { return this._contributors.text; }
+    get contributor_items() { return this._contributors.items; }
+    set contributors(value) { this._contributors.value = value; }
+    set contributors_text(value) { this._contributors.text = value; }
+    set contributor_items(value) { this._contributors.items = value; }
+
+    /* keywords: arrayItems item */
+    get keywords() { return this._keywords.value; }
+    get keyword_text() { return this.keywords.join(','); }
+    set keywords(values) { this._keywords.value = values; }
+    set keyword_text(value) { this._keywords.value = value.split(/\s*,\s*/g); }
+
 
     // history contains: version, date, items (single-liner)
     get history() { return this._history || []; }
@@ -46,13 +73,19 @@ export default class Project extends Descriptable {
         return this.history.map(({version, date, items})=>({
             version,
             date,
-            items: (items||[]).map(Patterns.liner_serialize).join('\n'),
+            items: (items||[]).map(Liner.serialize),
         }));
     }
     set history(value) { 
         if(value) {
             this.history_log(value); 
         }
+    }
+    get history_items() {
+        return Object.fromEntries(this.history.map(({version, date, items})=>[
+            version,
+            {version, date, items},
+        ]));
     }
 
     get serialized() {
@@ -64,7 +97,7 @@ export default class Project extends Descriptable {
             links: this.links_text,
             license: this.license_text,
             contributors: this.contributors_text,
-            keywords: this.keywords,
+            // keywords: this.keywords,
             ...super.serialized,
         }
     }
@@ -87,18 +120,10 @@ export default class Project extends Descriptable {
         it.items = (it.items || [])
             .concat(
                 (items instanceof Array?items:(items||'').split('\n'))
-                .map(Patterns.liner_parse));
+                .map(Liner.parse));
         // 
         if(created) {
             this._history = this.history.concat([it]);
         }
-    }
-
-    get keywords() { return this._keywords; }
-    set keywords(value) { 
-        if(!Array.isArray(value)) {
-            value = value.split(/[\s,]+/g);
-        }
-        this._keywords = value;
     }
 }

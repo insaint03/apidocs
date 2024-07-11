@@ -1,5 +1,6 @@
 <template>
-  <v-textarea v-model="texts" 
+  <v-textarea v-model="texts"
+    :disabled="disabled"
     :label="label" v-bind="$thx.field"
     @focus="focused=true" @blur="changes" />
   <div v-show="focused">
@@ -51,6 +52,10 @@ export default {
       type: [String, Object, Array],
       required: false,
       default: ()=>''
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
     label: String,
   },

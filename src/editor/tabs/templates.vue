@@ -70,20 +70,32 @@
             <tr>
               <th><v-icon title="connect definition">mdi-connection</v-icon></th>
               <td>
-                <v-select v-model="tmpl.request.method" :items="request_methods"
-                  clearable
-                  name="method" label="http method" v-bind="$thx.field" />
-                <v-text-field v-model="tmpl.request.path"
-                  name="path" label="path" v-bind="$thx.field" />
+                <v-row>
+                  <v-col>
+                    <v-autocomplete v-model="tmpl.request.method" :items="request_methods"
+                      clearable
+                      name="method" label="http method" v-bind="$thx.field" />
+                  </v-col>
+                  <v-col>
+                    <v-text-field v-model="tmpl.request.path"
+                      name="path" label="path" v-bind="$thx.field" />
+                  </v-col>
+                </v-row>
                 <message-items-field v-model="tmpl.request.queries" label="queries" />
               </td>
               <td>
-                <v-select v-model="tmpl.response.status" :items="response_status"
-                  clearable
-                  label="status" placeholder="default: OK (200)"
-                  v-bind="$thx.field" />
-                <v-text-field v-model="tmpl.response.mimetype"
-                  label="mimetype" v-bind="$thx.field" />
+                <v-row>
+                  <v-col>
+                    <v-autocomplete v-model="tmpl.response.status" :items="response_status"
+                      clearable
+                      label="status" placeholder="default: OK (200)"
+                      v-bind="$thx.field" />
+                  </v-col>
+                  <v-col>
+                    <v-text-field v-model="tmpl.response.mimetype"
+                      label="mimetype" v-bind="$thx.field" />
+                  </v-col>
+                </v-row>
               </td>
             </tr>
             <tr>
@@ -101,6 +113,7 @@
               <th><v-icon title="body">mdi-dock-bottom</v-icon></th>
               <td>
                 <constraints-field v-model="tmpl.request.body"
+                  :disabled="tmpl.request.method=='GET'"
                   label="body constraints" v-bind="$thx.field" />
               </td>
               <td>

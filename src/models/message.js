@@ -1,22 +1,23 @@
 import Descriptable from "./descriptable";
-import Patterns from "./patterns";
 import Datatype from "./datatype";
 import Template from './template';
+
+import ObjectItems from "./meta/objectItems";
+import Constraints from "./meta/constraints";
 
 export default class Message extends Descriptable {
     static http = 'HTTP/1.1';
 
     constructor({headers, cookies, body}, ...templates) {
         super({});
-        this.headers = headers || [];
-        this.cookies = cookies || {};
+        this._headers = new ObjectItems(headers);
+        this._cookies = new ObjectItems(cookies);
 
-        this._body_candidates = null;
+        this._body_candidates = new Constraints(null);
         
         // templates presented -- building message body
         if(Array.isArray(templates)) {
             this._body = body;
-
         } 
         // else - run body constraints
         else {
@@ -48,49 +49,20 @@ export default class Message extends Descriptable {
         }
     }
 
-    get headers() {
-        return (this._headers || []);
-    }
+    get headers() { return this._headers.value; }
+    get headers_text() { return this._headers.text; }
+    get header_items() { return this._headers.items; }
+    set headers(value) { this._headers.value = value; }
+    set headers_text(value) { this._headers.text = value; }
+    set header_items(value) { this._headers.items = value; }
+
+    get cookies() { return this._cookies.value; }
+    get cookies_text() { return this._cookies.text; }
+    get cookie_items() { return this._cookies.items; }
+    set cookies(value) { this._cookies.value = value; }
+    set cookies_text(value) { this._cookies.text = value; }
+    set cookie_items(value) { this._cookies.items = value; }
     
-    get header_texts() {
-        return this.headers.map(Patterns.item_serialize);
-    }
-
-    set headers(value) {
-        // TODO: assert array
-        this._headers = Patterns.map_items(value);
-    }
-
-    add_header(key, datatype, defaults, required) {
-        this._header.push({key, datatype, defaults, required});
-    }
-
-    headers_of(key) {
-        let keysearch = key.toLowerCase();
-        return this.headers.filter((h)=>h.key.toLowerCase() === keysearch);
-    }
-
-    count_headers(key) {
-        return this.headers_of(key).length;
-    }
-
-    remove_header(key, orindex) {
-        this._headers = this.headers.filter((k,i)=> k !== key && i !== orindex);
-    }
-    
-
-    get cookies() {
-        return (this._cookies || []);
-    }
-
-    set cookies(value) {
-        this._cookies = Patterns.map_items(value);
-    }
-
-    get cookie_texts() {
-        return this.cookies.map(Patterns.item_serialize);
-    }
-
     put_cookie(key, datatype, defaults, required) {
         this._cookies[key] = { datatype, defaults, required };
     }

@@ -5,11 +5,16 @@ import InvalidValue from "@/exceptions/InvalidValue";
 import Patterns from "./patterns";
 import Descriptable from "./descriptable";
 
+import Name from './meta/name';
+import ObjectItems from "./meta/objectItems";
+import ArrayItems from "./meta/arrayItems";
+import EnumItems from "./meta/enumItems";
+
 export default class Datatype extends Descriptable {
 
     constructor(name, basistype) {
         super({});
-        this._name = name || '';
+        this._name = new Name(name);
         // except for origin generation
         if(name === basistype) {
             this._basistype = null;
@@ -32,16 +37,18 @@ export default class Datatype extends Descriptable {
         return `datatype/${this.name}`;
     }
 
-    get namespace() { return Patterns.naming_parse(this.name).namespace || ''; }
-    get localname() { return Patterns.naming_parse(this.name).localname || ''; }
-    get name() { return this._name; }
+    get namespace() { return this._name.namespace; }
+    get localname() { return this._name.localname; }
+    get name() { return this._name.value; }
     set name(value) { 
         // name change validation
         if(Datatype.find(value, false)) {
             throw new NameDuplication(Datatype._type, value);
         }
-        this._name = value;
-
+        // replace store then update
+        Datatype._store[value] = this;
+        delete Datatype._store[this.name];
+        this._name.value = value;
     }
 
     // basis readonly (direct upper type)
@@ -136,62 +143,27 @@ export default class Datatype extends Descriptable {
      * in both cases, setting item overwrites existing list.
      */
     get items() {
-        // if null, it is array or object but typed "any"
-        if(this.is_collective) {
-            return this._items || [];
+        if(this.is_object && !(this._items instanceof ObjectItems)) { 
+            this._items = new ObjectItems() ; 
+        }
+        else if(this.is_array && !(this._items instanceof ArrayItems)) { 
+            this._items = new ArrayItems(); 
+        }
+        else if(this.is_enum && !(this._items instanceof EnumItems)) { 
+            this._items = new EnumItems(); 
         }
         else {
             return null;
         }
-
+        return this._items.value;
     }
-    get items_text() {
-        if(!this.is_collective) {
-            return null;
-        }
-        return Datatype.serialize_items(this.origintype, this.items);
-        
-    }
+    get items_text() { return this.is_collective ? this.items.text : null; }
+    get item_items() { return this.is_collective ? this.items.items : null; }
 
-    set items(value) {
-        // expect value to be an array of strings
-        if(!this.is_collective) { return; }
-        // clense input values into array of items
-        if(typeof value === 'object' && !Array.isArray(value)) {
-            value = Object.entries(value)
-                .map(([k,v])=>`${k}:${v}`);
-        } else if(typeof value==='string') {
-            value = value.split('\n')
-                .map((ln)=>ln.trim())
-                .filter((ln)=>ln);
-        }
+    set items(values) { if(this.is_collective) this.items.value = values; }
+    set items_text(values) { if(this.is_collective) this.items.text = values; }
+    set items_items(values) { if(this.is_collective) this.items.items = values; }
 
-        if(this.origintype==='array') {
-            this._items = value.filter((v)=>Datatype.name_exists(v));
-        } else if(this.origintype==='object') {
-            const puts = value.map((v)=>(v.key && v.datatype)
-                ? v : Patterns.item_parse(v));
-            this._items = puts.map((it)=>{
-                // check primitive types then create new
-                let datatype = Datatype.find(it.datatype);
-                if(!datatype || datatype.is_primitive) {
-                    // create new type
-                    const name = datatype ? `${this.name}.${it.key}` : it.datatype;
-                    Datatype._store[name] = Datatype.setup({
-                        name, 
-                        basistype: datatype ? it.datatype : Datatype.default_basis,
-                    });
-                    it.datatype = name;
-                }
-                return it;
-            })
-        } else if(this.origintype==='enum') {
-            this._items = value.map((v)=>(v.value)
-                ? v : Patterns.item_parse_enum(v));
-        }
-    }
-
-    
 
     is_descendant_of(origin) {
         let comparative_name = origin.name || origin;

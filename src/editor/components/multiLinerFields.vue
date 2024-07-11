@@ -1,24 +1,24 @@
 <template>
   <v-list :color="$thx.color.markdown">
     <v-list-item class="pa-0">
-      <v-textarea v-model="value"
+      <v-textarea 
+        :model-value="value" @update:model-value="($ev)=>$emit('update:modelValue', $ev)"
         v-bind="$thx.field"
         :label="label"
         :rules="[liner_parse, keytype_match]"
         placeholder="(keytype) title <link1,link2|anchor> and optional longlong description"
         hint="(keytype) title <link> desc; keytype and title are required"
-        @change="$emit('update:modelValue', parsed)"
         @focus="focused=true" @blur="focused=false"
       />
       <div v-show="focused">
         <v-divider>preview</v-divider>
-        <liner-list-group :items="parsed" :icons="icons" editable />
+        <liner-list-group :items="items" :icons="icons" editable />
       </div>
     </v-list-item>
   </v-list>
 </template>
 <script>
-import Patterns from '@/models/patterns';
+// import Liner from '@/models/meta/liner'
 import linerListGroup from '@/viewer/components/linerListGroup.vue';
 
 export default {
@@ -28,7 +28,7 @@ export default {
   },
   methods: {
     liner_parse() {
-      this.parsed.forEach((p,index)=>{
+      this.items.forEach((p,index)=>{
         const line = index +1;
         if(p.keytype==null) {
           return `leading (keytype) required at line[${line}]`
@@ -40,7 +40,7 @@ export default {
       return true;
     },
     keytype_match() {
-      this.parsed.forEach((p, index)=>{
+      this.items.forEach((p, index)=>{
         const line = index +1;
         if(this.keytypes && 0<this.keytypes.length) {
           if(!this.keytypes.includes(p.keytype)) {
@@ -52,27 +52,37 @@ export default {
     },
   },
   props: {
-    modelValue: {type: Object},
+    modelValue: {type: String},
+    items: {type:Array},
     keytypes: {type: Array, required: false },
     label: {type: String, required: false },
     icons: {type: Object, required: false},
   },
   computed: {
-    parsed: {
-      get() {
-        return this.value.trim()
-          ? this.value.split('\n').map(Patterns.liner_parse)
-          : [];
-      },
-      set() {
-        // TODO
-      }
-    }
+    value: {
+      get() { return this.modelValue; },
+      set(value) { this.$emit('update:modelValue', value); } 
+    },
+    // parsed() {
+    //   return this.value.split('\n')
+    //     .map(Liner.parse)
+    //     .filter((it)=>it!=null);
+    // },
+    // parsed: {
+    //   get() {
+    //     return this.value.trim()
+    //       ? this.value.split('\n').map(Patterns.liner_parse)
+    //       : [];
+    //   },
+    //   set() {
+    //     // TODO
+    //   }
+    // }
   },
   data() {
     return {
       focused: false,
-      value: (this.modelValue||[]).map(Patterns.liner_serialize).join('\n'),
+      // value: (this.modelValue||[]).map(Patterns.liner_serialize).join('\n'),
     }
   }
 }

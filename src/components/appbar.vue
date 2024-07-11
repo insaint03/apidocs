@@ -116,9 +116,15 @@ export default {
           ]
         },
         {
+          title: 'go', items: [
+            { title: 'edit', action: ()=>{ this.$router.push('/') }}, 
+            { title: 'view', action: ()=>{ this.$router.push('/view')} },
+            { title: 'guide', action: null },
+            { title: 'specification', action: null },
+          ]
+        },
+        {
           title: 'info', items: [
-            { title: 'watch guide' },
-            { title: 'show specification' },
             { title: 'about apidocs' },
           ]
         },

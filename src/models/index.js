@@ -40,8 +40,8 @@ export default {
 
     // clear current setups
     clear(){
-        this.location = new Project({});
-        this.project = {};
+        this.location = '';
+        this.project = new Project({});
         this.datatypes = {};
         Datatype.clear();
         this.templates = {};
