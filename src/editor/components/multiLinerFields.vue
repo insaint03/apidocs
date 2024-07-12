@@ -12,7 +12,7 @@
       />
       <div v-show="focused">
         <v-divider>preview</v-divider>
-        <liner-list-group :items="items" :icons="icons" editable />
+        <liner-list-group :items="items" :icons="icons" />
       </div>
     </v-list-item>
   </v-list>

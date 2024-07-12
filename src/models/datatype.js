@@ -142,25 +142,60 @@ export default class Datatype extends Descriptable {
      *  else if basis is object, items are {key, type, description, required, nullable, defaults} instance.
      * in both cases, setting item overwrites existing list.
      */
-    get items() {
-        if(this.is_object && !(this._items instanceof ObjectItems)) { 
-            this._items = new ObjectItems() ; 
+    get items_raw() {
+        if(this.is_object) { 
+            if(!(this._items instanceof ObjectItems)) {
+                this._items = new ObjectItems();
+            }
         }
-        else if(this.is_array && !(this._items instanceof ArrayItems)) { 
-            this._items = new ArrayItems(); 
+        else if(this.is_array) { 
+            if(!(this._items instanceof ArrayItems)) {
+                this._items = new ArrayItems();
+            }
         }
-        else if(this.is_enum && !(this._items instanceof EnumItems)) { 
-            this._items = new EnumItems(); 
+        else if(this.is_enum) { 
+            if(!(this._items instanceof EnumItems)) {
+                this._items = new EnumItems(); 
+            }
         }
         else {
-            return null;
+            this._items = null;
         }
-        return this._items.value;
+        return this._items;
+    }
+    get items() {
+        const its = this.items_raw;
+        return (its!=null) ? its.value : null;
     }
     get items_text() { return this.is_collective ? this.items.text : null; }
     get item_items() { return this.is_collective ? this.items.items : null; }
 
-    set items(values) { if(this.is_collective) this.items.value = values; }
+    set items(values) { 
+        if(this.items_raw == null) { 
+            return; 
+        }
+        this._items.value = values;
+        if(this.is_object) {
+            // create and update none-primitive types here
+            this._items.items = this._items.items.map((it)=>{
+                const dt = Datatype.find(it.datatype);
+                if(dt && dt.is_primitive) {
+                    // create new type then change current item
+                    const nt = Datatype.setup({
+                        name:`${this.name}.${it.key}`, 
+                        basistype: it.datatype,
+                        description: it.comment 
+                    });
+                    return {
+                        ...it,
+                        datatype: nt.name,
+                    };
+                } else {
+                    return it;
+                }
+            });
+        } 
+    }
     set items_text(values) { if(this.is_collective) this.items.text = values; }
     set items_items(values) { if(this.is_collective) this.items.items = values; }
 
@@ -244,8 +279,9 @@ export default class Datatype extends Descriptable {
         // optional
         ['validation', 'defaults', 'items', 'migration', 'examples']
             .forEach((prop)=>{
-                if(this[prop]&& this[prop]!==false) {
-                    ret[prop] = this[prop];
+                const pv = this[prop];
+                if(pv&& pv!==false) {
+                    ret[prop] = pv;
                 }
             });
         return ret;

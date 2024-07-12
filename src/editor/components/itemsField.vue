@@ -1,5 +1,5 @@
 <template>
-  <v-textarea v-model="texts"
+  <v-textarea v-model="items.text"
     :label="$props.label || 'properties'"
     :name="$props.name || 'items'"
     v-bind="$thx.field"
@@ -8,7 +8,7 @@
   <div v-show="focused">
     <v-divider>preview</v-divider>
     <v-list>
-      <v-list-item v-for="(it,ii) in items" :key="`items-field.${ii}`"
+      <v-list-item v-for="(it,ii) in previews" :key="`items-field.${ii}`"
         :prepend-icon="it.icon">
         <v-list-item-title>
           {{ it.name }} 
@@ -19,15 +19,17 @@
         </v-list-item-subtitle>
       </v-list-item>
     </v-list>
-
-
   </div>
 
 </template>
 <script>
 import Datatype from '@/models/datatype';
+import ObjectItems from '@/models/meta/objectItems';
+import ArrayItems from '@/models/meta/arrayItems';
+import EnumItems from '@/models/meta/enumItems';
 
 // import itemsObjectField from './itemsObjectField.vue';
+
 
 import { mapActions, mapState, mapWritableState } from 'pinia';
 import { useDatatypeStore } from '@/stores/datatype';
@@ -39,18 +41,21 @@ const parsed_map = {
       icon: v.required ? 'mdi-exclamation' : 'mdi-blank',
       name: v.key,
       inherits: t.inherits || [v.datatype],
-      summary: t.summary,
+      summary: v.comment || t.summary ,
     } : {
+      icon: 'mdi-blank',
       name: v.key,
+      inherits: [v.datatype],
+      summary: v.comment,
     }
   },
   array(v){
     const t= Datatype.find(v);
-    return {
+    return t ? {
       name: t.name,
       inherits: t.inherits,
       summary: t.summary,
-    }
+    } :null;
   },
   enum: (v)=>{
     return {
@@ -65,43 +70,14 @@ export default {
   components: {
     // itemsObjectField,
   },
-  emits: ['update:modelValue', 'change'],
-  watch: {
-    values() {
-      this.texts = this.parse();
-    },
-  },
-  beforeUpdate() {
-    if(!this.focused && this.values && this.values.items) {
-      this.texts = this.parse(this.values.items);
-    }
-    // this.texts = this.value_texts;
-  },
+  emits: [
+    'change',
+  ],
   methods: {
     changes() {
-      // const text = $ev.target.value;
-      console.log('try to update', this.texts);
-      this.$emit('change', this.texts);
+      this.$emit('change', this.raw);
       this.focused = false;
-    },
-    parse(items) {
-      return Datatype.serialize_items(this.origintype, ...(items || this.values.items));
-
-    },
-    add_item(val) {
-      if(this.is_array) {
-        const value = this.items.concat(this.findtype(val));
-        this.update_values(value);
-        // clear selection
-        this.puts.datatype = null;
-
-      } else if(this.is_enum) {
-        const value = {
-          value: this.puts.value,
-          desc: this.puts.desc,
-        };
-        this.update_values(value);
-      }
+      this.raw = null;
     },
     ...mapActions(useDatatypeStore, [
       'findtype',
@@ -144,9 +120,32 @@ export default {
       }
       return [];
     },
+    texts: {
+      get() {
+        return this.raw.text;
+      },
+      set(values) {
+        this.raw.text = values;
+      }
+    },
     items() {
-      return Datatype.parse_items(this.origintype, ...(this.texts||'').split('\n'))
-        .map(parsed_map[this.origintype]);
+        const cls = {
+          object: ObjectItems,
+          array: ArrayItems,
+          enum: EnumItems,
+        }[this.origintype];
+        if(this.raw == null
+        || !(this.raw instanceof cls)) {
+          this.raw = new cls();
+          this.raw.value = this.values.items;
+          // this.raw.value = this.values.items;
+        }
+        return this.raw;
+    },
+    previews() {
+      return this.raw.items
+        .map(parsed_map[this.origintype])
+        .filter((it)=>it!=null);
     },
     ...mapWritableState(useDatatypeStore, [
       'datatypes',
@@ -160,66 +159,14 @@ export default {
   data() {
     return {
       focused: false,
-      texts: '',
       // value: this.modelValue,
       raw_mode: false, 
       autopush: false,
       puts: {},
+      raw: null,
     };
   },
-  mounted() {
-  }
 }
-
-/** legacy templates 
- * <items-object-field v-if="is_object" :label="label" :disabled="disabled" />
-  <div v-else class="d-flex flex-fill flex-wrap justify-space-evenly">
-    <!-- editor mode -->
-    <v-list theme="dark" class="flex-fill">
-      <v-list-subheader>items</v-list-subheader>
-      <v-list-item 
-        class="border-t-thin"
-        v-for="(it,ii) in items" :key="`datatype-item-${ii}`"
-        prepend-icon="mdi-package">
-        <template v-if="is_array">
-          <v-list-item-title>
-            <v-chip>{{ basis_prop(it).join(' / ') }}</v-chip>
-          </v-list-item-title>
-          <v-list-item-subtitle>
-            // {{ summary_prop(it) }}
-          </v-list-item-subtitle>
-        </template>
-        <template v-else-if="is_enum">
-          <v-list-item-title>{{ it.value }}</v-list-item-title>
-          <v-list-item-subtitle>{{ it.desc }}</v-list-item-subtitle>
-        </template>
-        <template #append>
-          <v-btn icon flat @click="items.splice(ii,1)">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </template>
-      </v-list-item>
-      <v-divider />
-      <!-- adding fields item -->
-      <v-list-item>
-        <v-autocomplete v-if="is_array" v-bind="$thx.field"
-          single-line auto-select-first item-title="name" item-value="name"
-          :items="alltypes"
-          v-model="puts.datatype"
-          @change="add_item(puts.datatype)" />
-        <div v-else-if="is_enum" class="d-flex flex-fill justify-between">
-          <v-text-field v-model="puts.value" label="value" v-bind="$thx.field" />
-          <v-text-field v-model="puts.desc" label="desc" v-bind="$thx.field" />
-        </div>
-      </v-list-item>
-    </v-list>
-    <!-- raw mode -->
-    <div class="flex-fill pa-1">
-      <v-textarea :model-value="texts" :disabled="disabled" v-bind="$thx.field"
-        @change="($ev)=>texts=$ev.target.value" />
-    </div>
-  </div>
-*/
 </script>
 <style scoped>
 .item-key {

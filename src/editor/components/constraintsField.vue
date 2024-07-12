@@ -38,6 +38,10 @@ export default {
     modelValue: {
       type: [String, Array],
     },
+    variant: {
+      type: String,
+      default: '',
+    },
     label: {
       type: String,
       default: ()=>'body constraints',

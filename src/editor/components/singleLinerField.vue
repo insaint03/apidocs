@@ -13,7 +13,7 @@
     </v-list-item>
     <div v-show="focused">
       <v-divider>preview</v-divider>
-      <liner-list-group :items="[item]" :icons="icons" editable />
+      <liner-list-group :items="[item]" :icons="icons" />
     </div>
   </v-list>
 </template>

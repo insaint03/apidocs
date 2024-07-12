@@ -4,15 +4,15 @@ export default class Serializable {
     }
 
     set_multiline_value(values, objSerializer) {
-        this._raw = Array.isArray(values)
-            // case array 
-            ? values.map((el)=>
-                // element string or object
-                (typeof(el)==='object'?objSerializer(el):el))
-            // case multiline string
-            : typeof(values) === 'string'
-                ? values.split('\n')
-                : null;
+        if(typeof(values)==='string') {
+            values = values.split('\n')
+                .map((ln)=>ln.trim())
+                .filter((ln)=>ln && 0<ln.length);
+        }
+
+        this._raw = values
+            .map((el)=>(typeof(el)==='object'?objSerializer(el):el))
+            .filter((el)=>el!=null);
     }
 
     

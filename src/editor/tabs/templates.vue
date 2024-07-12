@@ -2,6 +2,8 @@
   <tab-header :icon="$thx.icon.tag" :color="$thx.color.tag">
     <template #title>
       {{ tmpl.name || 'New Template' }}
+      &nbsp;
+      <v-chip v-if="tmpl.tagname" :color="$thx.color.tag" size="small">{{ tmpl.tagname }}</v-chip>
     </template>
     <template #items>
       <template v-if="has_selection">
@@ -18,13 +20,6 @@
   </tab-header>
   <v-card flat>
     <v-card-item>
-      <!-- <v-card-title>
-        {{ tmpl.name }}
-        &nbsp;
-        <v-chip v-if="tmpl.tagname" readonly :color="$thx.color.tag" :title="`#${tmpl.tagname}`">
-          <v-icon size="small">{{ $thx.icon.tag }}</v-icon>{{ tmpl.tagname }}
-        </v-chip>
-      </v-card-title> -->
       <v-card-subtitle v-if="tmpl.extends">
         / {{ tmpl.extends }}
       </v-card-subtitle>
@@ -36,7 +31,6 @@
           <v-col>
             <v-text-field v-model="tmpl.name" label="name" v-bind="$thx.field" :disabled="has_selection" />
           </v-col>
-
           <v-col>
             <v-autocomplete v-model="tmpl.extends" label="extends" v-bind="$thx.field"
               prepend-inner-icon="mdi-slash-forward"

@@ -185,7 +185,7 @@ export default {
     },
 
     // deserialize json to object. state change not provided
-    async deserialize_json(loads) {
+    async parse_json(loads) {
         const content = JSON.parse(loads);
         return {
             location: content.location,
@@ -203,7 +203,7 @@ export default {
     },
 
     // TODO: deserialize yaml to object. state change not provided
-    async deserialize_yaml(yaml) {
+    async parse_yaml(yaml) {
         const content = yaml_parse(yaml);
         return {
             location: content.location,
@@ -234,7 +234,7 @@ export default {
     // load data from local/session storage
     async load_storage(type='session') {
         const storage = eval(`${type.toLowerCase()}Storage`);
-        return await this.deserialize_yaml(storage.getItem('apidocs'));
+        return await this.parse_yaml(storage.getItem('apidocs'));
     },
 
 
@@ -259,7 +259,6 @@ export default {
             raw = await import(location /* @vite-ignore */);
             content = raw.default || raw;
         }
-
         
         return ({
             location,

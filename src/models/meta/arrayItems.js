@@ -11,8 +11,12 @@ export default class ArrayItems extends Serializable {
         this._raw = value;
     }
 
-    get text() { return this.value.join('\n'); }
-    set text(values) { this._raw = values.split('\n'); }
+    get text() { 
+        return this.value.join('\n'); 
+    }
+    set text(values) { 
+        this._raw = values.split('\n'); 
+    }
     get items() { return this.value; }
     set items(values) { this._raw = values; }
 }

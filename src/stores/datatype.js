@@ -149,23 +149,24 @@ export const useDatatypeStore = defineStore('datatype', {
                 .filter((dt)=>dt!=null)
                 .forEach((dt)=>dt[key] = value);
         },
-        update_items(texts) {
+        update_items(raw) {
             // split values
             this.selection.map((it)=>this.datatypes[it])
                 .filter((dt)=>dt!=null)
                 .forEach((dt)=>{
-                    dt.items = texts;
+                    dt.items = raw.value;
                 });
             // update new createds
             if(this.values.origintype==='object') {
-                this.project.datatypes = Object.assign(this.project.datatypes, 
-                    Object.fromEntries(Datatype.customs
-                        .filter((t)=>!this.datatypes[t.name])
-                        .map((t)=>[
-                            t.name,
-                            t,
-                        ])
-                    )
+                this.project.datatypes = 
+                    Object.assign(this.project.datatypes, 
+                        Object.fromEntries(Datatype.customs
+                            .filter((t)=>!this.datatypes[t.name])
+                            .map((t)=>[
+                                t.name,
+                                t,
+                            ])
+                        )
                 );
             }
         },

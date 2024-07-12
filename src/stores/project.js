@@ -52,7 +52,8 @@ export const useProjectStore = defineStore('project', {
     },
     actions: {
         async loads(location) {
-            gtm.push('load', {location,})
+            gtm.push('load', {location,});
+
             // load data
             const content = await models.loads(location);
 
