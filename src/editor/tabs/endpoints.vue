@@ -34,101 +34,20 @@
     </template>
     <template #item.request.pathname="{ item }">
       <span class="enpoint-pathname" readonly>
-        {{ item.request.pathname }}
+        {{ item.request.path }}
       </span>
     </template>
     <template #item.response="{ item }">
       <v-btn text flat size="x-small" class="ma-1" readonly
         :color="$thx.color.http_status(item.response.status_code)">{{ item.response.status_title }}</v-btn>
       {{ item.response.mimetype }}
-      <v-chip size="x-small" class="ma-1">{{ (item.response.body||{}).name }}</v-chip>
+      <v-chip size="x-small" class="ma-1">{{ item.response.body || '' }}</v-chip>
       <v-divider vertical />
     </template>
-    <template #expanded-row="{index, item, toggleSelect, columns}">
+    <template #expanded-row="{item, columns}">
       <tr>
         <td :colspan="columns.length">
-          <v-sheet theme="dark" class="my-2 pa-2 rounded">
-            <div class="d-flex justify-between">
-              <v-autocomplete v-model="item.entity.templates" label="templates" multiple chips :items="template_list" item-title="name" item-value="name" v-bind="$thx.field" />
-              <v-btn flat @click="subtract(index)" :color="$thx.color.danger">
-                <v-icon>mdi-close</v-icon> delete endpoint
-              </v-btn>
-            </div>
-            <v-row>
-              <v-col>
-                <markdown-field v-model="item.entity.desc" label="description" v-bind="$thx.field" @change="($ev)=>item.entity.desc=$ev.target.value" />
-              </v-col>
-            </v-row>
-            <v-table>
-              <thead>
-                <tr>
-                  <td>&nbsp;</td>
-                  <th style="text-align: center;">
-                    <v-icon size="small">mdi-airplane-takeoff</v-icon>
-                    Request
-                  </th>
-                  <th style="text-align: center;">
-                    Response
-                    <v-icon size="small">mdi-airplane-landing</v-icon>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <!-- connection base row -->
-                <tr>
-                  <th><v-icon title="connect definition">mdi-connection</v-icon></th>
-                  <td>
-                    <markdown-field v-model="item.entity.request.desc" label="description" v-bind="$thx.field" />
-                    <v-row>
-                      <v-col>
-                        <v-autocomplete v-model="item.entity.request.method" label="method" v-bind="$thx.field" :items="methods" clearable />
-                      </v-col>
-                      <v-col>
-                        <v-text-field :model-value="item.request.pathname" @update:model-value="(v)=>item.request.path=v" class="flex-grow px-2" label="pathname" v-bind="$thx.field" />
-                      </v-col>
-                    </v-row>
-                    <message-items-field v-model="item.entity.request.queries" label="query" />
-                  </td>
-                  <td>
-                    <markdown-field v-model="item.response.desc" label="description" v-bind="$thx.field" />
-                    <v-row>
-                      <v-col>
-                        <v-autocomplete v-model="item.response.status" label="method" v-bind="$thx.field" :items="statuses"
-                          item-title="title" item-subtitle="code" item-value="code" />
-                      </v-col>
-                      <v-col>
-                        <v-text-field v-model="item.response.mimetype" class="flex-grow px-2" label="pathname" v-bind="$thx.field" />
-                      </v-col>
-                    </v-row>
-                  </td>
-                </tr>
-                <tr>
-                  <th><v-icon title="headers/cookies">mdi-dock-top</v-icon></th>
-                  <td>
-                    
-                    <message-items-field :model-value="item.request.headers" label="header" />
-                    <message-items-field :model-value="item.request.cookies" label="cookie" />
-                  </td>
-                  <td>
-                    <message-items-field :model-value="item.response.headers" label="header" v-bind="$thx.field" />
-                    <message-items-field :model-value="item.response.cookies" label="cookie" v-bind="$thx.field" />
-                  </td>
-                </tr>
-                <tr>
-                  <th><v-icon title="body">mdi-dock-bottom</v-icon></th>
-                  <td>
-                    <v-autocomplete 
-                      :disabled="/^get$/i.test(item.request.method)"
-                      v-model="item.request.body" label="request.body" :items="datatype_list" item-title="name" response-object v-bind="$thx.field" />
-                  </td>
-                  <td>
-                    <v-autocomplete v-model="item.response.body" 
-                      label="responses" :items="datatype_list" item-title="name" response-object v-bind="$thx.field" />
-                  </td>
-                </tr>
-              </tbody>
-            </v-table>
-          </v-sheet>
+          <edit-entity :index="item.index" :entity="entities[item.index]" />
         </td>
       </tr>
     </template>
@@ -143,9 +62,10 @@ import { mapActions, mapState, mapWritableState } from 'pinia';
 import { useProjectStore } from '@/stores/project';
 
 import tabHeader from '../components/tabHeader.vue';
-import markdownField from '@/components/markdownField.vue';
+
 import templateMixDialog from '../components/templateMixDialog.vue';
-import messageItemsField from '../components/messageItemsField.vue';
+
+import editEntity from '../components/editEntity.vue';
 
 import Request from '@/models/request';
 import Response from '@/models/response';
@@ -162,9 +82,10 @@ export default {
   name: 'endpointsTab',
   components: {
     tabHeader,
-    markdownField,
+    // markdownField,
     templateMixDialog,
-    messageItemsField,
+    // messageItemsField,
+    editEntity,
   },
   methods: {
     append() {
@@ -187,11 +108,11 @@ export default {
   computed: {
     values() {
       return this.entities.map((e,i)=>({
-        index: i+1,
+        index: i,
         entity: e,
         tagnames: e.tagnames,
-        request: e.request,
-        response: e.response,
+        request: e.request_raw,
+        response: e.response_raw,
         // ...e,
       }))
     },
@@ -216,8 +137,7 @@ export default {
   data() {
     return {
       columns,
-      methods: Request.methods,
-      mimetypes: Response.mimetypes,
+
 
       show_mix: false,
       // statuses: Response.statuses,

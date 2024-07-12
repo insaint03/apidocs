@@ -1,34 +1,98 @@
 <template>
-  <v-expansion-panels variant="popout" multiple>
-    <!-- entity input form -->
-    <v-expansion-panel title="Form">
-      <v-expansion-panel-text>
-        <v-row>
-          <v-col>
-            <!-- TODO: template selector -->
-            <v-select multiple :items="templates" />
-            <v-textarea v-model="value.description" />
-          </v-col>
-          <v-col>
-            <base-form v-model="value" :fields="fields.entity" />
-          </v-col>
-        </v-row>
-      </v-expansion-panel-text>
-    </v-expansion-panel>
-    <!-- endpoint grouping area -->
-    <v-expansion-panel title="Endpoints">
-      <v-expansion-panel-text>
-        <v-data-table />
-      </v-expansion-panel-text>
-    </v-expansion-panel>
-  </v-expansion-panels>
+  <v-sheet theme="dark" class="ma-1 pa-1 rounded">
+    <div class="d-flex justify-between">
+      <v-autocomplete v-model="entity.template_names" 
+        label="templates" multiple clearable auto-select-first
+        :items="template_list"
+        item-title="name" item-value="name" v-bind="$thx.field" />
+    </div>
+    <v-row>
+      <v-col>
+        <markdown-field v-model="entity.description" label="description" v-bind="$thx.field" />
+      </v-col>
+    </v-row>
+    <v-table>
+      <thead>
+        <tr>
+          <td>&nbsp;</td>
+          <th style="text-align: center;">
+            <v-icon size="small">mdi-airplane-takeoff</v-icon>
+            Request
+          </th>
+          <th style="text-align: center;">
+            Response
+            <v-icon size="small">mdi-airplane-landing</v-icon>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- connection base row -->
+        <tr>
+          <th><v-icon title="connect definition">mdi-connection</v-icon></th>
+          <td>
+            <markdown-field v-model="request.description" label="description" v-bind="$thx.field" />
+            <v-row>
+              <v-col>
+                <v-autocomplete v-model="request.method" label="method" v-bind="$thx.field" :items="methods" clearable />
+              </v-col>
+              <v-col>
+                <v-text-field v-model="request.path" class="flex-grow px-2" label="pathname" v-bind="$thx.field" />
+              </v-col>
+            </v-row>
+            <message-items-field v-model="request.queries" label="query" />
+          </td>
+          <td>
+            <markdown-field v-model="response.description" label="description" v-bind="$thx.field" />
+            <v-row>
+              <v-col>
+                <v-autocomplete v-model="response.status" label="status" v-bind="$thx.field" :items="statuses"
+                  item-title="title" item-subtitle="code" item-value="code" />
+              </v-col>
+              <v-col>
+                <v-autocomplete v-model="response.mimetype" class="flex-grow px-2" label="mimetype" v-bind="$thx.field" :items="mimetypes" />
+              </v-col>
+            </v-row>
+          </td>
+        </tr>
+        <tr>
+          <th><v-icon title="headers/cookies">mdi-dock-top</v-icon></th>
+          <td>
+            <message-items-field v-model="request.headers" label="header" />
+            <message-items-field v-model="request.cookies" label="cookie" />
+          </td>
+          <td>
+            <message-items-field v-model="response.headers" label="header" />
+            <message-items-field v-model="response.cookies" label="cookie" />
+          </td>
+        </tr>
+        <tr>
+          <th><v-icon title="body">mdi-dock-bottom</v-icon></th>
+          <td>
+            <v-autocomplete 
+              :disabled="/^get$/i.test(request.method)"
+              :model-value="request.body" label="request.body" :items="datatype_list" item-title="name" response-object v-bind="$thx.field" />
+          </td>
+          <td>
+            <v-autocomplete :model-value="response.body" 
+              label="responses" :items="datatype_list" item-title="name" response-object v-bind="$thx.field" />
+          </td>
+        </tr>
+      </tbody>
+    </v-table>
+  </v-sheet>
 </template>
 <script>
-import { mapWritableState } from 'pinia';
+import { mapState, mapWritableState } from 'pinia';
 import { useProjectStore } from '@/stores/project';
-import fields from '@/fields';
+import { useEndpointStore } from '@/stores/endpoint';
+// import fields from '@/fields';
 
-import baseForm from '@/components/forms/baseForm.vue';
+import messageItemsField from '../components/messageItemsField.vue';
+import markdownField from '@/components/markdownField.vue';
+// import baseForm from '@/components/forms/baseForm.vue';
+import ObjectItems from '@/models/meta/objectItems'
+// import Request from '@/models/request';
+// import Response from '@/models/response';
 
 const tableHeaders = [
   'request',
@@ -38,28 +102,40 @@ const tableHeaders = [
 export default {
   name: 'editEntity',
   components: {
-    baseForm,
+    markdownField,
+    messageItemsField,
   },
   props: {
-    modelValue: {
-      // type: Array,
+    index: {
+      type: Number,
       required: true,
     }
   },
   computed: {
+    entity() {
+      return this.entities[this.index];
+    },
+    request() {
+      return this.entity.request_raw;
+    },
+    response() {
+      return this.entity.response_raw;
+    },
+    ...mapState(useEndpointStore, [
+      // 'parameters',
+      // 'entities',
+      'methods',
+      'mimetypes',
+      'statuses',
+      'datatype_list',
+      'template_list',
+    ]),
     ...mapWritableState(useProjectStore, [
-      'parameters',
       'entities',
-      'templates'
     ]),
   },
   data() {
     return {
-      fields,
-      value: this.modelValue,
-      tableBind: {
-        headers: tableHeaders,
-      }
     }
   }
 }

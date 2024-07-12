@@ -39,6 +39,9 @@ export default class Request extends Message {
         return this.path.map(Patterns.path_serialize)
             .join(Request.path_delimiter);
     }
+    set pathname(values) {
+        this.path = values;
+    }
 
     get path() {
         return this._path || [];
@@ -202,7 +205,7 @@ export default class Request extends Message {
                 path: agg.path || req.path,
                 queries: {
                     ...agg.queries, 
-                    ...req.queries
+                    ...req.queries,
                 },
                 cookies: (agg.cookies || []).concat(req.cookies || [])
                     .filter((c,i,a)=>a.indexOf(c)===i), // unique

@@ -7,8 +7,8 @@ export default class ArrayItems extends Serializable {
     get value() {
         return this._raw || [];
     }
-    set value(value) {
-        this._raw = value;
+    set value(values) {
+        this._raw = values;
     }
 
     get text() { 
