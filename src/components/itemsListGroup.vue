@@ -11,11 +11,11 @@
             {{ it.key }}
           </div>
           <div class="d-flex-inline">
-            <v-breadcrumbs :color="$thx.color.datatype" :items="type_inherits(it.datatype)" />
+            <v-breadcrumbs :color="$thx.color.datatype" :items="type_inherits(it.datatype || {})" />
           </div>
         </v-list-item-title>
         <v-list-item-subtitle>
-          {{ type_summary(it.datatype) }}
+          {{ type_summary(it.datatype || {}) }}
         </v-list-item-subtitle>
         <template #append v-if="it.defaults">
           <i>={{ it.defaults }}</i>

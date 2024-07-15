@@ -20,7 +20,7 @@
           <template v-if="modelValue.is_object">
             <v-list-subheader>properties</v-list-subheader>
             <v-list-item 
-              v-for="(it,ii) in modelValue.items" :key="`datatype-item-${ii}`"
+              v-for="(it,ii) in modelValue.item_items" :key="`datatype-item-${ii}`"
               :title="it.key" :subtitle="summarize(it.datatype) || ':'">
               <template #append>
                 <v-breadcrumbs :items="inheritance(it.datatype)" class="pa-1" />

@@ -37,7 +37,7 @@ export default {
       return this.response.status_title;
     },
     body() {
-      return this.response.body.name;
+      return this.response.body;
     }
   },
   data() {

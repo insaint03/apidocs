@@ -52,15 +52,19 @@ export default class ObjectItems extends Serializable {
     }
 
     get text() { return this.value.join('\n'); }
-    set text(values) { this._raw = values.split('\n'); }
-    get items() { return this.value.map(ObjectItems.parse).filter((it)=>it!=null); }
+    set text(values) { 
+        this._raw = values.split('\n')
+            .map((ln)=>ln.trim())
+            .filter((ln)=>ln && 0<ln.length); 
+    }
+    get items() { return this.value.map(ObjectItems.parse); }
     set items(values) { this._raw = values.map(ObjectItems.serialize); }
 
     get dict() { 
         return Object.fromEntries(this._raw
             .map(ObjectItems.parse)
             .filter((it)=>it!=null)
-            .map((it)=>[it.key, ObjectItems.serialize_dict(it)])
+            .map((it)=>[`${it.required?'!':''}${it.key}`, ObjectItems.serialize_dict(it)])
         );
     }
     set dict(values) {

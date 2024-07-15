@@ -15,7 +15,7 @@
     </thead>
     <tbody density="compact">
       <!-- type object -->
-      <template v-for="it,ii in datatype.items" :key="`dt-itme.${it.datatype}x${ii}`">
+      <template v-for="it,ii in datatype.item_items" :key="`dt-itme.${it.datatype}x${ii}`">
         <tr @click="expanded[it.key] = !expanded[it.key]">
           <th>
             <v-icon size="small" title="required">{{ it.required ? 'mdi-exclamation' : 'mdi-blank' }}</v-icon>

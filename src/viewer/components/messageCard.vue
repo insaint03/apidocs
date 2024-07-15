@@ -11,9 +11,9 @@
         <!-- queries -->
         <table-items v-if="queries" :items="queries" label="queries"  />
         <!-- cookies -->
-        <table-items v-if="modelValue.cookies" :items="modelValue.cookies" label="cookies"  />
+        <table-items v-if="modelValue.cookies" :items="modelValue.cookie_items" label="cookies"  />
         <!-- headers -->
-        <table-items v-if="modelValue.headers" :items="modelValue.headers" label="headers"  />
+        <table-items v-if="modelValue.headers" :items="modelValue.header_items" label="headers"  />
         <!-- body -->
         <datatypeItems v-if="modelValue.body" :datatype="modelValue.body" label="body" />
         <!-- <table-items v-if="modelValue.body && modelValue.body.items" :items="modelValue.body.items" label="body"  /> -->

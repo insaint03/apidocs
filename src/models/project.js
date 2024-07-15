@@ -68,7 +68,7 @@ export default class Project extends Descriptable {
 
 
     // history contains: version, date, items (single-liner)
-    get history() { return this._history || []; }
+    get history() { return this._history.value || []; }
     get history_text() {
         return this.history.map(({version, date, items})=>({
             version,
@@ -93,10 +93,10 @@ export default class Project extends Descriptable {
             name: this.name,
             // description: this.description,
             version: this.version,
-            history: this.history_text,
-            links: this.links_text,
+            history: this.history,
+            links: this.links,
             license: this.license_text,
-            contributors: this.contributors_text,
+            contributors: this.contributors,
             // keywords: this.keywords,
             ...super.serialized,
         }

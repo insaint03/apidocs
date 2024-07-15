@@ -59,18 +59,18 @@ export default {
   computed: {
     liners() {
       return this.liner_keys
-        .map((key)=>[key, this.liner_items(key)])
-        .filter(([,v])=>v!=null);
+        .map(({key,items})=>[key, this.liner_items(items)])
+        .filter(([,v])=>v!=null && 0<v.length);
     },
 
   },
   data() {
     return {
       liner_keys: [
-        'license',
-        'links',
-        'terms',
-        'contributors',
+        {key: 'license', items: 'license_item'},
+        {key: 'links', items: 'link_items'},
+        {key: 'terms', items: 'term_items'},
+        {key: 'contributors', items: 'contributor_items'},
       ],
       // tabs,
       // fields,

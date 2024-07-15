@@ -14,10 +14,10 @@
       </tr>
     </thead>
     <tbody>
-      <template v-for="it,ii in datatype.items" :key="`dt-item.${it}x${ii}`">
+      <template v-for="it,ii in datatype.item_items" :key="`dt-item.${it}x${ii}`">
         <tr @click="expanded[it] = !expanded[it]">
           <th>
-            - {{ it }}
+            - {{ it.key }}
           </th>
           <td>
             <v-text-field :model-value="summary_of(it)" v-bind="$thx.field"

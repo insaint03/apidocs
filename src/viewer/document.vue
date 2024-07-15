@@ -86,8 +86,7 @@ export default {
       return models.get_endpathes({endpoints: this.endpoints});
     },
     datatype_references() {
-      return Object.values(this.datatypes).filter((d)=>d.items
-      );
+      return Object.values(this.datatypes).filter((d)=>d.items!=null);
     },
   },
   data() {

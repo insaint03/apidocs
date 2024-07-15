@@ -167,8 +167,8 @@ export default class Datatype extends Descriptable {
         const its = this.items_raw;
         return (its!=null) ? its.value : null;
     }
-    get items_text() { return this.is_collective ? this.items.text : null; }
-    get item_items() { return this.is_collective ? this.items.items : null; }
+    get items_text() { return this.items!=null ? this._items.text : null; }
+    get item_items() { return this.items!=null ? this._items.items : null; }
 
     set items(values) { 
         // TODO: update as this._items = values;
@@ -198,7 +198,7 @@ export default class Datatype extends Descriptable {
         } 
     }
     set items_text(values) { if(this.is_collective) this.items.text = values; }
-    set items_items(values) { if(this.is_collective) this.items.items = values; }
+    set item_items(values) { if(this.is_collective) this.items.items = values; }
 
 
     is_descendant_of(origin) {
@@ -278,9 +278,13 @@ export default class Datatype extends Descriptable {
             ...super.serialized,
         };
         // optional
-        ['validation', 'defaults', 'items', 'migration', 'examples']
-            .forEach((prop)=>{
-                const pv = this[prop];
+        Object.entries({
+            validation: this.validation,
+            defaults: this.defaults,
+            items: this.items ? this.items_raw.dict : null,
+            migration: this.migration,
+            examples: this.examples,})
+            .forEach(([prop, pv])=>{
                 if(pv&& pv!==false) {
                     ret[prop] = pv;
                 }
