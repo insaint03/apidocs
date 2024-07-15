@@ -84,8 +84,11 @@ export default class Response extends Message {
         return Object.entries(Response.statuses).map(([code, data])=>({code: parseInt(code), ...data}));
     }
 
-    constructor({mimetype, status, headers, cookies, body}, ...templates) {
-        super({headers, cookies, body}, ...templates);
+    constructor(option={}, ...templates) {
+        const tmpls = templates.map((t)=>t.response);
+        const {mimetype, status, headers, cookies, body, description} = Response.merge(...tmpls, option);
+
+        super({headers, cookies, body, description}, ...templates);
         this._mtype = mimetype || 'application/json';
         this.status = status || '200';
     }

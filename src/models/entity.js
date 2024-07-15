@@ -4,7 +4,7 @@ import Response from "./response";
 import Template from "./template";
 
 // import ArrayItems from "./meta/arrayItems";
-// import ObjectItems from "./meta/objectItems";
+import ObjectItems from "./meta/objectItems";
 
 //TODO: ? Entity should be - more thoughly data container, 
 // limited computing properties
@@ -14,13 +14,8 @@ export default class Entity extends Descriptable {
         this._tmpls = [].concat(templates);
         this._trails = null;
         this._tagnames;
-        this._request = request || {};
-        this._response = response || {};
-        this.update_templates();
-        // this.request_base = Request.merge(...templates.map((tmpl)=>tmpl.request));
-        // this.response_base = Response.merge(...templates.map((tmpl)=>tmpl.response));
-        // this._request_raw = null;
-        // this._response_raw = null;
+        this._request = new Request(request || {}, ...this.templates);
+        this._response = new Response(response || {}, ...this.templates);
     }
 
     get ep() {
@@ -40,19 +35,7 @@ export default class Entity extends Descriptable {
         // update request/response bases
         this.update_templates();
     }
-    
-    update_templates() {
-        this.request_base = Request.merge(...this.templates.map((tmpl)=>tmpl.request));
-        this.response_base = Response.merge(...this.templates.map((tmpl)=>tmpl.response));
-        this._request_raw = {
-            ...this.request_base,
-            ...this._request,
-        };
-        this._response_raw = {
-            ...this.response_base,
-            ...this._response,
-        };
-    }
+   
 
     get templates() {
         return Template.finds(...this.template_names)
@@ -79,34 +62,67 @@ export default class Entity extends Descriptable {
     }
 
     get request() {
-        return new Request(this.request_raw, ...this.templates);
+        return this._request;
     }
-    set request(value) {
-        this._request = value;
-    }
-
-    get request_raw() {
-        return this._request_raw;
-    }
-
-    set request_raw(value) {
-        this._request = value;
-    }
-
+    
     get response() {
-        return new Response(this.response_raw, ...this.templates);
+        return this._response;
     }
 
-    get response_raw() {
-        return this._response_raw;
-    }
-    set resopnse_raw(value) {
-        this._response = value;
-    }
+    // set request(value) {
+    //     this._request = value;
+    // }
 
-    set response(value) {
-        this._response = {...this._response, ...value};
-    }
+    /* pass request properties */
+    // desc
+    get request_desc() {return this.request.description;}
+    set request_desc(value) {this.request.description = value;}
+    // method
+    get request_method() {return this.request.method;}
+    set request_method(value) {this.request.method = value;}
+    // pathname
+    get request_pathname() {return this.request.pathname;}
+    set request_pathname(value) {this.request.path = value;}
+    // queries
+    get request_queries() {return this.request.query_text }
+    set request_queries(value) {this.request.query_text = value;}
+    // headers
+    get request_headers() {return this.request.headers.text;}
+    set request_headers(value) {
+        this._request.headers = (value||'').split('\n');}
+    // cookies
+    get request_cookies() {return this.request.cookies.text;}
+    set request_cookies(value) {
+        this._request.cookies = (value||'').split('\n')
+            .map(ObjectItems.parse);}
+    // body
+    get request_body() {return this.request.body.text;}
+    set request_body(value) {this._request.body = value;}
+
+    /* pass response properties*/
+    // desc
+    get response_desc() {return this.response.description;}
+    set response_desc(value) {this._response.description = value;}
+    // status
+    get response_status() {return this.response.status;}
+    set response_status(value) {this._response.status = value;}
+    // mimetype
+    get response_mimetype() {return this.response.mimetype;}
+    set response_mimetype(value) {this._response.mimetype = value;}
+    // headers
+    get response_headers() {return this.response.headers;}
+    set response_headers(value) {this._response.headers = value;}
+    // cookies
+    get response_cookies() {return this.response.cookies;}
+    set response_cookies(value) {this._response.cookies = value;}
+    // body
+    get response_body() {return this.response.body;}
+    set response_body(value) {this._response.body = value;}
+
+
+    // set response(value) {
+    //     this._response = {...this.response_base, ...value};
+    // }
 
     get serialized() {
         return {

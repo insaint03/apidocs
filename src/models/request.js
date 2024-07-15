@@ -20,14 +20,17 @@ export default class Request extends Message {
     static path_delimiter = '/';
     static path_separator = '\n';
 
-    constructor({method, path, queries, cookies, headers, body}, ...templates) {
-        super({cookies, headers, body}, ...templates);
+    constructor(option={}, ...templates) {
+        const tmpls = templates.map((t)=>t.request);
+        const {method, path, queries, cookies, headers, body, description} = Request.merge(option, ...tmpls);
+
+        super({cookies, headers, body, description}, ...templates);
         this.method = (method||'GET').toUpperCase();
         this.path = path;
         this._path_matches = null;
         // set query
-        this._queries = new ObjectItems();
-        this.queries = queries;
+        this._queries = new ObjectItems(queries);
+        // this.queries = queries || [];
     }
 
 
@@ -126,7 +129,7 @@ export default class Request extends Message {
     ];
 
     get queries() { 
-        return Object.fromEntries(this._queries.value.map((q)=>([q.key, q])));
+        return this._queries;
     }
     get query_text() { 
         return this._queries.text; 
@@ -134,14 +137,7 @@ export default class Request extends Message {
     get query_items() { return this._queries.items; }
     set queries(values) {
         // object
-        if(typeof(values)==='object' && !Array.isArray(values)) {
-            values = Object.entries(values)
-                .map(([key, e])=>typeof(e)==='string'
-                    ? `${key}:${e}`
-                    : {key, ...e});
-        } 
-        this._queries.value = Object.entries(values)
-            .map(([key,e])=>({key, ...e}));
+        this._queries.value = values;
     }
     set query_text(value) { this._queries.text = value; }
     set query_items(values) { this._queries.items = values; }
@@ -199,7 +195,7 @@ export default class Request extends Message {
 
     // object request options to derive final
     static merge(...reqs) {
-        return reqs.reduce((agg, req)=>{
+        return reqs.reduce((agg, req, ri)=>{
             return {
                 method: agg.method || req.method,
                 path: agg.path || req.path,

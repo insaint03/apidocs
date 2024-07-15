@@ -36,10 +36,10 @@
                 <v-autocomplete v-model="request.method" label="method" v-bind="$thx.field" :items="methods" clearable />
               </v-col>
               <v-col>
-                <v-text-field v-model="request.path" class="flex-grow px-2" label="pathname" v-bind="$thx.field" />
+                <v-text-field v-model="request.pathname" class="flex-grow px-2" label="pathname" v-bind="$thx.field" />
               </v-col>
             </v-row>
-            <message-items-field v-model="request.queries" label="query" />
+            <message-items-field v-model="request.query_items" label="query" />
           </td>
           <td>
             <markdown-field v-model="response.description" label="description" v-bind="$thx.field" />
@@ -57,24 +57,26 @@
         <tr>
           <th><v-icon title="headers/cookies">mdi-dock-top</v-icon></th>
           <td>
-            <message-items-field v-model="request.headers" label="header" />
-            <message-items-field v-model="request.cookies" label="cookie" />
+            <message-items-field v-model="request.header_items" label="header" />
+            <message-items-field v-model="request.cookie_items" label="cookie" />
           </td>
           <td>
-            <message-items-field v-model="response.headers" label="header" />
-            <message-items-field v-model="response.cookies" label="cookie" />
+            <message-items-field v-model="response.header_items" label="header" />
+            <message-items-field v-model="response.cookie_items" label="cookie" />
           </td>
         </tr>
         <tr>
           <th><v-icon title="body">mdi-dock-bottom</v-icon></th>
           <td>
             <v-autocomplete 
+              v-model="request.body"
               :disabled="/^get$/i.test(request.method)"
-              :model-value="request.body" label="request.body" :items="datatype_list" item-title="name" response-object v-bind="$thx.field" />
+              label="request.body" :items="datatype_all" item-title="name" response-object v-bind="$thx.field" />
           </td>
           <td>
-            <v-autocomplete :model-value="response.body" 
-              label="responses" :items="datatype_list" item-title="name" response-object v-bind="$thx.field" />
+            <v-autocomplete 
+              v-model="response.body"
+              label="responses" :items="datatype_all" item-title="name" response-object v-bind="$thx.field" />
           </td>
         </tr>
       </tbody>
@@ -116,10 +118,10 @@ export default {
       return this.entities[this.index];
     },
     request() {
-      return this.entity.request_raw;
+      return this.entity.request;
     },
     response() {
-      return this.entity.response_raw;
+      return this.entity.response;
     },
     ...mapState(useEndpointStore, [
       // 'parameters',
@@ -127,7 +129,7 @@ export default {
       'methods',
       'mimetypes',
       'statuses',
-      'datatype_list',
+      'datatype_all',
       'template_list',
     ]),
     ...mapWritableState(useProjectStore, [

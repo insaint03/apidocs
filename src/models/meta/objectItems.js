@@ -29,7 +29,8 @@ export default class ObjectItems extends Serializable {
     }
 
     constructor(value=[]) {
-        super(value);
+        super({});
+        this.value = value;
     }
 
     get value() {
@@ -37,7 +38,12 @@ export default class ObjectItems extends Serializable {
     }
     set value(values) {
         // Object case
-        if(typeof(values) === 'object' && !Array.isArray(values)) {
+        if(typeof(values)==='string') {
+
+            values = values.split('\n');
+        }
+        if(typeof(values) === 'object' 
+        && typeof(values.map)!=='function') {
             values = Object.entries(values).map(([key,e])=>typeof(e)==='object'
             ? {key, ...e}
             : e.includes(`${key}:`) ? e : `${key}:${e}`);

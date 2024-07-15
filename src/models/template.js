@@ -65,6 +65,12 @@ export default class Template extends Descriptable {
 
     set request(value) {
         this._request = Object.assign(this._request, value);
+        if(value.body) {
+            const body_constraints = Array.isArray(value.body)
+                ? value.body : value.body.split('\n');
+            this._request.body = body_constraints
+                .map(Patterns.type_constraint_parse);
+        }
     }
 
     get_body_constraints(of_message) {

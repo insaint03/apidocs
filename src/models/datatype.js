@@ -171,6 +171,7 @@ export default class Datatype extends Descriptable {
     get item_items() { return this.is_collective ? this.items.items : null; }
 
     set items(values) { 
+        // TODO: update as this._items = values;
         if(this.items_raw == null) { 
             return; 
         }
@@ -528,7 +529,7 @@ export default class Datatype extends Descriptable {
         }
 
         const filters = constraints.map((ce)=>{
-            return Object.entries(Datatype.constraint_fielters)
+            return Object.entries(Datatype.constraint_filters)
                 .reduce((agg, [ctype, cbuilder])=>agg || (ce[ctype]
                     ? cbuilder(ce[ctype]) : null), null);
         });

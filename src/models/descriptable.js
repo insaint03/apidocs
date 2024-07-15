@@ -17,7 +17,7 @@ export default class Descriptable {
     }
 
     get description() {
-        return [this._summary, this._desc].join('\n').trim();
+        return [this.summary, this.desc].join('\n').trim();
     }
 
     set description(value) {

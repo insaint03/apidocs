@@ -34,12 +34,12 @@
     </template>
     <template #item.request.pathname="{ item }">
       <span class="enpoint-pathname" readonly>
-        {{ item.request.path }}
+        {{ item.request.pathname }}
       </span>
     </template>
     <template #item.response="{ item }">
       <v-btn text flat size="x-small" class="ma-1" readonly
-        :color="$thx.color.http_status(item.response.status_code)">{{ item.response.status_title }}</v-btn>
+        :color="$thx.color.http_status(item.response.status)">{{ item.response.status_title }}</v-btn>
       {{ item.response.mimetype }}
       <v-chip size="x-small" class="ma-1">{{ item.response.body || '' }}</v-chip>
       <v-divider vertical />
@@ -47,7 +47,8 @@
     <template #expanded-row="{item, columns}">
       <tr>
         <td :colspan="columns.length">
-          <edit-entity :index="item.index" :entity="entities[item.index]" />
+          <edit-entity :index="item.index" 
+          />
         </td>
       </tr>
     </template>
@@ -73,8 +74,8 @@ import Response from '@/models/response';
 const columns = [
   { title: '#', key: 'index', },
   { title: 'tags', key: 'tags', value: (e)=>e.tagnames },
-  { title: 'method', key: 'request.method', value:(e)=>e.request.method },
-  { title: 'pathname', key: 'request.pathname', value:(e)=>e.request.pathname },
+  { title: 'method', key: 'request.method', value:(e)=>e.request_method },
+  { title: 'pathname', key: 'request.pathname', value:(e)=>e.request_pathname },
   { title: 'response', key: 'response', value:(e)=>e.response },
 ]
 
@@ -111,8 +112,8 @@ export default {
         index: i,
         entity: e,
         tagnames: e.tagnames,
-        request: e.request_raw,
-        response: e.response_raw,
+        request: e.request,
+        response: e.response,
         // ...e,
       }))
     },

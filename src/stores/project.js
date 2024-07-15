@@ -25,6 +25,9 @@ export const useProjectStore = defineStore('project', {
 
         // datatype list to show on the page
         //  - object, enum provided
+        datatype_all() {
+          return models.datatype_all;
+        },
         datatype_list() {
             return Object.values(this.datatypes)
                 .filter((dt)=>false

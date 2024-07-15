@@ -10,7 +10,9 @@ export default class Serializable {
                 .filter((ln)=>ln && 0<ln.length);
         }
 
+
         this._raw = values
+            .filter((el)=>el!=null)
             .map((el)=>(typeof(el)==='object'?objSerializer(el):el))
             .filter((el)=>el!=null);
     }
