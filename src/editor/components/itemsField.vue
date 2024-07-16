@@ -36,6 +36,7 @@ import { useDatatypeStore } from '@/stores/datatype';
 
 const parsed_map = {
   object(v){
+    if(!v) { return null; }
     const t = Datatype.find(v.datatype);
     return  t ? {
       icon: v.required ? 'mdi-exclamation' : 'mdi-blank',
@@ -73,11 +74,16 @@ export default {
   emits: [
     'change',
   ],
+  watch: {
+    modelValue() {
+      this.raw = null;
+    },
+  },
   methods: {
     changes() {
       this.$emit('change', this.raw);
       this.focused = false;
-      this.raw = null;
+      // this.raw = null;
     },
     ...mapActions(useDatatypeStore, [
       'findtype',
@@ -143,9 +149,9 @@ export default {
         return this.raw;
     },
     previews() {
-      return this.raw.items
+      return this.items ? this.items.items
         .map(parsed_map[this.origintype])
-        .filter((it)=>it!=null);
+        .filter((it)=>it!=null) : [];
     },
     ...mapWritableState(useDatatypeStore, [
       'datatypes',

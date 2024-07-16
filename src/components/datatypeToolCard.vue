@@ -3,48 +3,38 @@
     <template #title>
       <v-icon>{{ $thx.icon.datatype }}</v-icon>
       {{ modelValue.name }}
+      &nbsp;
+      <sub v-if="modelValue.summary" style="font-style:italic;">// {{ modelValue.summary }}</sub>
     </template>
     <template #subtitle>
-        <v-breadcrumbs :items="modelValue.inherits" />
+      <v-chip size="small">{{ modelValue.inherits.join(' / ') }}</v-chip>
     </template>
     <template #activator="{ props }">
       <slot name="default" :props="props"></slot>
-
     </template>
-    <v-row>
-      <v-col>
-        <mark-down :model-value="modelValue.description" />
-      </v-col>
-      <v-col v-if="modelValue.items">
-        <v-list line="two" density="compact">
-          <template v-if="modelValue.is_object">
-            <v-list-subheader>properties</v-list-subheader>
-            <v-list-item 
-              v-for="(it,ii) in modelValue.item_items" :key="`datatype-item-${ii}`"
-              :title="it.key" :subtitle="summarize(it.datatype) || ':'">
-              <template #append>
-                <v-breadcrumbs :items="inheritance(it.datatype)" class="pa-1" />
-              </template>
-            </v-list-item>
-          </template>
-          <template v-else-if="modelValue.is_array">
-            
-          </template>
-        </v-list>
-      </v-col>
-    </v-row>
+    <div class="d-flex">
+      <div class="flex-fill pa-1" v-if="modelValue.desc">
+        <mark-down :model-value="modelValue.desc" />
+      </div>
+      <div class="flex-fill pa-1" v-if="modelValue.items!=null">
+        <datatype-items :datatype="modelValue" no-expand />
+      </div>
+    </div>
   </tool-card>
 </template>
 
 <script>
 import Datatype from '@/models/datatype';
 import toolCard from './toolCard.vue';
-// import datatypeItems from '@/viewer/components/datatypeItems.vue';
+// import itemsTree from '@/viewer/components/itemsTree.vue';
+import datatypeItems from '@/viewer/components/datatypeItems.vue';
 
 export default {
   name: 'datatype-tool-card',
   components: {
     toolCard,
+    // itemsTree,
+    datatypeItems,
     // datatypeItems,
   },
   methods: {

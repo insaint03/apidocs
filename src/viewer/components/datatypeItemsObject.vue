@@ -1,56 +1,52 @@
 <template>
-  <v-table v-bind="$thx.table" class="rounded-lg" style="min-width: 30vw;">
-    <thead>
-      <tr>
-        <td colspan="2">
-          <v-label>{{ label }}</v-label><br />
-          <v-chip>{</v-chip>
-        </td>
-        <td style="text-align: right">
-          <v-btn icon flat size="small" @click="()=>{expand_all = !expand_all}">
-            <v-icon>{{ $thx.expanding_icon(expand_all) }}</v-icon>
-          </v-btn>
-        </td>
-      </tr>
-    </thead>
-    <tbody density="compact">
-      <!-- type object -->
-      <template v-for="it,ii in datatype.item_items" :key="`dt-itme.${it.datatype}x${ii}`">
-        <tr @click="expanded[it.key] = !expanded[it.key]">
-          <th>
-            <v-icon size="small" title="required">{{ it.required ? 'mdi-exclamation' : 'mdi-blank' }}</v-icon>
-            {{ it.key }}:
-          </th>
-          <td>
-            <v-breadcrumbs :items="inheritance(it.datatype)" class="pa-0" />
-          </td>
-          <td>
-            <v-text-field :model-value="summary_of(it.datatype)" v-bind="$thx.field"
-            single-line hide-details placeholder="summary" readonly
-            :append-icon="$thx.expanding_icon(expanded[it.key])"
-            min-width="5vw" />
-          </td>
-        </tr>
-        <tr v-show="expanded[it.key]">
-          <td colspan="3">
+  <v-list density="compact">
+    <!-- starts -->
+    <v-list-item :append-icon="noExpand ? null : $thx.expanding_icon(expand_all)">
+      <v-list-item-title>
+        <v-chip :color="$thx.color.datatype"> {{ datatype.inherits.join(' / ') }} {</v-chip>
+      </v-list-item-title>
+    </v-list-item>
+    <!-- values -->
+    <template v-for="it, ii in items" :key="`dt-item.${it.name}x${ii}`">
+      <v-list-item 
+        prepend-icon="mdi-circle-medium"
+        :append-icon="expandables[ii] ? $thx.expanding_icon(expanded[ii]) : null">
+        <v-list-item-subtitle v-if="summary_of(it.datatype)">
+          // {{ summary_of(it.datatype) }}
+        </v-list-item-subtitle>
+        <v-list-item-title>
+          <strong>{{ it.key }} </strong>&nbsp;:
+          <v-chip size="small">{{ inheritance(it.datatype).join(' / ') }}</v-chip>
+        </v-list-item-title>
+      </v-list-item>
+      <v-list-item prepend-icon="mdi-blank" v-if="!noExpand && expandables[ii]" v-show="expanded[ii]">
+        <v-row>
+          <v-col v-if="it.desc">
             <mark-down :model-value="it.desc" />
-          </td>
-        </tr>
-      </template>
-    </tbody>
-    <tfoot>
-      <tr>
-        <td colspan="3">
-          <v-chip>}</v-chip>
-        </td>
-      </tr>
-    </tfoot>
-  </v-table>
+          </v-col>
+          <v-col v-if="it.items!=null">
+            <items-tree :root="it.name" />
+          </v-col>
+        </v-row>
+      </v-list-item>
+    </template>
+    <!-- ends -->
+    <v-list-item>
+      <v-list-item-title>
+        <v-chip :color="$thx.color.datatype">} </v-chip>
+      </v-list-item-title>
+    </v-list-item>
+  </v-list>
 </template>
 <script>
 import Datatype from '@/models/datatype';
+import itemsTree from '@/viewer/components/itemsTree.vue';
+
 export default {
   name: 'datatypeItems',
+  components: { 
+    itemsTree 
+  },
   methods: {
     inheritance(tp) {
       return Datatype.typeprop(tp, 'inherits');
@@ -61,22 +57,29 @@ export default {
   },
   props: {
     datatype: Datatype,
+    noExpand: {type: Boolean, required: false, default: false },
     label: {type: String, required: false, default: 'items' },
   },
   computed: {
     expand_all: {
       get() {
-        return Object.values(this.expanded).every((v)=>v==true);
+        return this.expanded.every((v,i)=>!this.expandables[i] || this.expanded[i]);
       },
       set(v) {
-        this.expanded = Object.fromEntries(this.datatype.items.map((it)=>[it.key, v]));
+        this.expanded.forEach((_,i)=>this.$set(this.expanded, i, this.expandables[i] ? v : false));
       }    
     },
+    items() {
+      return this.datatype.item_items;
+    },
+    expandables() {
+      return this.items.map((it)=>it.desc || it.items!=null);
+    }
 
   },
   data() {
     return {
-      expanded: {},
+      expanded: [],
     };
   }
 }

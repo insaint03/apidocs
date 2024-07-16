@@ -43,6 +43,7 @@ export default {
   },
   props: {
     datatype: Datatype,
+    noExpand: {type: Boolean, required: false, default: false },
     label: {type: String, required: false, default: 'items' },
   },
   computed: {

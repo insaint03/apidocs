@@ -1,51 +1,54 @@
 <template>
-  <v-table v-bind="$thx.table" class="rounded">
-    <thead>
-      <tr>
-        <td>
-          <v-label>{{ label }}</v-label><br />
-          array of -- <v-chip>[</v-chip>
-        </td>
-        <td style="text-align: right">
-          <v-btn icon flat size="small" @click="()=>{expand_all = !expand_all}">
-            <v-icon>{{ $thx.expanding_icon(expand_all) }}</v-icon>
-          </v-btn>
-        </td>
-      </tr>
-    </thead>
-    <tbody>
-      <template v-for="it,ii in datatype.items" :key="`dt-item.${it}x${ii}`">
-        <tr @click="expanded[it] = !expanded[it]">
-          <th>
-            - {{ it }}
-          </th>
-          <td>
-            <v-text-field :model-value="summary_of(it)" v-bind="$thx.field"
-              single-line hide-details placeholder="summary" readonly
-              :append-icon="$thx.expanding_icon(expanded[it.key])"
-              min-width="5vw" />
-          </td>
-        </tr>
-        <tr v-show="expanded[it.key]">
-          <td colspan="2">
+  <v-list density="compact">
+    <!-- starts -->
+    <v-list-item :append-icon="noExpand ? null : $thx.expanding_icon(expand_all)"
+      @click="expand_all = !noExpand && !expand_all">
+      <v-list-item-title>
+        <v-chip :color="$thx.color.datatype"> {{ datatype.inherits.join(' / ') }} [</v-chip>
+      </v-list-item-title>
+    </v-list-item>
+    <!-- values -->
+    <template v-for="it, ii in item_types" :key="`dt-item.${datatype.name}x${ii}`">
+      <v-divider v-if="ii>0">or</v-divider>
+      <v-list-item 
+        prepend-icon="mdi-minus"
+        :append-icon="(!noExpand && expandables[ii]) ? $thx.expanding_icon(expanded[ii]) : null"
+        @click="expanded[ii] = expandables[ii] && !expanded[ii]">
+        <v-list-item-subtitle v-if="it.summary">
+          // {{ it.summary }}
+        </v-list-item-subtitle>
+        <v-list-item-title>
+          <v-chip size="small">{{ inheritance(it.name).join(' / ') }}</v-chip>
+        </v-list-item-title>
+      </v-list-item>
+      <v-list-item v-if="!noExpand && expandables[ii]" v-show="expanded[ii]">
+        <v-row >
+          <v-col v-if="it.desc">
             <mark-down :model-value="it.desc" />
-          </td>
-        </tr>
-      </template>
-    </tbody>
-    <tfoot>
-      <tr>
-        <td colspan="2">
-          <v-chip>]</v-chip>
-        </td>
-      </tr>
-    </tfoot>
-  </v-table>
+          </v-col>
+          <v-col v-if="it.items!=null">
+            <items-tree v-if="it.items" :root="it" />
+          </v-col>
+        </v-row>
+      </v-list-item>
+    </template>
+    <!-- ends -->
+    <v-list-item>
+      <v-list-item-title>
+        <v-chip :color="$thx.color.datatype">] </v-chip>
+      </v-list-item-title>
+    </v-list-item>
+  </v-list>
 </template>
 <script>
 import Datatype from '@/models/datatype';
+import itemsTree from '@/viewer/components/itemsTree.vue';
+
 export default {
   name: 'datatypeItemsArray',
+  components: {
+    itemsTree,
+  },
   methods: {
     typeprop(name, key, defaults) {
       const dt = Datatype.find(name);
@@ -59,18 +62,28 @@ export default {
     }
   },
   props: {
-    datatype: Object,
+    datatype: Datatype,
+    noExpand: {type: Boolean, required: false, default: false },
     label: {type: String, required: false, default: 'items' },
   },
   computed: {
     expand_all: {
       get() {
-        return this.datatype.items.reduce((agg, it)=>agg && this.expanded[it.key], true);
+        return this.expandables.reduce((agg, ex,ei)=>agg && (agg && ex && this.expanded[ei]), !this.noExpand);
       },
       set(v) {
-        this.expanded = Object.fromEntries(this.datatype.items.map((it)=>[it.key, v]));
+          this.expanded = v 
+            ? [].concat(this.expandables)
+            : [];
+        // this.expanded = Object.fromEntries(this.datatype.items.map((it)=>[it.key, v]));
       }    
     },
+    item_types() {
+      return this.datatype.items.map((it)=>Datatype.find(it));
+    },
+    expandables() {
+      return this.item_types.map((d)=>d.desc || d.items!=null);
+    }
   },
   data() {
     return {

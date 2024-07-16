@@ -1,46 +1,33 @@
 <template>
-  <v-table v-bind="$thx.table">
-    <thead>
-      <tr>
-        <td>
-          <v-label>{{ label }}</v-label><br />
-          enumeration <v-chip>&lt;</v-chip>
-        </td>
-        <td style="text-align: right">
-          <v-btn icon flat size="small" @click="()=>{expand_all = !expand_all}">
-            <v-icon>{{ $thx.expanding_icon(expand_all) }}</v-icon>
-          </v-btn>
-        </td>
-      </tr>
-    </thead>
-    <tbody>
-      <template v-for="it,ii in datatype.item_items" :key="`dt-item.${it}x${ii}`">
-        <tr @click="expanded[it] = !expanded[it]">
-          <th>
-            - {{ it.key }}
-          </th>
-          <td>
-            <v-text-field :model-value="summary_of(it)" v-bind="$thx.field"
-            single-line hide-details placeholder="summary" readonly
-            :append-icon="$thx.expanding_icon(expanded[it.key])"
-            min-width="5vw" />
-          </td>
-        </tr>
-        <tr v-show="expanded[it.key]">
-          <td colspan="2">
-            <!-- TODO: fill in -->
-          </td>
-        </tr>
-      </template>
-    </tbody>
-    <tfoot>
-      <tr>
-        <td colspan="2">
-          <v-chip>&gt;</v-chip>
-        </td>
-      </tr>
-    </tfoot>
-  </v-table>
+  <v-list density="compact">
+    <!-- starts -->
+    <v-list-item :append-icon="noExpand ? null : $thx.expanding_icon(expand_all)"
+      @click="expand_all = !noExpand && !expand_all">
+      <v-list-item-title>
+        <v-chip :color="$thx.color.datatype"> {{ datatype.inherits.join(' / ') }} &lt;</v-chip>
+      </v-list-item-title>
+    </v-list-item>
+    <!-- values -->
+    <template v-for="{value, desc}, ii in items" :key="`dt-item.${datatype.name}x${ii}`">
+      <v-divider v-if="ii>0">or</v-divider>
+      <v-list-item 
+        prepend-icon="mdi-square-medium"
+        @click="expanded[ii] = expandables[ii] && !expanded[ii]">
+        <v-list-item-subtitle v-if="desc">
+          // {{ desc }}
+        </v-list-item-subtitle>
+        <v-list-item-title>
+          <strong>{{ value }}</strong>
+        </v-list-item-title>
+      </v-list-item>
+    </template>
+    <!-- ends -->
+    <v-list-item>
+      <v-list-item-title>
+        <v-chip :color="$thx.color.datatype">&gt; </v-chip>
+      </v-list-item-title>
+    </v-list-item>
+  </v-list>
 </template>
 <script>
 import Datatype from '@/models/datatype';
@@ -60,6 +47,7 @@ export default {
   },
   props: {
     datatype: Object,
+    noExpand: {type: Boolean, required: false, default: false },
     label: {type: String, required: false, default: 'items' },
   },
   computed: {
@@ -71,10 +59,11 @@ export default {
         this.expanded = Object.fromEntries(this.datatype.items.map((it)=>[it.key, v]));
       }    
     },
+    items() { return this.datatype.item_items; }
   },
   data() {
     return {
-      expanded: {},
+      expanded: [],
     };
   },
 };

@@ -5,10 +5,16 @@
       </slot>
     </template>
     <v-card flat class="tool-card">
-      <v-card-item>
-        <v-card-title><slot name="title"></slot></v-card-title>
-        <v-card-subtitle><slot name="subtitle"></slot></v-card-subtitle>
-      </v-card-item>
+      <v-toolbar style="background-color: inherit; color: inherit;">
+        <v-toolbar-title>
+          <slot name="title"></slot>
+        </v-toolbar-title>
+        <v-spacer />
+        <v-toolbar-items class="align-center pr-4">
+          <slot name="subtitle"></slot>
+
+        </v-toolbar-items>
+      </v-toolbar>
       <v-card-text>
         <slot>
         </slot>
