@@ -18,6 +18,14 @@
     <v-toolbar-title>apiDocs</v-toolbar-title>
     <v-spacer />
     <v-toolbar-items>
+      <!-- download current -->
+      <v-btn icon @click="download_dialog=true" :title="`download`">
+        <v-icon>mdi-download</v-icon>
+      </v-btn>
+      <!-- change mode -->
+      <v-btn icon @click="move_mode" :title="`go ${other_mode}`">
+        <v-icon>{{ mode_icon }}</v-icon>
+      </v-btn>
       <!-- toggle extension -->
       <v-btn icon @click="extension = !extension">
         <v-icon>{{ extension ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
@@ -39,9 +47,10 @@
           </v-list>
         </v-menu>
       </v-tabs>
-      <!-- search -->
+      <!-- TODO: search
       <v-spacer />
       <v-text-field label="search" density="compact" hide-details single-line append-icon="mdi-magnify" clearable />
+       -->
     </template>
   </v-app-bar>
   <open-dialog v-model="import_dialog" />
@@ -64,6 +73,9 @@ export default {
     embedDialog,
     downloadDialog,
   },
+  mounted() {
+    console.log(this.$router.currentRoute.value.name);
+  },
   methods: {
     async with_progress(action) {
       this.progress = true;
@@ -78,6 +90,12 @@ export default {
     async clear() {
       return await this.with_progress(() => this.clears());
     },
+    open(href) {
+      window.open(href, '_blank');
+    },
+    move_mode() {
+      this.$router.push(`/${this.other_mode}`);
+    },
     ...mapActions(useProjectStore, [
       'clears',
       'loads',
@@ -88,6 +106,19 @@ export default {
     ]),
   },
   computed: {
+    mode() {
+      return this.$router.currentRoute.value.name;
+    },
+    viewer_mode() {
+      return /^view$/i.test(this.mode);
+    },
+    other_mode() {
+      return this.viewer_mode ? 'edit' : 'view';
+    },
+    mode_icon() {
+      return this.viewer_mode ? 'mdi-pencil' : 'mdi-eye';
+    },
+    
     ...mapState(useProjectStore, [
       'location',
     ]),
@@ -117,15 +148,10 @@ export default {
         },
         {
           title: 'go', items: [
-            { title: 'edit', action: ()=>{ this.$router.push('/') }}, 
-            { title: 'view', action: ()=>{ this.$router.push('/view')} },
+            { title: 'issues', action: ()=>this.open('https://github.com/insaint03/apidocs/issues'), },
             { title: 'guide', action: null },
             { title: 'specification', action: null },
-          ]
-        },
-        {
-          title: 'info', items: [
-            { title: 'about apidocs' },
+            { title: 'about' },
           ]
         },
       ],
