@@ -1,6 +1,9 @@
 <template>
   <v-card flat :color="$thx.color.api">
     <v-toolbar flat density="compact" @click="expanding = !expanding">
+      <v-toolbar-title>
+        
+      </v-toolbar-title>
       <v-toolbar-items>
         <v-btn text readonly style="text-transform: none;">
           {{ ep.pathname }}

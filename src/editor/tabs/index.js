@@ -1,7 +1,8 @@
 import projectInfo from './project.vue'
 import datatypeTab from './datatypes.vue'
 import templateTab from './templates.vue';
-import previewTab from './preview.vue';
+import rawTextTab from './rawText.vue';
+// import previewTab from './preview.vue';
 import endpointTab from './endpoints.vue';
 
 export default {
@@ -9,7 +10,8 @@ export default {
         projectInfo,
         datatypeTab,
         templateTab,
-        previewTab,
+        rawTextTab,
+        // previewTab,
         endpointTab,
     },
     editTabs: [
@@ -17,6 +19,7 @@ export default {
         {key: 'datatype', icon: 'datatype', title: 'Datatypes', component: 'datatype-tab'},
         {key: 'endpoint', icon: 'endpoint', title: 'Endpoints', component: 'endpoint-tab'},
         {key: 'template', icon: 'tag', title: 'Templates', component: 'template-tab'},
-        {key: 'preview', icon: 'eye', title: 'Preview', component: 'preview-tab'},
+        // {key: 'preview', icon: 'eye', title: 'Preview', component: 'preview-tab'},
+        {key: 'rawtext', icon: 'text', title: 'txt', component: 'raw-text-tab'},
     ]
 };

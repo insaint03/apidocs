@@ -73,9 +73,9 @@ export default {
     embedDialog,
     downloadDialog,
   },
-  mounted() {
-    console.log(this.$router.currentRoute.value.name);
-  },
+  // mounted() {
+  //   console.log(this.$router.currentRoute.value.name);
+  // },
   methods: {
     async with_progress(action) {
       this.progress = true;

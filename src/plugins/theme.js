@@ -46,6 +46,7 @@ const themes = {
             external: 'mdi-open-in-new',
             links: {
                 github: 'mdi-github',
+                linkedin: 'mdi-linkedin',
                 repository: 'mdi-source-repository',
                 wiki: 'mdi-wikipedia',
                 issue: 'mdi-ticket-outline',

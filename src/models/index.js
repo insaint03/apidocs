@@ -181,7 +181,7 @@ export default {
     // serialize data (defaults current state) to json
     async serialize_json(loads) {
         loads = loads || this.state;
-        return JSON.stringify(serialized(loads));
+        return JSON.stringify(serialized(loads), null, 2);
     },
 
     // deserialize json to object. state change not provided

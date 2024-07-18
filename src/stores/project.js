@@ -54,20 +54,22 @@ export const useProjectStore = defineStore('project', {
         },
     },
     actions: {
+        load_state(data) {
+            this.clears();
+            models.state = data;
+            this.$state = {
+                ...models.state,
+            };
+            this.caches();
+
+        },
         async loads(location) {
             gtm.push('load', {location,});
 
             // load data
             const content = await models.loads(location);
 
-            // setup concurrent states
-            models.state = content;
-            // announce state change
-            this.$state = {
-                ...models.state,
-            };
-            // cache it
-            this.caches();
+            this.load_state(content)
             // push recent list
             models.recents = {
                 location, 
@@ -83,6 +85,8 @@ export const useProjectStore = defineStore('project', {
             return fmatch ? fmatch.groups.fname : location;
 
         },
+        async serialize_json(value) { return await models.serialize_json(value || this) },
+        async serialize_yaml(value) { return await models.serialize_yaml(value || this) },
         async download(filename) {
             // test filetype, defaults to yaml. json is also available
             const download = this.get_filename(filename)
