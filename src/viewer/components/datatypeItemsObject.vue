@@ -9,6 +9,7 @@
     <!-- values -->
     <template v-for="it, ii in items" :key="`dt-item.${it.name}x${ii}`">
       <v-list-item 
+        @click="expanded[ii] = expandables[ii]&&!expanded[ii]"
         prepend-icon="mdi-circle-medium"
         :append-icon="expandables[ii] ? $thx.expanding_icon(expanded[ii]) : null">
         <v-list-item-subtitle v-if="summary_of(it.datatype)">
@@ -19,13 +20,13 @@
           <v-chip size="small">{{ inheritance(it.datatype).join(' / ') }}</v-chip>
         </v-list-item-title>
       </v-list-item>
-      <v-list-item prepend-icon="mdi-blank" v-if="!noExpand && expandables[ii]" v-show="expanded[ii]">
+      <v-list-item prepend-icon="mdi-blank" v-if="expandables[ii]" v-show="expanded[ii]">
         <v-row>
           <v-col v-if="it.desc">
             <mark-down :model-value="it.desc" />
           </v-col>
-          <v-col v-if="it.items!=null">
-            <items-tree :root="it.name" />
+          <v-col>
+            <items-tree :root="it.datatype" />
           </v-col>
         </v-row>
       </v-list-item>
@@ -54,6 +55,9 @@ export default {
     summary_of(tp) {
       return Datatype.typeprop(tp, 'summary')
     },
+    items_of(tp) {
+      return Datatype.typeprop(tp, 'items');
+    }
   },
   props: {
     datatype: Datatype,
@@ -73,7 +77,9 @@ export default {
       return this.datatype.item_items;
     },
     expandables() {
-      return this.items.map((it)=>it.desc || it.items!=null);
+      const ret = this.items.map((it)=>!this.noExpand &&
+        (it.desc || Datatype.typeprop(it.datatype, 'items')!=null));
+      return ret;
     }
 
   },

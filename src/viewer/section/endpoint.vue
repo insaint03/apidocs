@@ -1,62 +1,61 @@
 <template>
-  <v-card flat :id="`/endpoint/${index}/`" class="border-thin my-2">
+  <v-card flat class="my-4" :id="`/endpoint/${index}/`">
     <v-card-item>
-      <v-toolbar class="inherited" density="compact"  @click="expand=!expand">
-        <v-toolbar-title>
-          {{  entity.summary  }}
-        </v-toolbar-title>
-        <v-spacer />
-        <v-toolbar-items>
-          <v-btn readonly :color="$thx.color.http_method[method]" style="text-transform: none;">
-            <span class="request method">[{{ method }}]</span>
-            <span class="request pathname">{{ pathname }}</span>
-          </v-btn>
-          <v-divider vertical />
-          <v-btn readonly :color="$thx.color.http_status(status)" style="text-transform: none;">
-            &nbsp;
-            {{ response.mimetype }}
-            <v-chip size="small" :color="$thx.color.datatype">{{ response.body }}</v-chip>
-            :{{ response.status_title }}
-          </v-btn>
-          <v-btn readonly style="text-transform: none;" :color="$thx.color.http_status(status)" 
-            :href="`#/datatype/${response.body.name}/`" @click.stop>
-          </v-btn>
-          <v-btn icon readonly>
-            <v-icon>{{ $thx.expanding_icon(expands) }}</v-icon>
-          </v-btn>
-        </v-toolbar-items>
-      </v-toolbar>
-      <v-card-text v-show="expand">
-        <v-row>
-          <v-col>
-            <mark-down :model-value="desc" v-if="desc" />
-            <v-autocomplete 
-              :model-value="tags" 
-              prepend-inner-icon="mdi-tag" menu-icon="mdi-blank"
-              multiple chips label="tags" variant="outlined" readonly>
-              <template #chip="{item}">
-                <v-chip variant="flat" :color="$thx.color.tag" active readonly class="ma-1" v-bind="item"
-                  @click="location.href=`#/tag/${item.title}/`" />
-              </template>
-            </v-autocomplete>
-          </v-col>
-        </v-row>
-        <v-row>
-          <!-- request card -->
-          <v-col>
-            <message-card :model-value="request" 
-              :title="method" :subtitle="pathname"
-              :color="$thx.color.http_method[method]" :queries="request.queries" />
-          </v-col>
-          <!-- response card -->
-          <v-col>
-            <message-card :model-value="response"
-              :title="response.status_title" :subtitle="`${response.mimetype} (${response.status_title})`"
-              :color="$thx.color.http_status(status)" />
-          </v-col>
-        </v-row>
-      </v-card-text>
+      <v-card-title>{{ entity.summary }}</v-card-title>
+      <v-card-subtitle>
+        <v-chip v-for="tag, ti in tags" :key="`ep-tag-${index}.${ti}${tag}`" :color="$thx.color.tag" active readonly
+          @click="location.href=`#/tag/${tag.title}/`">
+          <v-icon>{{ $thx.icon.tag }}</v-icon>
+          &nbsp;
+          {{ tag }}
+        </v-chip>
+      </v-card-subtitle>
     </v-card-item>
+    <v-card-text class="d-flex border-t-thin">
+      <v-row>
+        <v-col class="request">
+          <mark-down v-if="request.desc" :model-value="request.desc" />
+          <message-card :model-value="request" 
+            :title="method" :subtitle="pathname"
+            :color="$thx.color.http_method[method]" :queries="request.queries"> 
+            <template #header>
+              <v-list-item>
+                <template #prepend>
+                  <v-btn text flat size="small" readonly :color="$thx.color.http_method[method]">
+                  {{ request.method }}
+                  </v-btn>
+                </template>
+                <v-list-item-title>&nbsp;{{ request.pathname }}</v-list-item-title>
+              </v-list-item>
+            </template>
+          </message-card>
+        </v-col>
+        <v-col class="response">
+          <mark-down v-if="response.desc" :model-value="response.desc" />
+          <message-card :model-value="response"
+            :title="response.status_title" :subtitle="`${response.mimetype} (${response.status_title})`"
+            :color="$thx.color.http_status(status)">
+            <template #header>
+              <v-list-item>
+                <v-list-item-title style="text-align: end;">
+                  {{ response.mimetype }}&nbsp;
+                </v-list-item-title>
+                <template #append>
+                  <v-btn text flat size="small" readonly :color="$thx.color.http_status(status)">
+                    {{ response.status_title }}
+                  </v-btn>
+                </template>
+              </v-list-item>
+            </template>
+          </message-card>
+        </v-col>
+      </v-row>
+    </v-card-text>
+    <!-- actions later -->
+    <v-card-actions>
+      <v-spacer />
+      <v-btn text disabled>Explore</v-btn>
+    </v-card-actions>
   </v-card>
 </template>
 <script>

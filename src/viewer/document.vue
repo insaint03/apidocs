@@ -5,37 +5,25 @@
     <info-section :project="project" />
     <p>&nbsp;</p>
     <!-- tag types -->
-    <v-toolbar flat :color="$thx.color.template" id="/tag/">
-      <v-toolbar-title>
-        <v-icon>{{ $thx.icon.tag }}</v-icon>
-      </v-toolbar-title>
-    </v-toolbar>
+    <h2 id="/tag/" :color="$thx.color.tag">/tags/</h2>
     <tag-section v-for="tmpl in tags" :key="`tag-${tmpl.tagname}`"
       :tag="tmpl" 
       :entities="entities.filter((e)=>e.affiliated(tmpl.name))"/>
     <p>&nbsp;</p>
     <!-- datatypes -->
-    <v-toolbar flat :color="$thx.color.datatype" id="/datatype/">
-      <v-toolbar-title>
-        <v-icon>{{ $thx.icon.datatype }}</v-icon>
-      </v-toolbar-title>
-    </v-toolbar>
+    <h2 id="/datatype/" :color="$thx.color.datatype">/datatypes/</h2>
     <datatype-section v-for="dt in datatype_references" :key="`datatype-${dt.name}`"
       :datatype="dt" />
     <p>&nbsp;</p>
     <!-- endpoints -->
-    <v-toolbar flat :color="$thx.color.endpoint" id="/endpoint/">
-      <v-toolbar-title>
-        <v-icon>{{ $thx.icon.endpoint }}</v-icon>
-      </v-toolbar-title>
-    </v-toolbar>
+    <h2 id="/endpoint/" :color="$thx.color.api">/endpoints/</h2>
     <template v-for="(ep, ei) in endpathes" :key="`endpoint-${ei}.${ep}`">
-      <h2 :id="`/endpoint${ep}`" class="border-b-thin">
+      <h3 :id="`/endpoint${ep}`" class="border-b-thin">
         <v-btn flat icon readonly :title="`${ep}`">
           <v-icon :color="$thx.color.endpoint">{{ $thx.icon.endpoint }}</v-icon>
         </v-btn>
         {{ ep }}
-      </h2>
+      </h3>
       <template v-for="eps,epi in endpoints[ep]" :key="`endpoint-${ei}.${ep}-${epi}`">
         <endpoint-section  v-bind="eps" />
       </template>

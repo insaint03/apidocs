@@ -3,23 +3,24 @@
     <template #title>
       <v-icon>{{ $thx.icon.datatype }}</v-icon>
       {{ modelValue.name }}
-      &nbsp;
-      <sub v-if="modelValue.summary" style="font-style:italic;">// {{ modelValue.summary }}</sub>
     </template>
-    <template #subtitle>
+    <template #items>
       <v-chip size="small">{{ modelValue.inherits.join(' / ') }}</v-chip>
     </template>
     <template #activator="{ props }">
       <slot name="default" :props="props"></slot>
     </template>
-    <div class="d-flex">
-      <div class="flex-fill pa-1" v-if="modelValue.desc">
+    <template #prefix v-if="modelValue.summary">
+      // {{ modelValue.summary }}
+    </template>
+    <v-row>
+      <v-col v-if="modelValue.desc">
         <mark-down :model-value="modelValue.desc" />
-      </div>
-      <div class="flex-fill pa-1" v-if="modelValue.items!=null">
+      </v-col>
+      <v-col v-if="modelValue.items!=null">
         <datatype-items :datatype="modelValue" no-expand />
-      </div>
-    </div>
+      </v-col>
+    </v-row>
   </tool-card>
 </template>
 

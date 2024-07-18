@@ -31,7 +31,7 @@
             <v-textarea disabled :model-value="values.defaults" label="defaults" v-bind="$thx.field" name="defaults" @change="changes" />
           </v-col>
           <v-col>
-            <items-field v-if="values.items" label="items" name="items" @change="update_items" />
+            <items-field label="items" name="items" @change="update_items" :model-value="values.items" />
           </v-col>
         </v-row>
         <v-divider>details</v-divider>

@@ -18,6 +18,7 @@ export const useDatatypeStore = defineStore('datatype', {
     state: () =>({
         show: true,
         project: useProjectStore(),
+        selected: '',
         selection: [],
         search_query: '',
         keynames,
@@ -29,7 +30,7 @@ export const useDatatypeStore = defineStore('datatype', {
             const init = Object.fromEntries(
                 this.keynames.map((p)=>[p,undefined]));
                 
-                return this.selection.reduce((agg,name)=>{
+            return this.selection.reduce((agg,name)=>{
                 const the_type = this.datatypes[name];
                 this.keynames.forEach((pn)=>{
                     const current = agg[pn];
@@ -42,7 +43,10 @@ export const useDatatypeStore = defineStore('datatype', {
                     }
                 });
                 return agg;
-                }, init);
+            }, init);
+        },
+        item_values() {
+            return this.values.items || true;
         },
         // value_texts() {
         //     return this.values.origintype ?
@@ -59,10 +63,10 @@ export const useDatatypeStore = defineStore('datatype', {
             let ret = Object.fromEntries(this.origins.map((origintype)=>[
                 origintype,
                 this.types
-                  .filter((v)=>v.origintype===origintype
-                  && !(this.search_pattern && !this.search_pattern.test(v.name)))
-              ]));
-              return ret;
+                    .filter((v)=>v.origintype===origintype
+                    && !(this.search_pattern && !this.search_pattern.test(v.name)))
+                ]));
+            return ret;
         },
         search_pattern() {
             return (this.search_query && this.search_query.length>0) 
@@ -131,17 +135,15 @@ export const useDatatypeStore = defineStore('datatype', {
     },
     actions: {
         select(ev, item) {
-            // multiple selection on ctrl or shift key
-            if(ev.ctrlKey || ev.shiftKey) {
-                this.selection = this.selection.includes(item)
-                    ? this.selection.filter((it)=>it!=item)
-                    : this.selection.concat([item]);
-            } 
-            // single selection
-            else {
-                this.selection = this.selection.includes(item) && this.selection.length<=1
-                    ? [] : [item];
+            let now = [].concat(this.selection);
+            if(now.includes(item)) {
+                now.splice(now.indexOf(item), 1);
+            } else if(ev.ctrlKey || ev.shiftKey) {
+                now.push(item);
+            } else {
+                now = [item];
             }
+            this.$patch({selection: Object.assign([],now), selected: Date.now()});
         },
         updates(key, value) {
             // multiple update
@@ -150,6 +152,7 @@ export const useDatatypeStore = defineStore('datatype', {
                 .forEach((dt)=>dt[key] = value);
         },
         update_items(raw) {
+            if(!raw) { return; }
             // split values
             this.selection.map((it)=>this.datatypes[it])
                 .filter((dt)=>dt!=null)

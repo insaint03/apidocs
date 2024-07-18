@@ -1,26 +1,27 @@
 <template>
-  <v-textarea v-model="items.text"
-    :label="$props.label || 'properties'"
-    :name="$props.name || 'items'"
-    v-bind="$thx.field"
-    @focus="focused=true" @blur="changes"
-  />
-  <div v-show="focused">
-    <v-divider>preview</v-divider>
-    <v-list>
-      <v-list-item v-for="(it,ii) in previews" :key="`items-field.${ii}`"
-        :prepend-icon="it.icon">
-        <v-list-item-title>
-          {{ it.name }} 
-          &nbsp;<v-chip size="small" v-if="it.inherits">{{ it.inherits.join(' / ') }}</v-chip>
-        </v-list-item-title>
-        <v-list-item-subtitle v-show="it.summary">
-          //{{ it.summary }}
-        </v-list-item-subtitle>
-      </v-list-item>
-    </v-list>
-  </div>
-
+  <template v-if="values.items">
+    <v-textarea v-model="texts"
+      :label="$props.label || 'properties'"
+      :name="$props.name || 'items'"
+      v-bind="$thx.field"
+      @focus="focused=true" @blur="changes"
+    />
+    <div v-show="focused">
+      <v-divider>preview</v-divider>
+      <v-list>
+        <v-list-item v-for="(it,ii) in previews" :key="`items-field.${ii}`"
+          :prepend-icon="it.icon">
+          <v-list-item-title>
+            {{ it.name }} 
+            &nbsp;<v-chip size="small" v-if="it.inherits">{{ it.inherits.join(' / ') }}</v-chip>
+          </v-list-item-title>
+          <v-list-item-subtitle v-show="it.summary">
+            //{{ it.summary }}
+          </v-list-item-subtitle>
+        </v-list-item>
+      </v-list>
+    </div>
+  </template>
 </template>
 <script>
 import Datatype from '@/models/datatype';
@@ -75,20 +76,26 @@ export default {
     'change',
   ],
   watch: {
-    modelValue() {
-      this.raw = null;
-    },
+    selection() {
+      this.init_values();
+    }
   },
   methods: {
+    init_values() {
+      this.items = this.values.items;
+    },
     changes() {
-      this.$emit('change', this.raw);
+      this.$emit('change', this.items);
       this.focused = false;
-      // this.raw = null;
+      this.update_items(this.items);
     },
     ...mapActions(useDatatypeStore, [
       'findtype',
-      'updates',
+      'update_items',
     ]),
+  },
+  beforeMount() {
+    this.init_values();
   },
   props: {
     // datatype: Object,
@@ -128,36 +135,40 @@ export default {
     },
     texts: {
       get() {
-        return this.raw.text;
+        return this.items.text;
       },
       set(values) {
-        this.raw.text = values;
+        this.items.text = values;
       }
     },
-    items() {
-        const cls = {
-          object: ObjectItems,
-          array: ArrayItems,
-          enum: EnumItems,
-        }[this.origintype];
-        if(this.raw == null
-        || !(this.raw instanceof cls)) {
-          this.raw = new cls();
-          this.raw.value = this.values.items;
-          // this.raw.value = this.values.items;
+    items: {
+      get() {
+        return this.itemsInstance[this.origintype] || {};
+      },
+      set(vs) {
+        if(!this.itemsInstance[this.origintype]) {
+          return;
         }
-        return this.raw;
+        this.itemsInstance[this.origintype].value = vs;
+      }
     },
+    // items() {
+    //   this.$set(this.raw, 'value', this.values.items);
+    //   return this.raw;
+    // },
     previews() {
-      return this.items ? this.items.items
+      // set values first
+      return this.items.items
         .map(parsed_map[this.origintype])
-        .filter((it)=>it!=null) : [];
+        .filter((it)=>it!=null);
     },
     ...mapWritableState(useDatatypeStore, [
       'datatypes',
     ]),
     ...mapState(useDatatypeStore, [
       // 'value_texts',
+      'item_values',
+      'selection',
       'values',
       'alltypes',
     ]),
@@ -169,7 +180,12 @@ export default {
       raw_mode: false, 
       autopush: false,
       puts: {},
-      raw: null,
+      itemsInstance: {
+        object: new ObjectItems(),
+        array: new ArrayItems(),
+        enum: new EnumItems(),
+      }
+      // _raw: null,
     };
   },
 }

@@ -1,108 +1,122 @@
 <template>
-  <tool-card location="left">
+  <tool-card :title="modelValue.summary" >
     <template #title>
       <v-icon>{{ $thx.icon.endpoint }}</v-icon>
+      &nbsp;
       {{ modelValue.summary }}
     </template>
-
-    <template #activator="{ props }">
-      <slot name="default" :props="props">
-      </slot>
+    <template #items>
+      <v-chip v-for="it, ii in modelValue.tagnames" :key="`endpoint-tag-${ii}`"
+        :color="$thx.color.template" size="small">
+        <v-icon size="x-small">{{ $thx.icon.tag }}</v-icon>
+        {{it}}
+      </v-chip>
     </template>
-    <div>
-      <v-chip-group>
-        <v-chip v-for="it, ii in modelValue.tagnames" :key="`endpoint-tag-${ii}`"
-          :color="$thx.color.template" size="small">{{it}}</v-chip>
-      </v-chip-group>
-    </div>
-    <div>
-      <mark-down :model-value="modelValue.desc" />
-    </div>
+    <template #activator="{ props }">
+      <slot name="default" :props="props"></slot>
+    </template>
     <v-row>
       <!-- request section -->
-      <v-col cols="6">
-        <v-list>
-          <!-- request method / path -->
-          <v-list-item :title="req.pathname" >
-            <template #prepend>
-              <v-btn text flat size="small" :color="$thx.color.http_method[req.method]">{{ req.method }}</v-btn>
-            </template>
-          </v-list-item>
-          <!-- request queries -->
-          <item-list-group v-if="req.queries && 0<req.queries.length" title="queries" :items="req.queries" />
-          <!-- request cookies -->
-          <item-list-group v-if="req.cookies && 0<req.cookies.length" title="cookies" :items="req.cookies" />
-          <!-- request header -->
-          <item-list-group v-if="req.headers && 0<req.headers.length" title="headers" :items="req.headers" />
-          <!-- request body -->
-          <template v-if="req.body">
-            <v-divider>body</v-divider>
-            <v-list-item>
-              <v-list-item-title>
-                <v-breadcrumbs :items="req.body.inherits" :color="$thx.color.datatype" />
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                {{ req.body.summary }}
-              </v-list-item-subtitle>
-            </v-list-item>
+      <v-col>
+        <!-- request section -->
+        <v-sheet class="pa-2" theme="dark">
+          <!-- request definition -->
+          <div>
+            <v-btn text readonly size="small" :color="$thx.color.http_method[req.method]">
+              {{ req.method }}
+            </v-btn>
+            &nbsp;
+            {{ req.pathname }}
+          </div>
+          <template v-if="req.queries && 0<req.queries.length">
+            <div v-for="q,qi in req.query_items" :key="`ep-tool.${q.key}.${qi}`">
+              <span class="request query">{{ qi<=0 ? '?' : '&' }}</span>
+              <strong>{{ q.key }}</strong> =
+              &nbsp;
+              <v-chip size="small">{{ inherits_of(q.datatype).join(' / ') }}</v-chip>
+            </div>
           </template>
-        </v-list>
+          <!-- header, cookies -->
+          <template v-if="req.headers && 0<req.headers.length">
+            <v-divider>headers</v-divider>
+            <div v-for="h,hi in req.header_items" :key="`ep-tool.${h.key}.${hi}`">
+              <strong>{{ h.key }}</strong> :
+              &nbsp;
+              <v-chip size="small">{{ inherits_of(h.datatype).join(' / ') }}</v-chip>
+            </div>
+          </template>
+          <template v-if="req.cookies && 0<req.cookies.length">
+            <v-divider>cookies</v-divider>
+            <div v-for="c,ci in req.cookie_items" :key="`ep-tool.${c.key}.${ci}`">
+              <strong>{{ c.key }}</strong> :
+              &nbsp;
+              <v-chip size="small">{{ inherits_of(c.datatype).join(' / ') }}</v-chip>
+            </div>
+          </template>
+          <template v-if="req.bodytype">
+            <v-divider>body</v-divider>
+            <v-chip size="small">{{ inherits_of(req.bodytype).join(' / ') }}</v-chip>
+          </template>
+        </v-sheet>
       </v-col>
       <!-- response section -->
-      <v-col cols="6">
-        <!-- todo: response table -->
-        <v-list>
-          <!-- response status -->
-          <v-list-item  :title="resp.mimetype">
-            <template #prepend>
-              <v-btn text flat size="small" :color="$thx.color.http_status(resp.status)">{{ resp.status_title }}</v-btn>
-            </template>
-          </v-list-item>
-          <!-- response queries -->
-          <item-list-group v-if="resp.queries && 0<resp.queries.length" title="queries" :items="resp.queries" />
-          <!-- response cookies -->
-          <item-list-group v-if="resp.cookies && 0<resp.cookies.length" title="cookies" :items="resp.cookies" />
-          <!-- response header -->
-          <item-list-group v-if="resp.headers && 0<resp.headers.length" title="headers" :items="resp.headers" />
-          <!-- response body -->
-          <template v-if="resp.body">
-            <v-divider>body</v-divider>
-            <v-list-item>
-              <v-list-item-title>
-                <v-breadcrumbs :items="resp.body.inherits" :color="$thx.color.datatype" />
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                {{ resp.body.summary }}
-              </v-list-item-subtitle>
-            </v-list-item>
+      <v-col>
+        <v-sheet class="pa-2" theme="dark">
+          <!-- response definition -->
+          <div>
+            {{ resp.status_title }} {{ resp.status_code }}
+            &nbsp;
+            {{ resp.mimetype }}
+          </div>
+          <!-- header, cookies -->
+          <template v-if="resp.headers && 0<resp.headers.length">
+            <v-divider>headers</v-divider>
+            <div v-for="h,hi in resp.header_items" :key="`ep-tool.${h.key}.${hi}`">
+              <strong>{{ h.key }}</strong> :
+              &nbsp;
+              <v-chip size="small">{{ inherits_of(h.datatype).join(' / ') }}</v-chip>
+            </div>
           </template>
-        </v-list>
+          <template v-if="resp.cookies && 0<resp.cookies.length">
+            <v-divider>cookies</v-divider>
+            <div v-for="c,ci in resp.cookie_items" :key="`ep-tool.${c.key}.${ci}`">
+              <strong>{{ c.key }}</strong> :
+              &nbsp;
+              <v-chip size="small">{{ inherits_of(c.datatype).join(' / ') }}</v-chip>
+            </div>
+          </template>
+          <template v-if="resp.bodytype">
+            <v-divider>body</v-divider>
+            <v-chip size="small">{{ inherits_of(resp.bodytype).join(' / ') }}</v-chip>
+          </template>
+        </v-sheet>
       </v-col>
     </v-row>
   </tool-card>
 </template>
 <script>
-// import Datatype from '@/models/datatype';
+import Datatype from '@/models/datatype';
 import Entity from '@/models/entity';
 import toolCard from './toolCard.vue';
-// import requestGroup from '@/viewer/components/requestGroup.vue';
-// import responseGroup from '@/viewer/components/responseGroup.vue';
-import itemListGroup from './itemsListGroup.vue';
 // import messageCard from '@/viewer/components/messageCard.vue';
+// import tableItems from '@/viewer/components/tableItems.vue';
+// import itemsTree from '@/viewer/components/itemsTree.vue';
 
 export default {
   name: 'endpointToolCard',
   components: {
     toolCard,
-    itemListGroup
-    // requestGroup,
-    // responseGroup,
     // messageCard,
+    // tableItems,
+    // itemsTree,
   },
   methods: {
-    type_summary(typename) {
+    summary_of(typename) {
       return Datatype.typeprop(typename, 'summary') || '';
-    }
+    },
+    inherits_of(typename) {
+      return Datatype.typeprop(typename, 'inherits') || [];
+    },
   },
   props: {
     modelValue: Entity,

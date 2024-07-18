@@ -49,6 +49,10 @@ export default class Message extends Descriptable {
         // return Datatype.find(this._body);
     }
 
+    get bodytype() {
+        return this._body ? Datatype.find(this._body) : null;
+    }
+
     set body(value) {
 
         this._body = value;

@@ -37,6 +37,11 @@ export default class ObjectItems extends Serializable {
         return this._raw || [];
     }
     set value(values) {
+        //
+        if(values==null) {
+            this._raw = [];
+            return;
+        }
         // Object case
         if(typeof(values)==='string') {
 

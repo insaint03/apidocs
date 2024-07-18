@@ -1,26 +1,22 @@
 <template>
-  <v-card flat :color="color">
-    <slot name="header">
-      <v-card-item>
-        <v-card-subtitle>{{ subtitle }}</v-card-subtitle>
-        <v-card-title>{{ title }}</v-card-title>
-      </v-card-item>
-    </slot>
-    <v-card-text>
-      <slot name="body">
-        <!-- queries -->
-        <table-items v-if="queries" :items="queries" label="queries"  />
-        <!-- cookies -->
-        <table-items v-if="modelValue.cookies" :items="modelValue.cookie_items" label="cookies"  />
-        <!-- headers -->
-        <table-items v-if="modelValue.headers" :items="modelValue.header_items" label="headers"  />
-        <!-- body -->
-        <datatypeItems v-if="modelValue.body" :datatype="modelValue.body" label="body" />
-        <!-- <table-items v-if="modelValue.body && modelValue.body.items" :items="modelValue.body.items" label="body"  /> -->
-      </slot>
-    </v-card-text>
+  <v-list flat slim density="compact">
+    <slot name="header"></slot>
+    <table-items v-if="queries && 0<queries.length" label="queries" :items="modelValue.query_items" />
+    <table-items v-if="cookies && 0<cookies.length" label="cookies" :items="modelValue.cookie_items" />
+    <table-items label="headers" :items="modelValue.header_items" />
+    <!-- queries if exists -->
+    <!-- headers -->
+    <!-- cookies -->
+    <!-- body -->
+    <template v-if="bodytype">
+      <v-divider>body</v-divider>
+      <v-list-item>
+        <datatype-items :datatype="bodytype" />
+      </v-list-item>
+    </template>
+    <slot name="footer"></slot>
 
-  </v-card>
+  </v-list>
 </template>
 <script>
 import Message from '@/models/message';
@@ -35,9 +31,9 @@ export default {
   },
   props: {
     modelValue: Message,
-    color: { type: String, required: false, default: 'primary' },
-    title: { type: String, required: false, default: 'title' },
-    subtitle: { type: String, required: false, default: 'subtitle' },
+    // color: { type: String, required: false, default: 'primary' },
+    // title: { type: String, required: false, default: 'title' },
+    // subtitle: { type: String, required: false, default: 'subtitle' },
     // queries: { type: Array, required: false, default: null}
   },
   computed: {
@@ -51,7 +47,7 @@ export default {
       return this.modelValue.headers;
     },
     bodytype() {
-      return this.modelValue.body;
+      return this.modelValue.bodytype;
     },
     items() {
       return this.modelValue.body.items;

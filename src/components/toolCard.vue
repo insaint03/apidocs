@@ -11,10 +11,14 @@
         </v-toolbar-title>
         <v-spacer />
         <v-toolbar-items class="align-center pr-4">
-          <slot name="subtitle"></slot>
+          <slot name="items"></slot>
 
         </v-toolbar-items>
       </v-toolbar>
+      <v-card-item>
+        <slot name="prefix"></slot>
+
+      </v-card-item>
       <v-card-text>
         <slot>
         </slot>
