@@ -39,7 +39,7 @@
     <open-dialog v-model="import_dialog" />
 </template>
 <script>
-const guide_location = 'https://github.com/insaint03/apidocs/raw/main/data/apidoc.guide.yaml';
+const guide_location = 'https://raw.githubusercontent.com/insaint03/apidocs/main/data/simple.native.yaml';
 import { mapActions, mapState } from 'pinia';
 import { useProjectStore } from '@/stores/project';
 import { useExampleStore } from '@/stores/example';
@@ -51,8 +51,10 @@ export default {
     openDialog,
   },
   methods: {
-    load_guide() {
-      this.loads(guide_location);
+    async load_guide() {
+      // console.log(guide_location);
+      this.loads(guide_location)
+        .then(()=>this.$router.push('/view'));
     },
     moment(timestamp) {
       return (new Date(timestamp)).toLocaleString();
@@ -60,7 +62,6 @@ export default {
     ...mapActions(useProjectStore, [
       'loads',
       'clears',
-      ''
     ]),
   },
   computed: {
