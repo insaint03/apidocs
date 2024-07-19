@@ -1,0 +1,587 @@
+location: ''
+project:
+  name: apidoc
+  version: 0.4.a.draft
+  history: []
+  links:
+    - >-
+      (github) github <https://github.com/insaint03/apidocs|repository,
+      https://github.com/insaint03/apidocs/issues|issues>
+  license: (CC) CC-BY-NC-SA 4.0 <https://creativecommons.org/licenses/by-nc-sa/4.0/>
+  contributors:
+    - >-
+      (owner) yg.song
+      <https://www.linkedin.com/in/%EC%9A%A9%EA%B7%BC-%EC%86%A1-53868187/|LinkedIn>
+      a.k.a dxnlab
+  description: |-
+    Rest(ful) API documentation editor/viewer
+    To ease API doc building and/or management
+
+    - For developers whom need to share endpoint definitions
+    - And for Service users whom needs reference document
+datatypes:
+  document:
+    name: document
+    basistype: object
+    description: yaml/json file
+    items:
+      '!project': project
+      '!datatypes': document._datatypes
+      '!entities': document._entities
+      '!templates': document._templates
+    examples: []
+  project:
+    name: project
+    basistype: object
+    description: project description
+    items:
+      '!name': _.naming
+      version: project._version
+      description: _.description
+      license: liner
+      links: project._links
+      terms: project._terms
+      contributors: project._contributors
+      history: project._history
+    examples: []
+  datatype:
+    name: datatype
+    basistype: object
+    description: data scheme definition
+    items:
+      '!name': _.naming
+      '!basistype': datatype._basistype=string
+      description: _.description
+      items: items
+      migration: datatype._migration
+      defaults: datatype._defaults
+      evaluation: datatype._evaluation
+    examples: []
+  template:
+    name: template
+    basistype: object
+    description: builder template to mix
+    items:
+      '!name': _.naming
+      description: _.description
+      extend: template._extend
+      datatypes: template._datatypes
+      request: request
+      response: response
+    examples: []
+  endpoint:
+    name: endpoint
+    basistype: object
+    description: endpoint, 1to1 request-response pair
+    items:
+      description: _.description
+      templates: endpoint._templates
+      '!request': request
+      '!response': response
+    examples: []
+  request:
+    name: request
+    basistype: object
+    description: http request message description
+    items:
+      '!method': request._method
+      '!path': request._path
+      description: _.description
+      queries: _.http_queries
+      headers: _.http_headers
+      cookies: _.http_cookies
+      body: _.http_body
+    examples: []
+  response:
+    name: response
+    basistype: object
+    description: http response description
+    items:
+      status: response._status=200(OK)
+      mimetype: response._mimetype=application+json
+      headers: _.http_headers
+      cookies: _.http_cookies
+      body: _.http_body
+    examples: []
+  document._datatypes:
+    name: document._datatypes
+    basistype: object
+    description: datatype dictionary in document
+    items:
+      '[name]': datatype
+    examples: []
+  document._templates:
+    name: document._templates
+    basistype: object
+    description: template dictionary in document
+    items:
+      '[name]': template
+    examples: []
+  document._entities:
+    name: document._entities
+    basistype: array
+    description: endpoint array in document
+    items:
+      - endpoint
+    examples: []
+  liner:
+    name: liner
+    basistype: object
+    description: (keytype) title <links,...> description
+    items:
+      '!key': liner._key
+      '!title': liner._title
+      links: _.liner_links
+      description: liner._description
+    examples: []
+  liner._key:
+    name: liner._key
+    basistype: string
+    description: liner keytype
+    examples: []
+  liner._title:
+    name: liner._title
+    basistype: string
+    description: human-readable title
+    examples: []
+  liner._description:
+    name: liner._description
+    basistype: string
+    description: liner description
+    examples: []
+  _.multi_liner:
+    name: _.multi_liner
+    basistype: array
+    description: array of liners
+    items:
+      - liner
+    examples: []
+  _.liner_link:
+    name: _.liner_link
+    basistype: object
+    description: link description in liner. separated by comma (,)
+    items:
+      '!href': _.liner_link._href
+      anchor: _.liner_link._anchor
+    examples: []
+  _.liner_link._href:
+    name: _.liner_link._href
+    basistype: string
+    description: hyperlink location string
+    examples: []
+  _.liner_link._anchor:
+    name: _.liner_link._anchor
+    basistype: string
+    description: hyperlink title to show, use href instead if not presented
+    examples: []
+  _.liner_links:
+    name: _.liner_links
+    basistype: array
+    description: liner link array
+    items:
+      - _.liner_link
+    examples: []
+  items:
+    name: items
+    basistype: array
+    description: datatype contained element description
+    items:
+      - _.object_item
+      - _.array_item
+      - _.enum_item
+    examples: []
+  _.object_item:
+    name: _.object_item
+    basistype: object
+    description: object/dict type containment
+    items:
+      '!key': _.object_item._key
+      '!datatype': _.object_item._datatype
+      defaults: _.object_item._defaults
+      description: _.object_item._description
+    examples: []
+  _.array_item:
+    name: _.array_item
+    basistype: string
+    description: array element applicable datatype name
+    examples: []
+  _.enum_item:
+    name: _.enum_item
+    basistype: object
+    description: |-
+      enumeration element item description.
+      Splice text by first - leftmost - space, value and its description
+    items:
+      '!value': _.enum_item._value
+      desc: _.enum_item._desc
+    examples: []
+  _.naming:
+    name: _.naming
+    basistype: string
+    description: single line naming format. separated as <...namespace.>localname
+    examples: []
+  _.description:
+    name: _.description
+    basistype: string
+    description: >-
+      multiline string description
+
+      first line sets summary/title, others gets detailed description that
+      presented in markdown format
+    examples: []
+  project._version:
+    name: project._version
+    basistype: string
+    description: project version string
+    examples: []
+  project._license:
+    name: project._license
+    basistype: liner
+    description: project license item in liner
+    items: {}
+    examples: []
+  project._links:
+    name: project._links
+    basistype: array
+    description: project links in liner format
+    items:
+      - liner
+    examples: []
+  project._terms:
+    name: project._terms
+    basistype: array
+    description: legal information about the project, within liner format
+    items:
+      - liner
+    examples: []
+  project._contributors:
+    name: project._contributors
+    basistype: array
+    description: project contributors, within liner format
+    items:
+      - liner
+    examples: []
+  project._history:
+    name: project._history
+    basistype: object
+    description: project history logs to show version history
+    items:
+      '[version]': _.multi_liner
+    examples: []
+  _.object_item._key:
+    name: _.object_item._key
+    basistype: string
+    description: item key string
+    examples: []
+  _.object_item._datatype:
+    name: _.object_item._datatype
+    basistype: string
+    description: item datatype basis
+    examples: []
+  _.object_item._defaults:
+    name: _.object_item._defaults
+    basistype: string
+    description: default value
+    examples: []
+  _.object_item._description:
+    name: _.object_item._description
+    basistype: string
+    description: description string
+    examples: []
+  _.enum_item._value:
+    name: _.enum_item._value
+    basistype: string
+    description: enumeration value. spliced at first space
+    examples: []
+  _.enum_item._desc:
+    name: _.enum_item._desc
+    basistype: string
+    description: enumeration description. Rest of the text after first space
+    examples: []
+  datatype._basistype:
+    name: datatype._basistype
+    basistype: string
+    description: direct inheritance parent typename
+    examples: []
+  datatype._migration:
+    name: datatype._migration
+    basistype: string
+    description: If applied to DB, its corresponding table/schema name
+    examples: []
+  datatype._defaults:
+    name: datatype._defaults
+    basistype: string
+    description: default value
+    examples: []
+  datatype._evaluation:
+    name: datatype._evaluation
+    basistype: string
+    description: evaluation function, eval applicable with js
+    examples: []
+  request._method:
+    name: request._method
+    basistype: string
+    description: |-
+      http request method
+      one in:
+      - GET
+      - POST
+      - PUT
+      - PATCH
+      - DELETE
+    examples: []
+  request._path:
+    name: request._path
+    basistype: string
+    description: http request pathname, delimited by slash (/)
+    examples: []
+  _.http_body:
+    name: _.http_body
+    basistype: string
+    description: http body datatype name
+    examples: []
+  response._status:
+    name: response._status
+    basistype: string
+    description: |-
+      response status code and/or its name
+      defaults `200 (OK)`
+    examples: []
+  response._mimetype:
+    name: response._mimetype
+    basistype: string
+    description: |-
+      response mimetype 
+      To show data serialization scheme
+    examples: []
+  _.http_queries:
+    name: _.http_queries
+    basistype: array
+    description: http search query
+    items:
+      - _.object_item
+    examples: []
+  _.http_headers:
+    name: _.http_headers
+    basistype: array
+    description: http header parameter
+    items:
+      - _.object_item
+    examples: []
+  _.http_cookies:
+    name: _.http_cookies
+    basistype: array
+    description: http cookie parameter
+    items:
+      - _.object_item
+    examples: []
+  endpoint._templates:
+    name: endpoint._templates
+    basistype: array
+    description: endpoint templates, by names
+    items:
+      - _.naming
+    examples: []
+  template._tagname:
+    name: template._tagname
+    basistype: string
+    description: tagname to make group
+    examples: []
+  template._extend:
+    name: template._extend
+    basistype: string
+    description: direct-parent base template name
+    examples: []
+  template._datatypes:
+    name: template._datatypes
+    basistype: array
+    description: template associated datatype names
+    items:
+      - _.naming
+    examples: []
+templates:
+  _foundation.root:
+    name: _foundation.root
+    tagname: null
+    datatypes: []
+    request:
+      method: null
+      path: null
+    response:
+      mimetype: application/json
+      status: null
+    description: ''
+  _foundation.auth:
+    name: _foundation.auth
+    extend: _foundation.root
+    tagname: null
+    datatypes: []
+    request:
+      method: null
+      path: null
+    response:
+      mimetype: application/json
+      status: null
+    description: ''
+  _foundation.list:
+    name: _foundation.list
+    extend: _foundation.root
+    tagname: null
+    datatypes: []
+    request:
+      method: GET
+      path: null
+    response:
+      mimetype: application/json
+      status: null
+      body:
+        - inherit: array
+    description: ''
+  _foundation.get:
+    name: _foundation.get
+    extend: _foundation.root
+    tagname: null
+    datatypes: []
+    request:
+      method: GET
+      path: null
+    response:
+      mimetype: application/json
+      status: null
+      body:
+        - inherit: object
+    description: ''
+  _foundation.create:
+    name: _foundation.create
+    extend: _foundation.root
+    tagname: null
+    datatypes: []
+    request:
+      method: POST
+      path: null
+    response:
+      mimetype: application/json
+      status: null
+      body:
+        - inherit: object
+    description: ''
+  _foundation.update:
+    name: _foundation.update
+    extend: _foundation.root
+    tagname: null
+    datatypes: []
+    request:
+      method: PUT
+      path: null
+    response:
+      mimetype: application/json
+      status: null
+      body:
+        - inherit: object
+    description: ''
+  _foundation.delete:
+    name: _foundation.delete
+    extend: _foundation.root
+    tagname: null
+    datatypes: []
+    request:
+      method: DELETE
+      path: null
+    response:
+      mimetype: application/json
+      status: null
+      body:
+        - inherit: object
+    description: ''
+  core:
+    name: core
+    tagname: core
+    datatypes:
+      - document
+      - project
+      - datatype
+      - template
+      - endpoint
+    request:
+      method: null
+      path: /x/
+    response:
+      mimetype: null
+      status: null
+    description: ''
+entities:
+  - templates:
+      - core
+      - _foundation.get
+    description: >-
+      view document
+
+      - **viewer mode:** click eye-icon from upper right corner on edit mode.
+
+      - **embed mode:** one can publish at there location with embeding .html.
+       try ***File > embedding...*** menu
+      - **download data** one can download data only, to advance at embeding
+      mode. try ***File > save/download***
+    request:
+      method: GET
+      path: /x/document
+      queries: ''
+      description: ''
+    response:
+      mimetype: application/json
+      status: 200
+      description: ''
+      body: document
+  - templates:
+      - core
+      - _foundation.create
+    description: >-
+      create document
+
+      - create from scratch: ***File > clear new***
+
+      - import from other (web) location data : ***File > open/import ...***
+
+      - load from local yaml contents: at edit mode, go ***txt*** tab at bottom
+      to see text editor field. place yaml text content there, click "SAVE" at
+      top/end right corner.
+    request:
+      method: POST
+      path: /x/document
+      queries: ''
+      description: ''
+    response:
+      mimetype: application/json
+      status: 200
+      description: ''
+      body: document
+  - templates:
+      - core
+      - _foundation.update
+    description: >-
+      edit document
+
+      editor mode has total 5 tabs (at bottom)
+
+      - **project**: project meta data info
+
+      - **datatypes**: edit data types at this section. beware, left-side
+      datatypes tab is multi-selectable, multi-editable.
+
+      - **endpoints**: edit endpoint/entities here. Mix & match templates to
+      run. It will be last place to run.
+
+      - **templates**: "templates", are - as its name suggest - are data
+      fragment which used in common. The component can be hierarchical
+      inherited, and/or mix and combined.
+    request:
+      method: PUT
+      path: /x/document
+      queries: ''
+      description: ''
+    response:
+      mimetype: application/json
+      status: 200
+      description: ''
+      body: document
+timestamp: 1721380124977
