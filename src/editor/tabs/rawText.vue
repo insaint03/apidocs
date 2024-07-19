@@ -11,7 +11,7 @@
       <v-spacer />
       <v-toolbar-items>
         <!-- update if dirty -->
-        <v-btn text @click="init_current" :disabled="!dirty">
+        <v-btn text @click="load_update" :disabled="!dirty">
           <v-icon>mdi-content-save</v-icon>
         </v-btn>
       </v-toolbar-items>
@@ -21,7 +21,7 @@
     </v-sheet>
     <v-card-actions>
       <v-spacer />
-      <v-btn text @click="init_current" :disabled="!dirty">
+      <v-btn text @click="load_update" :disabled="!dirty">
         save
       </v-btn>
     </v-card-actions>
@@ -40,13 +40,14 @@ export default {
       this.texts = ''+txt;
     },
     async load_update() {
-
+      const serializer = this[`parse_${this.mode}`];
+      this.load_state(await serializer(this.texts));
     },
     async intersect(visible) {
       if(visible) {
         this.init_current();
-      } else if(this.dirty) {
-        return confirm('changes not updated. discard?');
+      } else {
+        this.load_update();
       }
     },
     async toggle_mode() {
@@ -54,6 +55,9 @@ export default {
       this.init_current();
     },
     ...mapActions(useProjectStore, [
+      'load_state',
+      'parse_json',
+      'parse_yaml',
       'serialize_json',
       'serialize_yaml',
     ]),
@@ -62,6 +66,10 @@ export default {
     modelValue: String,
   },
   computed: {
+    parsed() {
+      const serializer = this[`parse_${this.mode}`];
+      return serializer(this.texts);
+    },
     current() {
       return {
         location: this.location,

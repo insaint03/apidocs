@@ -69,14 +69,14 @@
           <th><v-icon title="body">mdi-dock-bottom</v-icon></th>
           <td>
             <v-autocomplete 
-              v-model="request.body"
+              :model-value="request.bodytype"
               :disabled="/^get$/i.test(request.method)"
-              label="request.body" :items="datatype_all" item-title="name" response-object v-bind="$thx.field" />
+              label="request.body" :items="datatype_all" item-title="name" item-value="name" v-bind="$thx.field" />
           </td>
           <td>
             <v-autocomplete 
-              v-model="response.body"
-              label="responses" :items="datatype_all" item-title="name" response-object v-bind="$thx.field" />
+              :model-value="response.bodytype"
+              label="responses" :items="datatype_all" item-title="name" item-value="name" v-bind="$thx.field" />
           </td>
         </tr>
       </tbody>

@@ -42,10 +42,12 @@ export default {
     clear(){
         this.location = '';
         this.project = new Project({});
+
         this.datatypes = {};
         Datatype.clear();
-        this.templates = {};
+
         Template.clear();
+        this.templates = {...Template._store};
         this.entities = [];
     },
 
@@ -131,21 +133,24 @@ export default {
             .sort((l,r)=>l.localeCompare(r));
     },
 
-    _hierarchical_loads(puts, setup, find_parent, presets) {
+    _hierarchical_loads(puts, setup, prerequisit, presets) {
         const entries = Object.entries(puts);
-        const to_loads = [].concat(entries);
+        let to_loads = [].concat(entries);
         let iterations = (entries.length+1)*2;
         const rets = {};
         while(--iterations>0 && to_loads.length>0) {
-            const [key, value] = to_loads.shift();
-            const prerequisit = find_parent(key, value);
-            if(prerequisit && !presets.includes(prerequisit)) {
-                to_loads.push([key, value]);
-                continue;
-            } 
-            rets[key] = setup(key, value);
-            // rets.push(setup(key, value));
-            presets.push(key);
+            to_loads = to_loads.map(([key, value])=>{
+                // const prerequisit = find_parent(key, value);
+                if(!prerequisit(key, value, presets)) {
+                    return [key, value];
+                } 
+                else {
+                    rets[key] = setup(key, value);
+                    // rets.push(setup(key, value));
+                    presets.push(key);
+                    return null;
+                }
+            }).filter((v)=>v!=null);
         }
         return rets;
     },
@@ -158,14 +163,14 @@ export default {
         this.datatypes = 
             this._hierarchical_loads(values.datatypes || values.data.datatypes || {},
                 (k,v)=>Datatype.setup({name: k, ...v}),
-                (k,v)=>v.basistype,
+                (k,v,pre)=>pre.includes(v.basistype),
                 Datatype.names(...Datatype.all),
             );
         // then templates next,
         this.templates = 
             this._hierarchical_loads(values.templates || values.data.templates || {},
                 (k,v)=>Template.setup({name: k, ...v}),
-                (k,v)=>v.extend,
+                (k,v,pre)=>v.extend==null || pre.includes(v.extend),
                 Template.names(...Template.all),
             );
         // finally, load entities
@@ -234,7 +239,10 @@ export default {
     // load data from local/session storage
     async load_storage(type='session') {
         const storage = eval(`${type.toLowerCase()}Storage`);
-        return await this.parse_yaml(storage.getItem('apidocs'));
+        const getitem = storage.getItem('apidocs');
+        if(getitem !=null) {
+            return await this.parse_yaml();
+        }
     },
 
 

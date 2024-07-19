@@ -8,10 +8,10 @@
     <!-- headers -->
     <!-- cookies -->
     <!-- body -->
-    <template v-if="bodytype">
+    <template v-if="modelValue.body!=null">
       <v-divider>body</v-divider>
       <v-list-item>
-        <datatype-items :datatype="bodytype" />
+        <datatype-items :datatype="modelValue.body" />
       </v-list-item>
     </template>
     <slot name="footer"></slot>
@@ -46,9 +46,12 @@ export default {
     headers() {
       return this.modelValue.headers;
     },
-    bodytype() {
-      return this.modelValue.bodytype;
-    },
+    // body() {
+    //   return this.modelValue.body;
+    // },
+    // bodytype() {
+    //   return this.modelValue.bodytype;
+    // },
     items() {
       return this.modelValue.body.items;
     }

@@ -19,4 +19,6 @@ export default class ArrayItems extends Serializable {
     }
     get items() { return this.value; }
     set items(values) { this._raw = values; }
+
+    get dict() { return this.value; }
 }

@@ -1,20 +1,32 @@
 <template>
   <v-card flat class="my-4" :id="`/endpoint/${index}/`">
     <v-card-item>
-      <v-card-title>{{ entity.summary }}</v-card-title>
+      <v-card-title class="d-flex flex-fill">
+        <span class="flex-grow">
+          {{ entity.summary }}
+        </span>
+        <v-spacer />
+        <v-chip-group :color="$thx.color.tag">
+          <v-chip v-for="tag, ti in tags" :key="`ep-tag-${index}.${ti}${tag}`" active readonly
+            @click="location.href=`#/tag/${tag.title}/`">
+            <v-icon>{{ $thx.icon.tag }}</v-icon>
+            &nbsp;
+            {{ tag }}
+          </v-chip>
+        </v-chip-group>
+      </v-card-title>
       <v-card-subtitle>
-        <v-chip v-for="tag, ti in tags" :key="`ep-tag-${index}.${ti}${tag}`" :color="$thx.color.tag" active readonly
-          @click="location.href=`#/tag/${tag.title}/`">
-          <v-icon>{{ $thx.icon.tag }}</v-icon>
-          &nbsp;
-          {{ tag }}
-        </v-chip>
       </v-card-subtitle>
     </v-card-item>
-    <v-card-text class="d-flex border-t-thin">
+    <v-card-text class="border-t-thin">
+      <v-row>
+        <v-col>
+          <mark-down v-if="entity.desc" :model-value="entity.desc" />
+        </v-col>
+      </v-row>
       <v-row>
         <v-col class="request">
-          <mark-down v-if="request.desc" :model-value="request.desc" />
+          <mark-down v-if="request.description" :model-value="request.description" />
           <message-card :model-value="request" 
             :title="method" :subtitle="pathname"
             :color="$thx.color.http_method[method]" :queries="request.queries"> 
@@ -31,7 +43,7 @@
           </message-card>
         </v-col>
         <v-col class="response">
-          <mark-down v-if="response.desc" :model-value="response.desc" />
+          <mark-down v-if="response.description" :model-value="response.description" />
           <message-card :model-value="response"
             :title="response.status_title" :subtitle="`${response.mimetype} (${response.status_title})`"
             :color="$thx.color.http_status(status)">

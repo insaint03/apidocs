@@ -10,7 +10,7 @@ import ObjectItems from "./meta/objectItems";
 // limited computing properties
 export default class Entity extends Descriptable {
     constructor({templates, description, request, response}) {
-        super({desc: description});
+        super({description,});
         this._tmpls = [].concat(templates);
         this._trails = null;
         this._tagnames;

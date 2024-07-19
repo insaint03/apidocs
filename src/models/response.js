@@ -173,7 +173,7 @@ export default class Response extends Message {
                 headers: (agg.headers || []).concat(resp.headers || [])
                     .filter((h,i,a)=>a.indexOf(h)===i), // unique
                 cookies: {...agg.cookies, ...resp.cookies},
-                body: agg.body.concat(resp.body||[]),
+                body: resp.body || agg.body,
             }
         }, Response.option());
     }

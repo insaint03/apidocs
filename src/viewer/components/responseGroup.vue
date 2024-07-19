@@ -1,9 +1,10 @@
 <template>
   <div class="d-flex-inline flex-grow">
     <v-btn text flat :size="size" readonly
+      style="text-transform: none;"
       :color="color"
-      :title="`${body} (${status_title})`">
-      {{ body }}
+      :title="`${response.bodytype} (${status_title})`">
+      {{ response.bodytype }}
     </v-btn>
   </div>
 </template>

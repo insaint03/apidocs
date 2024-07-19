@@ -41,7 +41,7 @@
       <v-btn text flat size="x-small" class="ma-1" readonly
         :color="$thx.color.http_status(item.response.status)">{{ item.response.status_title }}</v-btn>
       {{ item.response.mimetype }}
-      <v-chip size="x-small" class="ma-1">{{ item.response.body || '' }}</v-chip>
+      <v-chip size="x-small" class="ma-1">{{ item.response.bodytype || '' }}</v-chip>
       <v-divider vertical />
     </template>
     <template #expanded-row="{item, columns}">

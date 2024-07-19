@@ -18,7 +18,7 @@ export default class Message extends Descriptable {
         // console.log('message body', body);
 
         // TODO: type suggestion
-        this._body = this._body_candidates.get_suggestion(Datatype.all);
+        this._body = body;
     }
 
 
@@ -45,17 +45,18 @@ export default class Message extends Descriptable {
     }
 
     get body() {
-        return this._body ? Datatype.find(this._body).name : null;
         // return Datatype.find(this._body);
-    }
-
-    get bodytype() {
         return this._body ? Datatype.find(this._body) : null;
+    }
+    
+    get bodytype() {
+        return this._body || null;
     }
 
     set body(value) {
-
-        this._body = value;
+        console.log('set body', value);
+        // const the_type = value ? Datatype.find(value) : null;
+        this._body = typeof(value)==='object' ? value.name : value;
     }
 
     get serialized() {
@@ -67,7 +68,7 @@ export default class Message extends Descriptable {
             ret.cookies = this.cookie_texts;
         }
         if(this.body) {
-            ret.body = this.body.name;
+            ret.body = this.bodytype;
         }
         return ret;
     }

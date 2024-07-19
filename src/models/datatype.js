@@ -171,31 +171,10 @@ export default class Datatype extends Descriptable {
     get item_items() { return this.items!=null ? this._items.items : null; }
 
     set items(values) { 
-        // TODO: update as this._items = values;
         if(this.items_raw == null) { 
             return; 
         }
         this._items.value = values;
-        if(this.is_object) {
-            // create and update none-primitive types here
-            this._items.items = this._items.items.map((it)=>{
-                const dt = Datatype.find(it.datatype);
-                if(dt && dt.is_primitive) {
-                    // create new type then change current item
-                    const nt = Datatype.setup({
-                        name:`${this.name}.${it.key}`, 
-                        basistype: it.datatype,
-                        description: it.comment 
-                    });
-                    return {
-                        ...it,
-                        datatype: nt.name,
-                    };
-                } else {
-                    return it;
-                }
-            });
-        } 
     }
     set items_text(values) { if(this.is_collective) this.items.text = values; }
     set item_items(values) { if(this.is_collective) this.items.items = values; }
@@ -281,7 +260,9 @@ export default class Datatype extends Descriptable {
         Object.entries({
             validation: this.validation,
             defaults: this.defaults,
-            items: this.items ? this.items_raw.dict : null,
+            items: this.items 
+                ? this.is_object ? this.items_raw.dict : this.items_raw.value
+                : null,
             migration: this.migration,
             examples: this.examples,})
             .forEach(([prop, pv])=>{

@@ -3,7 +3,8 @@ import { defineStore } from "pinia";
 // import { ref } from "vue";
 
 import Project from '@/models/project';
-import Template from '@/models/template';
+import Datatype from '@/models/datatype';
+// import Template from '@/models/template';
 
 import models from '@/models';
 import gtm from '@/gtm.js';
@@ -26,7 +27,7 @@ export const useProjectStore = defineStore('project', {
         // datatype list to show on the page
         //  - object, enum provided
         datatype_all() {
-          return models.datatype_all;
+          return Datatype.all;
         },
         datatype_list() {
             return Object.values(this.datatypes)
@@ -87,6 +88,8 @@ export const useProjectStore = defineStore('project', {
         },
         async serialize_json(value) { return await models.serialize_json(value || this) },
         async serialize_yaml(value) { return await models.serialize_yaml(value || this) },
+        parse_json(value) { return models.parse_json(value) },
+        parse_yaml(value) { return models.parse_yaml(value) },
         async download(filename) {
             // test filetype, defaults to yaml. json is also available
             const download = this.get_filename(filename)
@@ -109,7 +112,11 @@ export const useProjectStore = defineStore('project', {
             this.$state = {
                 ...models.state,
                 project: new Project({name: 'new project'}),
-                templates: Template.all,
+                // datatypes: models.datatypes,
+                // entities: models.entities,
+                // templates: {
+                //     ...Template._store
+                // },
             }
             // this.$state.project = new Project({name: 'new project'});
             return models.state;
@@ -118,8 +125,11 @@ export const useProjectStore = defineStore('project', {
         caches() {
             models.save_storage('session');
         },
-        revoke() {
-            models.load_storage('session');
+        async revoke() {
+            const data = await models.load_storage('session');
+            if(data!=null && data.project && data.datatypes) {
+                this.load_state(data);
+            }
             // this.$state = { ...models.state};
         },
         // save current state into localStorage

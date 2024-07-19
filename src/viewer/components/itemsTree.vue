@@ -66,7 +66,7 @@ export default {
     tree() {
       // with root
       // const queue = [{prefix: '+', type: this.root, lv: 0}];
-      const queue = this.datatype.item_items.map((it)=>({
+      let queue = this.datatype.item_items.map((it)=>({
         ...children_maps[this.datatype.origintype](it),
         lv: 0,
       }));
@@ -82,12 +82,12 @@ export default {
 
         // appending children
         if(_type.items!=null) {
-          queue.push(..._type.item_items
+          const children = _type.item_items
             .map((it)=>({
               ...children_maps[_type.origintype](it), 
               lv:node.lv+1,
-            }))
-          );
+            }));
+          queue = children.concat(queue);
         }
       }
       return tree;

@@ -49,9 +49,10 @@ export default class ObjectItems extends Serializable {
         }
         if(typeof(values) === 'object' 
         && typeof(values.map)!=='function') {
-            values = Object.entries(values).map(([key,e])=>typeof(e)==='object'
-            ? {key, ...e}
-            : e.includes(`${key}:`) ? e : `${key}:${e}`);
+            values = Object.entries(values)
+                .map(([key,e])=>typeof(e)==='object'
+                    ? {key, ...e}
+                    : e.includes(`${key}:`) ? e : `${key}:${e}`);
         } 
         this.set_multiline_value(values, ObjectItems.serialize);
     }

@@ -15,6 +15,9 @@
     <template #activator="{ props }">
       <slot name="default" :props="props"></slot>
     </template>
+    <div v-if="modelValue.desc">
+      <mark-down :model-value="modelValue.desc" />
+    </div>
     <v-row>
       <!-- request section -->
       <v-col>

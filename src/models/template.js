@@ -18,7 +18,7 @@ export default class Template extends Descriptable {
         // }
         this._name = new Name(name);
         // extending parent template name
-        this._extends = parent;
+        this._extend = parent;
         this._tagname = null;
         this._datatypes = null;
         const base = Template._store[parent] || {};
@@ -50,13 +50,13 @@ export default class Template extends Descriptable {
 
     set tagname(value) { this._tagname = value;}
 
-    get extends() {
-        return this._extends;
+    get extend() {
+        return this._extend;
     }
 
-    set extends(v) {
+    set extend(v) {
         // TODO: map template
-        this._extends = v;
+        this._extend = v;
     }
     
     get request() {
@@ -117,6 +117,7 @@ export default class Template extends Descriptable {
         // const req_options = this.request
         return {
             name: this.name,
+            extend: this.extend,
             tagname: this.tagname,
             datatypes: this.datatypes,
             request: Request.option_serialize(this.request),
@@ -159,7 +160,7 @@ export default class Template extends Descriptable {
     }
 
     static clear() {
-        Template._store = [
+        Template._store = Object.fromEntries([
             // defaults
             {name: '_foundation.root', request: {}, response: {mimetype: 'application/json'}},
             {name: '_foundation.auth', extend: '_foundation.root', request: {}, response: {}},
@@ -168,7 +169,7 @@ export default class Template extends Descriptable {
             {name: '_foundation.create', extend: '_foundation.root', request: {method: 'POST'}, response: {body: [{inherit: 'object'}]} },
             {name: '_foundation.update', extend: '_foundation.root', request: {method: 'PUT'}, response: {body: [{inherit: 'object'}]} },
             {name: '_foundation.delete', extend: '_foundation.root', request: {method: 'DELETE'}, response: {body: [{inherit: 'object'}]} },
-        ].map(Template.setup).reduce((agg, tmpl)=>{agg[tmpl.name] = tmpl; return agg;}, {});
+        ].map((v)=>[v.name, Template.setup(v)]));
     }
 
     static merge(prev, next) {

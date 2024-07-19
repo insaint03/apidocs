@@ -20,6 +20,9 @@ export default {
     emptyView,
     
   },
+  mounted() {
+    this.revoke();
+  },
   methods: {
     ...mapActions(useProjectStore, [
       'caches',

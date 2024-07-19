@@ -22,7 +22,7 @@ export default class Request extends Message {
 
     constructor(option={}, ...templates) {
         const tmpls = templates.map((t)=>t.request);
-        const {method, path, queries, cookies, headers, body, description} = Request.merge(option, ...tmpls);
+        const {method, path, queries, cookies, headers, body, description} = Request.merge(...tmpls, option);
 
         super({cookies, headers, body, description}, ...templates);
         this.method = (method||'GET').toUpperCase();
@@ -207,7 +207,7 @@ export default class Request extends Message {
                     .filter((c,i,a)=>a.indexOf(c)===i), // unique
                 headers: (agg.headers || []).concat(req.headers || [])
                     .filter((h,i,a)=>a.indexOf(h)===i), // unique
-                body: agg.body.concat(req.body||[]),
+                body: req.body || agg.body,
             }
         }, Request.option());
     }

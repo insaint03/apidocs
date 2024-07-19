@@ -74,7 +74,10 @@ export default {
       return models.get_endpathes({endpoints: this.endpoints});
     },
     datatype_references() {
-      return Object.values(this.datatypes).filter((d)=>d.items!=null);
+      return Object.values(this.datatypes)
+        // not starting with underscore, include namespace
+        .filter((d)=>!/^_/.test(d.name) && !/^_/.test(d.localname))
+        .filter((d)=>d.items!=null);
     },
   },
   data() {

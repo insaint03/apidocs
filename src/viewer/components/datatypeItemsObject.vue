@@ -50,13 +50,13 @@ export default {
   },
   methods: {
     inheritance(tp) {
-      return Datatype.typeprop(tp, 'inherits');
+      return Datatype.typeprop(tp, 'inherits') || [];
     },
     summary_of(tp) {
-      return Datatype.typeprop(tp, 'summary')
+      return Datatype.typeprop(tp, 'summary') || '';
     },
     items_of(tp) {
-      return Datatype.typeprop(tp, 'items');
+      return Datatype.typeprop(tp, 'items') || [];
     }
   },
   props: {

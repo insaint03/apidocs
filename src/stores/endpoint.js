@@ -20,6 +20,7 @@ export const useEndpointStore = defineStore('endpoint', {
         entities() { return this.project.entities; },
         template_list() { return this.project.template_list },
         datatype_list() { return this.project.datatype_list },
+        datatype_all() { return this.project.datatype_all },
     }, 
     actions: {
     },

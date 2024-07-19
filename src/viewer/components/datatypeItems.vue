@@ -1,7 +1,9 @@
 <template>
-  <datatype-items-object v-if="datatype.is_object" v-bind="$props" />
-  <datatype-items-array v-else-if="datatype.is_array" v-bind="$props" />
-  <datatype-items-enum v-else-if="datatype.is_enum" v-bind="$props" />
+  <div v-if="datatype">
+    <datatype-items-object v-if="datatype.is_object" v-bind="$props" />
+    <datatype-items-array v-else-if="datatype.is_array" v-bind="$props" />
+    <datatype-items-enum v-else-if="datatype.is_enum" v-bind="$props" />
+  </div>
 </template>
 <script>
 import Datatype from '@/models/datatype';
