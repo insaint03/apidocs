@@ -39,7 +39,7 @@
     <open-dialog v-model="import_dialog" />
 </template>
 <script>
-const guide_location = 'https://raw.githubusercontent.com/insaint03/apidocs/main/data/simple.native.yaml';
+const guide_location = 'https://raw.githubusercontent.com/insaint03/apidocs/main/data/apidoc.guide.yaml';
 import { mapActions, mapState } from 'pinia';
 import { useProjectStore } from '@/stores/project';
 import { useExampleStore } from '@/stores/example';
