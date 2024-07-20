@@ -1,18 +1,20 @@
 <template>
   <card-section :prefix="`tag/${tag.tagname}`">
     <template #card-title>
-      <h2>
-        <v-btn flat icon readonly :title="`#${tag.tagname}`">
-          <v-icon :color="$thx.color.tag">{{ $thx.icon.tag }}</v-icon>
-        </v-btn>
-        {{ tag.tagname }}
-      </h2>
+      <div class="d-flex align-center">
+        <h2 class="flex-shrink">
+          <v-btn flat icon readonly :title="`#${tag.tagname}`">
+            <v-icon :color="$thx.color.tag">{{ $thx.icon.tag }}</v-icon>
+          </v-btn>
+          {{ tag.tagname }}
+          &nbsp;
+        </h2>
+        <sub class="flex-fill">{{ tag.summary }}</sub>
+      </div>
     </template>
-    <!-- summary description -->
     <v-row>
       <v-col>
-        <i>{{ tag.summary }}</i>
-        <mark-down :model-value="tag.descr"  />
+        <mark-down :model-value="tag.desc"  />
       </v-col>
       <v-col>
         <v-list>

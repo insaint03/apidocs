@@ -56,7 +56,7 @@
               <v-chip size="small">{{ inherits_of(c.datatype).join(' / ') }}</v-chip>
             </div>
           </template>
-          <template v-if="req.bodytype">
+          <template v-if="req.body!=null">
             <v-divider>body</v-divider>
             <v-chip size="small">{{ inherits_of(req.bodytype).join(' / ') }}</v-chip>
           </template>

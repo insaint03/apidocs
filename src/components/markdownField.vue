@@ -1,8 +1,9 @@
 <template>
   <v-textarea v-model:model-value="value"
     :label="$props.label"
-    hint="first line is summary, rests are long markdown description"
     :name="name"
+    hint="first line is summary, rests are long markdown description"
+    auto-grow
     v-bind="{...$thx.field}"
     @change="($ev)=>$emit('change', $ev)"  
     @focus="focused=true" @blur="focused=false"

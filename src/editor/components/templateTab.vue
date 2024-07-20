@@ -2,11 +2,7 @@
   <v-navigation-drawer class="fill-height pa-0"
     order="1" location="right" 
     :model-value="show" permanent>
-    <v-list
-      :color="$thx.color.template"
-      @click.stop
-      @update:selected="$emit('selected')"
-      selectable slim>
+    <div>
       <v-list-subheader>Templates</v-list-subheader>
       <!-- search control -->
       <v-text-field v-model="search" label="Search & Create" outlined v-bind="$thx.field"
@@ -28,6 +24,14 @@
       </v-list-item>
       <!-- items -->
       <v-divider />
+    </div>
+
+    <v-list
+      class="h-75 overflow-auto"
+      :color="$thx.color.template"
+      @click.stop
+      @update:selected="$emit('selected')"
+      selectable slim>
       <v-list-item v-for="tmpl,ti in none_tags" :key="`template-tab.x.${tmpl.name}.${ti}`"
         :title="tmpl.name" :subtitle="tmpl.extends"
         :active="selected==tmpl"

@@ -38,14 +38,28 @@ export default {
   }
 }
 </script>
-<style scoped>
-.markdown-wrapper {
-  width: 100%;
-  min-height: 2.5vh;
-}
-
+<style>
 .markdown ul {
   display: block;
-  list-style-type: armenian;
+  list-style-type: disc;
+}
+
+.markdown p {
+  padding-top: 0.25em;
+  line-height: 1.25em;
+  /* min-height: 1.0em; */
+}
+
+.markdown a {
+  color: #80DEEA;
+}
+.markdown a:hover {
+  color: #B2EBF2;
+}
+.markdown a:active {
+  color: #80DEEA;
+}
+.markdown a:visited {
+  color: #4DD0E1;
 }
 </style>

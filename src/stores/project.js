@@ -35,6 +35,12 @@ export const useProjectStore = defineStore('project', {
                     ||dt.origintype==='object'
                     ||dt.origintype==='enum');
         },
+        datatype_referecnces() {
+            return Object.values(this.datatypes)
+                // not starting with underscore, include namespace
+                .filter((d)=>!/^_/.test(d.name) && !/^_/.test(d.localname))
+                .filter((d)=>d.items!=null);
+        },
         // templates to show
         template_list() {
             return Object.values(this.templates);
@@ -145,5 +151,10 @@ export const useProjectStore = defineStore('project', {
             sessionStorage.setItem(storage_key, localStorage.getItem(storage_key));
             this.revoke();
         },
+        // set_go_view(location='https://raw.githubusercontent.com/insaint03/apidocs/main/data/apidoc.guide.yaml') {
+        //     return this.loads(location)
+        //         // update to viewmode
+        //         .then(()=>this.$router.push('/view'));
+        // }
     }
 });

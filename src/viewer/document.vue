@@ -18,7 +18,7 @@
     <!-- endpoints -->
     <h2 id="/endpoint/" :color="$thx.color.api">/endpoints/</h2>
     <template v-for="(ep, ei) in endpathes" :key="`endpoint-${ei}.${ep}`">
-      <h3 :id="`/endpoint${ep}`" class="border-b-thin">
+      <h3 :id="`/endpoint${ep}`">
         <v-btn flat icon readonly :title="`${ep}`">
           <v-icon :color="$thx.color.endpoint">{{ $thx.icon.endpoint }}</v-icon>
         </v-btn>
@@ -75,10 +75,11 @@ export default {
     },
     datatype_references() {
       return Object.values(this.datatypes)
-        // not starting with underscore, include namespace
-        .filter((d)=>!/^_/.test(d.name) && !/^_/.test(d.localname))
-        .filter((d)=>d.items!=null);
+          // not starting with underscore, include namespace
+          .filter((d)=>!/^_/.test(d.name) && !/^_/.test(d.localname))
+          .filter((d)=>d.items!=null);
     },
+    
   },
   data() {
     return {

@@ -13,17 +13,85 @@ project:
       (owner) yg.song
       <https://www.linkedin.com/in/%EC%9A%A9%EA%B7%BC-%EC%86%A1-53868187/|LinkedIn>
       a.k.a dxnlab
-  description: |-
+  description: >-
     Rest(ful) API documentation editor/viewer
-    To ease API doc building and/or management
+
+    ## Face the truth:
+
+    ---
+
+    There are a few good technical leaders who keeps documentation clean & clear
+    while running a project. **I AM NOT**. I suppose you are, too. It's always
+    hard to maintain humane-resources for many of us, ***geeky engineers***. But
+    the paper work works at work. Actually **IT IS CRITICAL**. Not just for me,
+    I got to do something to ease the burden. 
+
+
+    &nbsp;
+
+
+    - **Faster**, It must save time & effort to build and maintain the document,
+    as top-priority
+
+    - **Easier**, and should be easier at share & update.
+
+    - **For developers**, No, Providers/consumers of these resources are always
+    ought to be ***geeks*** like us. ***BE EFFICIENT***. Make it short / clear /
+    and save storage.
+
+
+    &nbsp;
+
+
+    ### Yet OpenAPI specification / Swagger is good; however,
+
+    ---
+
+    The [openapi specification](https://swagger.io) did right thing. But It's
+    too much for those running in out of time. ***Spreadsheet*** is the another
+    alternative. __Now, here comes the mid__.
+
+
+    &nbsp;
+
+
+    To ease API doc building and/or management:
 
     - For developers whom need to share endpoint definitions
+
     - And for Service users whom needs reference document
+
+
+    &nbsp;
+
+
+    ***BE EFFICIENT***, leave out anything else.
 datatypes:
   document:
     name: document
     basistype: object
-    description: yaml/json file
+    description: >-
+      unit of data: yaml/json file
+
+      A **document** contains:
+
+      - ***project*** meta information to describe the project
+
+      - ***datatypes*** list of data scheme definitions
+
+      - ***entities*** or, ***endpoints*** that are request-response pairs,
+      indicating expectations.
+
+      - ***templates*** are common components, which can advant at mixing
+      entities.
+
+
+      &nbsp;
+
+
+      It can be loaded/updated via external document `File > open/import`, or
+      downloaded `File > save/download`. And one can easily publish other
+      document with `Embedding` html.
     items:
       '!project': project
       '!datatypes': document._datatypes
@@ -399,6 +467,18 @@ datatypes:
     items:
       - _.naming
     examples: []
+  datatype._origins:
+    name: datatype._origins
+    basistype: enum
+    description: ''
+    items:
+      - boolean
+      - number
+      - string
+      - array
+      - object
+      - enum
+    examples: []
 templates:
   _foundation.root:
     name: _foundation.root
@@ -508,7 +588,52 @@ templates:
     response:
       mimetype: null
       status: null
-    description: ''
+    description: >-
+      Put every information at a single unit file, document.
+
+      A ***document*** sets core data storage that needed at building,
+      maintaining, and share rest(ful) API documentation.
+
+
+      &nbsp;
+
+
+      One can simply create, import, save, share, view and share via a single
+      document - within yaml/json format.
+
+      There are 2 modes; **View** and **Edit** at the service. At ***view
+      mode*** - it's document viewer to look over concurrent contents. Anthoer,
+      ***edit mode***, updating the contents.
+  datatype:
+    name: datatype
+    tagname: datatype
+    datatypes:
+      - datatype
+      - items
+    request:
+      method: null
+      path: /x/datatype
+    response:
+      mimetype: null
+      status: null
+      body:
+        - fixed: datatype
+    description: >-
+      Data scheme information
+
+      It's all about data. ***datatypes*** are information on data schemes
+      within the project.
+
+
+
+      &nbsp;
+
+
+      A datatype entity has:
+
+      - ***name***: typename identifier, at `....namesapce.localname` format.
+
+      - ***basistype***: a class can be inherited. A Datatype can be so.
 entities:
   - templates:
       - core
@@ -524,7 +649,7 @@ entities:
       mode. try ***File > save/download***
     request:
       method: GET
-      path: /x/document
+      path: /x/
       queries: ''
       description: ''
     response:
@@ -547,7 +672,7 @@ entities:
       top/end right corner.
     request:
       method: POST
-      path: /x/document
+      path: /x/
       queries: ''
       description: ''
     response:
@@ -576,7 +701,7 @@ entities:
       inherited, and/or mix and combined.
     request:
       method: PUT
-      path: /x/document
+      path: /x/
       queries: ''
       description: ''
     response:
@@ -584,4 +709,111 @@ entities:
       status: 200
       description: ''
       body: document
+  - templates:
+      - datatype
+      - _foundation.list
+    description: >-
+      datatypes list
+
+      At the bottom of `edit` mode, 5 tabs are presented. `datatypes` mode is
+      second of the tabs. Or, selecting any of `datatypes` left-side panel
+      (shown on `datatypes`, `endpoints` tabs) will move over tabs.
+
+
+      &nbsp;
+
+
+      The side panel is multi-selectable, not like `templates` panel at the
+      opposite side. Since `datatypes` are concreate component of the content
+      but `templates` are rather abstract building blocks, **datatypes are
+      multi-selectable and multi-updatable**. Clicking datatype with `ctrl` or
+      `shift` key held, the selection will be toggled.
+
+
+      Editor form at the middle shows the data. When it's multi-selected, only
+      fields has value in common are enabled to edit. Which implies, one can
+      alternate every `object (dict)` into `array` at a single update, however
+      can NOT update a `string` type and `number` type into `boolean` at once.
+    request:
+      method: GET
+      path: /x/datatype
+      queries: ''
+      description: ''
+    response:
+      mimetype: application/json
+      status: 200
+      description: ''
+      body: datatype
+  - templates:
+      - datatype
+      - _foundation.create
+    description: Select & update datatype
+    request:
+      method: POST
+      path: /x/datatype
+      queries: ''
+      description: ''
+    response:
+      mimetype: application/json
+      status: 200
+      description: ''
+      body: datatype
+  - templates:
+      - datatype
+      - _foundation.get
+    description: >-
+      Data scheme information
+
+      It's all about data. ***datatypes*** are information on data schemes
+      within the project.
+
+
+
+      &nbsp;
+
+
+      A datatype entity has:
+
+      - ***name***: typename identifier, at `....namesapce.localname` format.
+
+      - ***basistype***: a class can be inherited. A Datatype can be so.
+    request:
+      method: GET
+      path: /x/datatype
+      queries: ''
+      description: ''
+    response:
+      mimetype: application/json
+      status: 200
+      description: ''
+      body: datatype
+  - templates:
+      - datatype
+      - _foundation.update
+    description: >-
+      Data scheme information
+
+      It's all about data. ***datatypes*** are information on data schemes
+      within the project.
+
+
+
+      &nbsp;
+
+
+      A datatype entity has:
+
+      - ***name***: typename identifier, at `....namesapce.localname` format.
+
+      - ***basistype***: a class can be inherited. A Datatype can be so.
+    request:
+      method: PUT
+      path: /x/datatype
+      queries: ''
+      description: ''
+    response:
+      mimetype: application/json
+      status: 200
+      description: ''
+      body: datatype
 timestamp: 1721380124977

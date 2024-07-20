@@ -36,14 +36,15 @@ export default class Descriptable {
     }
 
     static get_summary(text) {
-        return (text || '').split('\n')
+        return (text || '').trim()
+            .split('\n')
             .shift();
             // .map((t)=>t.trim())
             // .filter((t)=>t && t.length>0);
     }
 
     static get_desc(text) {
-        return (text || '').split('\n')
+        return (text || '').trim().split('\n')
             .slice(1)
             .join('\n');
     }

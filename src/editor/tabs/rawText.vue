@@ -11,8 +11,8 @@
       <v-spacer />
       <v-toolbar-items>
         <!-- update if dirty -->
-        <v-btn text @click="load_update" :disabled="!dirty">
-          <v-icon>mdi-content-save</v-icon>
+        <v-btn text readonly @click="load_update" :disabled="!dirty">
+          <v-icon>mdi-sync</v-icon>
         </v-btn>
       </v-toolbar-items>
     </v-toolbar>
@@ -22,7 +22,7 @@
     <v-card-actions>
       <v-spacer />
       <v-btn text @click="load_update" :disabled="!dirty">
-        save
+        sync
       </v-btn>
     </v-card-actions>
   </v-card>

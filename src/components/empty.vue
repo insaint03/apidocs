@@ -39,7 +39,7 @@
     <open-dialog v-model="import_dialog" />
 </template>
 <script>
-const guide_location = 'https://raw.githubusercontent.com/insaint03/apidocs/main/data/apidoc.guide.yaml';
+const guide_location = import.meta.env.VITE_GUIDE_LOCATION;
 import { mapActions, mapState } from 'pinia';
 import { useProjectStore } from '@/stores/project';
 import { useExampleStore } from '@/stores/example';
@@ -51,8 +51,8 @@ export default {
     openDialog,
   },
   methods: {
-    async load_guide() {
-      // console.log(guide_location);
+    load_guide() {
+      console.log('guide', guide_location, import.meta.env);
       this.loads(guide_location)
         .then(()=>this.$router.push('/view'));
     },
@@ -74,6 +74,7 @@ export default {
   },
   data() {
     return {
+      // guide_location,
       import_dialog: false,
     }
   }

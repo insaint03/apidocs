@@ -1,10 +1,10 @@
 <template>
-  <v-card flat class="my-4" :id="`/endpoint/${index}/`">
+  <v-card flat class="my-4 border-t-thin" :id="`/endpoint/${index}/`">
     <v-card-item>
       <v-card-title class="d-flex flex-fill">
-        <span class="flex-grow">
+        <h4 class="flex-grow">
           {{ entity.summary }}
-        </span>
+        </h4>
         <v-spacer />
         <v-chip-group :color="$thx.color.tag">
           <v-chip v-for="tag, ti in tags" :key="`ep-tag-${index}.${ti}${tag}`" active readonly

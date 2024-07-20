@@ -3,7 +3,7 @@
     <v-list-item class="pa-0">
       <v-textarea 
         :model-value="value" @update:model-value="($ev)=>$emit('update:modelValue', $ev)"
-        v-bind="$thx.field"
+        v-bind="$thx.field" auto-grow
         :label="label"
         :rules="[liner_parse, keytype_match]"
         placeholder="(keytype) title <link1,link2|anchor> and optional longlong description"

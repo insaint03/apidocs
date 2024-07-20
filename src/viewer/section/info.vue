@@ -1,10 +1,17 @@
 <template>
   <card-section  prefix="about">
     <template #card-title>
-      <h1>
-        {{ project.name }}
-        &nbsp;<sub>v{{ project.version }}</sub>
-      </h1>
+      <div class="d-flex flex-fill align-baseline">
+        <div class="d-flex flex-fill align-baseline">
+          <h1>
+            {{ project.name }}
+            &nbsp;
+          </h1>
+          <sub>{{ project.summary }}</sub>
+        </div>
+        &nbsp;
+        <v-chip size="x-small">v{{ project.version }}</v-chip size="small">
+      </div>
     </template>
     <!-- card-content -->
     <v-row>

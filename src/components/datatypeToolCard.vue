@@ -1,5 +1,5 @@
 <template>
-  <tool-card :title="modelValue.name" :subtitle="modelValue.summary">
+  <tool-card :title="modelValue.name" :subtitle="modelValue.summary" :location="location">
     <template #title>
       <v-icon>{{ $thx.icon.datatype }}</v-icon>
       {{ modelValue.name }}
@@ -47,6 +47,7 @@ export default {
     }
   },
   props: {
+    location: {type:String, default: 'bottom'},
     modelValue: Datatype,
   },
   data() {

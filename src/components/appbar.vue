@@ -23,7 +23,9 @@
         <v-icon>mdi-download</v-icon>
       </v-btn>
       <!-- change mode -->
-      <v-btn icon @click="move_mode" :title="`go ${other_mode}`">
+      <v-btn text @click="move_mode" :title="`go ${other_mode}`">
+        {{ mode }}
+        &nbsp;
         <v-icon>{{ mode_icon }}</v-icon>
       </v-btn>
       <!-- toggle extension -->

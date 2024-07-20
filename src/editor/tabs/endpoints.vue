@@ -74,6 +74,7 @@ import Response from '@/models/response';
 const columns = [
   { title: '#', key: 'index', },
   { title: 'tags', key: 'tags', value: (e)=>e.tagnames },
+  { title: 'summary', key: 'summary', value:(e)=>e.summary },
   { title: 'method', key: 'request.method', value:(e)=>e.request_method },
   { title: 'pathname', key: 'request.pathname', value:(e)=>e.request_pathname },
   { title: 'response', key: 'response', value:(e)=>e.response },
@@ -111,6 +112,7 @@ export default {
       return this.entities.map((e,i)=>({
         index: i,
         entity: e,
+        summary: e.summary,
         tagnames: e.tagnames,
         request: e.request,
         response: e.response,

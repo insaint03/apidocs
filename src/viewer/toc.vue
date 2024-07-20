@@ -44,7 +44,7 @@
           :prepend-icon="$thx.icon.datatype"
           href="#/datatype/" />
       </template>
-      <v-list-item v-for="tp in Object.values(datatypes).filter((d)=>d.is_collective)" :key="`toc.datatypes-${tp.name}`"
+      <v-list-item v-for="tp in datatype_referecnces" :key="`toc.datatypes-${tp.name}`"
         @click="opens(`_datatype.${tp.name}`)"
         :href="`#/datatype/${tp.name}/`"
         :title="tp.name" :subtitle="tp.basistype"></v-list-item>
@@ -105,6 +105,12 @@ export default {
     },
     endpathes() {
       return models.get_endpathes(this);
+    },
+    datatype_referecnces() {
+        return Object.values(this.datatypes)
+            // not starting with underscore, include namespace
+            .filter((d)=>!/^_/.test(d.name) && !/^_/.test(d.localname))
+            .filter((d)=>d.items!=null);
     },
     // ...mapState(useProjectStore, [
     //   'project', 

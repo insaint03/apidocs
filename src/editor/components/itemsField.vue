@@ -4,6 +4,7 @@
       :label="$props.label || 'properties'"
       :name="$props.name || 'items'"
       v-bind="$thx.field"
+      auto-grow
       @focus="focused=true" @blur="changes"
     />
     <div v-show="focused">
