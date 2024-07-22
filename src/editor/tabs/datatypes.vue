@@ -1,6 +1,11 @@
 <template>
   <tab-header :icon="$thx.icon.datatype" :color="$thx.color.datatype">
-    <template #title>{{ title }}</template>   
+    <template #title>{{ title }}</template>
+    <template #items>
+      <v-btn flat text @click="clear" :color="$thx.color.danger" :disabled="selection.length<=0">
+        delete
+      </v-btn>
+    </template>
   </tab-header>
   <v-card flat>
     <v-card-text>
@@ -84,6 +89,12 @@ export default {
     changes($ev) {
       return this.updates($ev.target.name, $ev.target.value);
     },
+    clear(){
+      if(window.confirm(`delete ${this.selection.join(', ')}?`)) {
+        // this.selection.forEach((v)=>this.deletes(v));
+        this.deletes(this.selection);
+      }
+    },
     typename_duplication() {
       const dupline = this.newtype_names.reduce((agg, ln, li)=>{
           return agg || (Datatype.name_exists(ln) ? {l:li+1, n:ln} : null);
@@ -119,6 +130,7 @@ export default {
     ...mapActions(useDatatypeStore, [
       'updates',
       'update_items',
+      'deletes',
       'appends',
       'create_new',
     ]),

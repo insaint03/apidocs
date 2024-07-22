@@ -7,6 +7,14 @@ project:
     - >-
       (github) github <https://github.com/insaint03/apidocs|repository,
       https://github.com/insaint03/apidocs/issues|issues>
+    - >-
+      (adv) with advance
+      <https://vuejs.org|vue.js,https://vitejs.dev|vite.js,https://vuetifyjs.com|vuetify.js,https://github.com/nodeca/js-yaml|js-yaml,https://markdown-it.github.io/|markdown-it>
+      Thanks for the efforts!
+    - (ref) referenced
+    - >-
+      <https://swagger.io|OpenAPI
+      specification/swagger,https://redocly.com|redocly>
   license: (CC) CC-BY-NC-SA 4.0 <https://creativecommons.org/licenses/by-nc-sa/4.0/>
   contributors:
     - >-
@@ -115,7 +123,7 @@ datatypes:
   datatype:
     name: datatype
     basistype: object
-    description: data scheme definition
+    description: data scheme definition either/or type descriptor
     items:
       '!name': _.naming
       '!basistype': datatype._basistype=string
@@ -128,7 +136,12 @@ datatypes:
   template:
     name: template
     basistype: object
-    description: builder template to mix
+    description: >-
+      common data fragment to build endpoints
+
+      Template is the core building block of `apidocs`. As its name suggests, it
+      holds ***template*** data to be set on an `endpiont entity`. One might
+      further ***mix templates*** to get a list of endpoints of the kinds.
     items:
       '!name': _.naming
       description: _.description
@@ -140,7 +153,14 @@ datatypes:
   endpoint:
     name: endpoint
     basistype: object
-    description: endpoint, 1to1 request-response pair
+    description: >-
+      endpoint, 1to1 request-response pair
+
+      If works has done right, a single API endpoint - determined by options on
+      its `request` - ought to have a single, unique corresponding `response`.
+      There, `apidocs` assumed an endpoint definition takes a single request and
+      an unique response, either. In case of error-ly responses, One might state
+      error responses by patternizing request pattern. (`/*beta*/`)
     items:
       description: _.description
       templates: endpoint._templates
@@ -152,7 +172,7 @@ datatypes:
     basistype: object
     description: http request message description
     items:
-      '!method': request._method
+      '!method': request._method=GET
       '!path': request._path
       description: _.description
       queries: _.http_queries
@@ -267,11 +287,6 @@ datatypes:
       '!datatype': _.object_item._datatype
       defaults: _.object_item._defaults
       description: _.object_item._description
-    examples: []
-  _.array_item:
-    name: _.array_item
-    basistype: string
-    description: array element applicable datatype name
     examples: []
   _.enum_item:
     name: _.enum_item
@@ -479,6 +494,43 @@ datatypes:
       - object
       - enum
     examples: []
+  type_constraint:
+    name: type_constraint
+    basistype: object
+    description: type constraints to suggest body datatype in template
+    items:
+      inherits: type_constraint._inherits
+      contains: type_constraint._contains
+      keyname: type_constraint._keyname
+      fixed: type_constraint._fixed
+    examples: []
+  type_constraint._inherits:
+    name: type_constraint._inherits
+    basistype: _.naming
+    description: '(/datatype): suggest datatype inherits the datatype by name'
+    examples: []
+  type_constraint._contains:
+    name: type_constraint._contains
+    basistype: _.naming
+    description: (@datatype) suggest datatype contains in item, by its name
+    examples: []
+  type_constraint._keyname:
+    name: type_constraint._keyname
+    basistype: string
+    description: >-
+      (#keyname) suggest datatype has the keyname in its item (ought to be
+      object or enum), by name
+    examples: []
+  type_constraint._fixed:
+    name: type_constraint._fixed
+    basistype: _.naming
+    description: (!datatype) force the datatype to be suggested
+    examples: []
+  _.array_item:
+    name: _.array_item
+    basistype: _.naming
+    description: array element applicable datatype name
+    examples: []
 templates:
   _foundation.root:
     name: _foundation.root
@@ -633,13 +685,135 @@ templates:
 
       - ***name***: typename identifier, at `....namesapce.localname` format.
 
+      - ***description***: type description
+
+      - ***migration***: the datatype, especially when its object-alike, it
+      could be a type related with a **DB table** that can be migrated.
+      migration stands for **DB table/scheme name** to be migrated when stated,
+      or ignored when null.
+
       - ***basistype***: a class can be inherited. A Datatype can be so.
+
+      - ***is_primitive***: If the datatype is primitive type or not. If the
+      type is primitive, a) it won't be apeared on editor-datatype tab, b) it
+      won't be found on viewer reference list, c) fianlly, it will derive
+      another datatype description when set to be an object item datatype.
+
+      - ***items***: `object` (`dict` and/or `map`), `array`, `enum` are
+      collective types that contains items. If it's object/dict-alike type, it
+      would be `key-value` pairs, or can be available `datatype names`, `value`
+      and its description for `array`s, or `enum` either corresponding order.
+
+
+      - ---
+
+      - **(below planned to be added/fixed in a near futuer)**
+
+      - ***defaults***: type-level default value
+
+      - ***evaluation***: type evaluation function, by `js eval`-available
+      description
+
+      - ***examples***: example values of the type
+  template:
+    name: template
+    tagname: template
+    datatypes:
+      - template
+      - type_constraint
+    request:
+      method: null
+      path: /x/template
+    response:
+      mimetype: null
+      status: null
+    description: >-
+      Building blocks for the endpoints
+
+      Template sets the core building block of `apidocs`. As its name suggests,
+      it holds ***template*** data to be set on an `endpiont entity`. One might
+      further ***mix templates*** to get a list of endpoints of the kinds.
+  endpoint:
+    name: endpoint
+    tagname: endpoint
+    datatypes:
+      - endpoint
+      - request
+      - response
+      - request._path
+      - type_constraint
+    request:
+      method: null
+      path: /x/endpoint
+    response:
+      mimetype: null
+      status: null
+    description: >-
+      endpoint, 1to1 request-response pair
+
+      If works has done right, a single API endpoint - determined by options on
+      its `request` - ought to have a single, unique corresponding `response`.
+      There, `apidocs` assumed an endpoint definition takes a single request and
+      an unique response, either. In case of error-ly responses, One might state
+      error responses by patternizing request pattern. (`/*beta*/`)
+  patterns:
+    name: patterns
+    tagname: util.patterns
+    datatypes:
+      - _.naming
+      - _.description
+      - liner
+      - items
+      - _.object_item
+      - _.array_item
+      - _.enum_item
+      - request._path
+      - type_constraint
+    request:
+      method: null
+      path: /x/util
+    response:
+      mimetype: null
+      status: null
+    description: >-
+      Utilized string patterns
+
+      - `naming` (in `datatype`.name, `template`.name) - `description`  -
+      `Liner` (in `project` - license, links, terms, contributors property) -
+      `Items`
+        - : `object_item` (in object.`items`, request.queries, http.headers, http.cookies)
+        - : `array_item` (in array.`items`)
+        - : `enum_item` (in enum.`items`)
+      - `request.path` - `http.body` (body constraints, in `template` -
+      request.body, response.body)
+  beta:
+    name: beta
+    tagname: futuer.beta
+    datatypes: []
+    request:
+      method: null
+      path: /z/beta
+    response:
+      mimetype: null
+      status: null
+    description: To be updated within beta (expected to be in year 2024)
+  futuer:
+    name: futuer
+    tagname: futuer
+    datatypes: []
+    request:
+      method: null
+      path: /z/future
+    response:
+      mimetype: null
+      status: null
+    description: To be updated after beta (2025 or later)
 entities:
   - templates:
       - core
       - _foundation.get
     description: >-
-      view document
+      View a document
 
       - **viewer mode:** click eye-icon from upper right corner on edit mode.
 
@@ -661,7 +835,7 @@ entities:
       - core
       - _foundation.create
     description: >-
-      create document
+      Create a document
 
       - create from scratch: ***File > clear new***
 
@@ -684,7 +858,7 @@ entities:
       - core
       - _foundation.update
     description: >-
-      edit document
+      Edit a document
 
       editor mode has total 5 tabs (at bottom)
 
@@ -713,7 +887,7 @@ entities:
       - datatype
       - _foundation.list
     description: >-
-      datatypes list
+      List datatypes
 
       At the bottom of `edit` mode, 5 tabs are presented. `datatypes` mode is
       second of the tabs. Or, selecting any of `datatypes` left-side panel
@@ -747,7 +921,20 @@ entities:
   - templates:
       - datatype
       - _foundation.create
-    description: Select & update datatype
+    description: >-
+      Create datatypes
+
+      datatype names are ***unique identifier*** among the project. Take advance
+      <namespace> prefix to avoid overlapping.
+
+
+      1. create at edit mode - `datatypes` tab:
+       - deselect any datatype from left-side panel `datatypes`
+       - multiline `names`, common basistype form will be presented
+       - put names (seperated by newline) to create, then click "SAVE" button at the right hand side of the form.
+      2. create at `datatypes` side panel
+       - place a name at `search & create` field.
+       - press `ctrl+enter` to create the type by the name. basistype set default `object`.
     request:
       method: POST
       path: /x/datatype
@@ -762,21 +949,25 @@ entities:
       - datatype
       - _foundation.get
     description: >-
-      Data scheme information
+      Get a single datatype
 
-      It's all about data. ***datatypes*** are information on data schemes
-      within the project.
-
-
-
-      &nbsp;
+      On edit mode, section `datatypes` and/or `endpoints`, left-hand side panel
+      `datatypes` is a place that can select to read/get datatype(s).
 
 
-      A datatype entity has:
+      &nbsp; 
 
-      - ***name***: typename identifier, at `....namesapce.localname` format.
 
-      - ***basistype***: a class can be inherited. A Datatype can be so.
+      Single click will toggle a single datatype selection and, `ctrl+click` or
+      `shift+click` will multi select toggle the datatypes.
+
+
+
+      However, editor pane in the middle of `datatypes` tab section, will show
+      selected datatype(s)'s properties.
+
+      Refer (c)Apple itunes property editor on multi-item selection, only
+      properties in common can be set by the setting.
     request:
       method: GET
       path: /x/datatype
@@ -790,22 +981,7 @@ entities:
   - templates:
       - datatype
       - _foundation.update
-    description: >-
-      Data scheme information
-
-      It's all about data. ***datatypes*** are information on data schemes
-      within the project.
-
-
-
-      &nbsp;
-
-
-      A datatype entity has:
-
-      - ***name***: typename identifier, at `....namesapce.localname` format.
-
-      - ***basistype***: a class can be inherited. A Datatype can be so.
+    description: Edit datatypes
     request:
       method: PUT
       path: /x/datatype
@@ -816,4 +992,132 @@ entities:
       status: 200
       description: ''
       body: datatype
+  - templates:
+      - template
+      - _foundation.list
+    description: List templates
+    request:
+      method: GET
+      path: /x/template
+      queries: ''
+      description: ''
+    response:
+      mimetype: application/json
+      status: 200
+      description: ''
+      body: template
+  - templates:
+      - template
+      - _foundation.get
+    description: Get a single template
+    request:
+      method: GET
+      path: /x/template
+      queries: ''
+      description: ''
+    response:
+      mimetype: application/json
+      status: 200
+      description: ''
+      body: template
+  - templates:
+      - template
+      - _foundation.create
+    description: Create templates
+    request:
+      method: POST
+      path: /x/template
+      queries: ''
+      description: ''
+    response:
+      mimetype: application/json
+      status: 200
+      description: ''
+      body: template
+  - templates:
+      - template
+      - _foundation.update
+    description: Edit templates
+    request:
+      method: PUT
+      path: /x/template
+      queries: ''
+      description: ''
+    response:
+      mimetype: application/json
+      status: 200
+      description: ''
+      body: template
+  - templates:
+      - endpoint
+      - _foundation.list
+    description: List endpoints
+    request:
+      method: GET
+      path: /x/endpoint
+      queries: ''
+      description: ''
+    response:
+      mimetype: application/json
+      status: 200
+      description: ''
+      body: endpoint
+  - templates:
+      - endpoint
+      - _foundation.get
+    description: Get a single endpoint
+    request:
+      method: GET
+      path: /x/endpoint
+      queries: ''
+      description: ''
+    response:
+      mimetype: application/json
+      status: 200
+      description: ''
+      body: endpoint
+  - templates:
+      - endpoint
+      - _foundation.create
+      - template
+    description: >-
+      Create endpoints.
+
+      At edit mode, `endpoints` section, simply click `+` button top-right side
+      of the panel will append a single (blank) endpoint.
+
+
+      &nbsp;
+
+
+      Try `Mix` button instead. At `Mix` button, it will show a dialog that can
+      select sequences of templates. After selecting templates at each stage, it
+      will adds **combinatorial** (cartesian - cross product) numbers of
+      endpoints at once. Normally, there might be a tag-named datatype template
+      for each migration type, plus CRUD (corresponding, _foundattion
+      `create`/`list`&`get`/`update`/`delete` by order) will be set.
+    request:
+      method: POST
+      path: /x/endpoint
+      queries: ''
+      description: ''
+    response:
+      mimetype: application/json
+      status: 200
+      description: ''
+      body: endpoint
+  - templates:
+      - endpoint
+      - _foundation.update
+    description: Edit endpoints
+    request:
+      method: PUT
+      path: /x/endpoint
+      queries: ''
+      description: ''
+    response:
+      mimetype: application/json
+      status: 200
+      description: ''
+      body: endpoint
 timestamp: 1721380124977

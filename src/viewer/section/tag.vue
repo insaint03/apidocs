@@ -25,8 +25,10 @@
               <template #default="{props}">
                 <v-list-item  v-bind="props"
                   class="tooltip" :href="`#/datatype/${dt.name}/`"
-                  :title="dt.localname" :subtitle="dt.summary" 
-                  :prepend-icon="$thx.icon.datatype" :color="$thx.color.datatype" />
+                  :prepend-icon="$thx.icon.datatype" :color="$thx.color.datatype">
+                  <v-list-item-subtitle v-if="dt.summary">// {{ dt.summary }}</v-list-item-subtitle>
+                  <v-list-item-title>{{ dt.localname }}</v-list-item-title>
+                </v-list-item>
               </template>
             </datatype-tool-card>
           </template>

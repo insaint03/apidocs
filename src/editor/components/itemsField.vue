@@ -12,13 +12,13 @@
       <v-list>
         <v-list-item v-for="(it,ii) in previews" :key="`items-field.${ii}`"
           :prepend-icon="it.icon">
+          <v-list-item-subtitle v-show="it.summary">
+            //{{ it.summary }}
+          </v-list-item-subtitle>
           <v-list-item-title>
             {{ it.name }} 
             &nbsp;<v-chip size="small" v-if="it.inherits">{{ it.inherits.join(' / ') }}</v-chip>
           </v-list-item-title>
-          <v-list-item-subtitle v-show="it.summary">
-            //{{ it.summary }}
-          </v-list-item-subtitle>
         </v-list-item>
       </v-list>
     </div>

@@ -15,9 +15,6 @@
     <template #activator="{ props }">
       <slot name="default" :props="props"></slot>
     </template>
-    <div v-if="modelValue.desc">
-      <mark-down :model-value="modelValue.desc" />
-    </div>
     <v-row>
       <!-- request section -->
       <v-col>
@@ -95,6 +92,10 @@
         </v-sheet>
       </v-col>
     </v-row>
+    &nbsp;
+    <div v-if="modelValue.desc">
+      <mark-down :model-value="modelValue.desc" />
+    </div>
   </tool-card>
 </template>
 <script>

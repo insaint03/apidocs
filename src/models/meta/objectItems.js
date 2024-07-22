@@ -23,7 +23,10 @@ export default class ObjectItems extends Serializable {
     static parse(line) {
         const match = line.match(ObjectItems.pattern);
         return match ? {
-            ...match.groups,
+            key: match.groups.key,
+            datatype: (match.groups.datatype || '').trim(),
+            defaults: match.groups.defaults,
+            comment: match.groups.comment,
             required: !!match.groups.required,
         } : null;
     }

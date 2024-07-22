@@ -312,4 +312,15 @@ export default {
                 .filter((v,i)=>i<recent_max))
         );
     },
+
+    delete_datatypes(...selection) {
+        const currents = Datatype.finds(...selection)
+            .map((dt=>dt.name));
+        // remove from state
+        this.state.datatypes = Object.fromEntries(
+            Object.entries(this.state.datatypes)
+                .filter(([k,])=>!currents.includes(k)));
+        // remove from store
+        currents.forEach((name)=>delete Datatype._store[name]);
+    }
 }

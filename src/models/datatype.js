@@ -273,7 +273,6 @@ export default class Datatype extends Descriptable {
         return ret;
     }
 
-
     static default_basis = 'string';
     static _type = 'Datatype'
     // naming convention of: name.space.localname
@@ -281,8 +280,18 @@ export default class Datatype extends Descriptable {
     static _store = [];
 
     static find(name, must) { 
+        //
+        if(!name) {
+            if(!must) {return null;}
+            else {throw new ValueNotFound(Datatype._type, name);}
+        }
         // to prevent datatype instance naming
-        const comparison = name.name || name;
+        const comparison = (typeof(name)=='object' 
+            ? (name.name || name.toString())
+            : name || '').trim();
+        // if(!comparison.trim) {
+        //     console.log('no trim', comparison, typeof(comparison));
+        // }
         const ret = Datatype.all.find((d)=>d.name === comparison);
         if(must && !ret) {
             throw new ValueNotFound(Datatype._type, name);

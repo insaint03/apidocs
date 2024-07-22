@@ -13,12 +13,19 @@ export default class Message extends Descriptable {
         this._cookies = new ObjectItems(cookies || {});
         this._templates = templates;
 
+        if(Array.isArray(body)) {
+            this._body_candidates = new Constraints(body);
+            this._body = null;
+        } else {
+            this._body_candidates = null;
+            this._body = body;
+        }
 
-        this._body_candidates = new Constraints(body);
-        // console.log('message body', body);
+        // this._body_candidates = new Constraints(body);
+        // // console.log('message body', body);
 
-        // TODO: type suggestion
-        this._body = body;
+        // // TODO: type suggestion
+        // this._body = Array.isArray(body) ? null : body;
     }
 
 

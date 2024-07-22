@@ -156,5 +156,15 @@ export const useProjectStore = defineStore('project', {
         //         // update to viewmode
         //         .then(()=>this.$router.push('/view'));
         // }
+        remove_datatypes(...selecteds) {
+            selecteds = selecteds || [];
+            // remove from models            
+            models.delete_datatypes(...selecteds);
+            // remove from current datatypes
+            selecteds.forEach((name)=>{
+                delete this.datatypes[name];
+            });
+
+        }
     }
 });

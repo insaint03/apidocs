@@ -1,9 +1,10 @@
 <template>
   <v-list-subheader v-if="label">{{ label }}</v-list-subheader>
   <v-list-item v-for="(item,ii) in items" :key="`liner-${label}.${ii}`"
-    :title="item.title" :subtitle="item.description"
     :active="editable"
     tabindex="-1">
+    <v-list-item-subtitle v-if="item.description">// {{ item.description }}</v-list-item-subtitle>
+    <v-list-item-title>{{ item.title }}</v-list-item-title>
     <template #prepend>
       <v-btn :title="item.keytype" flat readonly style="background:inherit;color:inherit">
         <v-icon v-if="icons && icons[item.keytype]">{{ icons[item.keytype] }}</v-icon>

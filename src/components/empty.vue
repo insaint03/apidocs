@@ -52,7 +52,6 @@ export default {
   },
   methods: {
     load_guide() {
-      console.log('guide', guide_location, import.meta.env);
       this.loads(guide_location)
         .then(()=>this.$router.push('/view'));
     },

@@ -47,8 +47,7 @@
     <template #expanded-row="{item, columns}">
       <tr>
         <td :colspan="columns.length">
-          <edit-entity :index="item.index" 
-          />
+          <edit-entity :index="item.index" />
         </td>
       </tr>
     </template>
@@ -67,6 +66,7 @@ import tabHeader from '../components/tabHeader.vue';
 import templateMixDialog from '../components/templateMixDialog.vue';
 
 import editEntity from '../components/editEntity.vue';
+import Entity from '@/models/entity';
 
 import Request from '@/models/request';
 import Response from '@/models/response';
@@ -91,10 +91,11 @@ export default {
   },
   methods: {
     append() {
-      this.entities.push({
+      this.entities.push(Entity.setup({
+        description: 'new endpoint',
         request: {},
         response: {},
-      });
+      }));
     },
     subtract(index) {
       this.entities.splice(index,1);

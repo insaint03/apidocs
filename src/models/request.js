@@ -207,6 +207,7 @@ export default class Request extends Message {
                     .filter((c,i,a)=>a.indexOf(c)===i), // unique
                 headers: (agg.headers || []).concat(req.headers || [])
                     .filter((h,i,a)=>a.indexOf(h)===i), // unique
+                // TODO: body constraints
                 body: req.body || agg.body,
             }
         }, Request.option());

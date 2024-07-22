@@ -151,27 +151,52 @@ export const useDatatypeStore = defineStore('datatype', {
                 .filter((dt)=>dt!=null)
                 .forEach((dt)=>dt[key] = value);
         },
+        
         update_items(raw) {
             if(!raw) { return; }
-            // split values
-            this.selection.map((it)=>this.datatypes[it])
+            const newname = (container_name, item_key)=>`${container_name}._${item_key}`;
+            // create_newtypes if needed
+            raw.items
+                .filter((it)=>it!=null)
+                .filter((it)=>{
+                    const dt = Datatype.find(it.datatype);
+                    return dt!=null && dt.is_primitive
+                })
+                .forEach((it)=>{
+                    // create new types by selections
+                    this.create_new(...this.selection.map((s)=>({
+                        name: newname(s, it.key),
+                        basistype: it.datatype,
+                        description: it.comment,
+                    })));
+                });
+            // sets
+            this.selection
+                .map((dt)=>this.datatypes[dt])
                 .filter((dt)=>dt!=null)
                 .forEach((dt)=>{
-                    dt.items = raw.value;
+                    const sets = raw.items
+                        .map((it)=>{
+                            const etype = Datatype.find(it.datatype);
+                            // ignore not found 
+                            if(etype==null) { return null; }
+                            // use non-primitive type as-is
+                            return etype.is_primitive ? {
+                                key: it.key,
+                                datatype: newname(dt.name, it.key),
+                                required: it.required,
+                                defaults: it.defaults,
+                                comment: it.comment,
+                            } : it;
+                        });
+                    dt.items = sets.filter((it)=>it!=null);
+                    // current.items = ;
                 });
-            // update new createds
-            if(this.values.origintype==='object') {
-                this.project.datatypes = 
-                    Object.assign(this.project.datatypes, 
-                        Object.fromEntries(Datatype.customs
-                            .filter((t)=>!this.datatypes[t.name])
-                            .map((t)=>[
-                                t.name,
-                                t,
-                            ])
-                        )
-                );
-            }
+        },
+        deletes(...selecteds) {
+            selecteds = (selecteds || this.selection || []).flat();
+            this.project.remove_datatypes(...selecteds);
+            this.selection=[];
         },
         create_search() {
             const name = this.search_query;
@@ -184,13 +209,14 @@ export const useDatatypeStore = defineStore('datatype', {
         },
         create_new(...puts) {
             const newtypes = Object.fromEntries(puts.map((put)=>{
-                const nt = Datatype.create(put.name, put.basistype);
-                nt.is_primitive = put.is_primitive;
+                const nt = Datatype.setup(put);
+                // nt.is_primitive = put.is_primitive;
                 return [put.name, nt];
             }));
             this.project.datatypes = Object.assign(this.project.datatypes, 
                 newtypes);
-            this.selection = [].concat(Object.keys(newtypes));
+            return newtypes;
+            // this.selection = [].concat(Object.keys(newtypes));
         },
         appends(...params) {
             let generates = [];
