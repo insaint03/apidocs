@@ -1,11 +1,8 @@
 <template>
   <!-- nav bar -->
   <v-navigation-drawer v-if="project_ready" app
-    
-    location="right" permanent>
-    <table-of-contents
-      v-bind="info_bindings"
-    />
+    location="right">
+    <table-of-contents v-bind="info_bindings"/>
   </v-navigation-drawer>
   <v-main app>
     <document-view v-if="project_ready" 

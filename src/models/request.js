@@ -26,11 +26,12 @@ export default class Request extends Message {
 
         super({cookies, headers, body, description}, ...templates);
         this.method = (method||'GET').toUpperCase();
-        this.path = path;
         this._path_matches = null;
-        // set query
         this._queries = new ObjectItems(queries);
-        // this.queries = queries || [];
+        
+        // set path & query
+        this.path = path;
+        this.queries = queries;
     }
 
 
@@ -52,7 +53,7 @@ export default class Request extends Message {
 
     set path(values) {
         this._path = (values || '').split(Request.path_delimiter)
-            .map(Patterns.path_parse);
+        .map(Patterns.path_parse);
     }
 
     path_fragment(index) {
@@ -141,21 +142,16 @@ export default class Request extends Message {
     }
     set query_text(value) { this._queries.text = value; }
     set query_items(values) { this._queries.items = values; }
+
     
     get serialized() {
         // all props
         const ret = {
+            ...super.serialized,
             method: this.method,
             path: this.pathname,
-            queries: this.query_text,
-            ...super.serialized,
+            queries: this._queries.dict || {},
         };
-        // remove empty queries
-        ['queries'].forEach((key)=>{        
-            if(ret[key] && ret[key].length===0) {
-                delete ret[key];
-            }
-        });
         return ret;
 
     }
@@ -163,7 +159,7 @@ export default class Request extends Message {
     static option() {
         return {
             method: null,
-            path: null,
+            path: '',
             queries: {},
             headers: [],
             cookies: [],
@@ -195,21 +191,21 @@ export default class Request extends Message {
 
     // object request options to derive final
     static merge(...reqs) {
-        return reqs.reduce((agg, req, ri)=>{
-            return {
-                method: agg.method || req.method,
-                path: agg.path || req.path,
+        return reqs.reduce((agg, req)=>({
+                method: req.method || agg.method,
+                path: req.path || agg.path,
                 queries: {
                     ...agg.queries, 
                     ...req.queries,
                 },
-                cookies: (agg.cookies || []).concat(req.cookies || [])
-                    .filter((c,i,a)=>a.indexOf(c)===i), // unique
+                cookies: {
+                    ...agg.cookies,
+                    ...req.cookies,
+                }, // unique
                 headers: (agg.headers || []).concat(req.headers || [])
                     .filter((h,i,a)=>a.indexOf(h)===i), // unique
                 // TODO: body constraints
                 body: req.body || agg.body,
-            }
-        }, Request.option());
+            }), Request.option());
     }
 }

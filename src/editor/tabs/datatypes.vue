@@ -49,7 +49,9 @@
             <v-textarea v-model="newtype.names" label="names" v-bind="$thx.field"
               :rules="[typename_duplication]"
               hint="separated by newline"
-              name="name" />
+              name="name" 
+              @keyup.ctrl.enter="create_newtype"
+            />
           </v-col>
           <v-col cols="3">
             <v-autocomplete v-model="newtype.basistype" label="basistype" v-bind="$thx.field" 

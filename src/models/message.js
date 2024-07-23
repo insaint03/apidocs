@@ -67,16 +67,11 @@ export default class Message extends Descriptable {
     }
 
     get serialized() {
-        const ret = {...super.serialized};
-        if(0<this.headers.length) {
-            ret.headers = this.header_texts;
-        }
-        if(0<this.cookies.length) {
-            ret.cookies = this.cookie_texts;
-        }
-        if(this.body) {
-            ret.body = this.bodytype;
-        }
-        return ret;
+        return {
+            ...super.serialized,
+            headers: this._headers.value,
+            cookies: this._cookies.dict,
+            body: this.bodytype,
+        };
     }
 }

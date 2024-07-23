@@ -28,26 +28,26 @@
       </v-chip-group>
     </template>
     <template #item.request.method="{ item }">
-      <v-btn text flat size="x-small" readonly :color="$thx.color.http_method[item.request.method]" class="mx-1">
-        {{ item.request.method }}
+      <v-btn text flat size="x-small" readonly :color="$thx.color.http_method[item.entity.request.method]" class="mx-1">
+        {{ item.entity.request_method }}
       </v-btn>
     </template>
     <template #item.request.pathname="{ item }">
       <span class="enpoint-pathname" readonly>
-        {{ item.request.pathname }}
+        {{ item.entity.request.pathname }}
       </span>
     </template>
     <template #item.response="{ item }">
       <v-btn text flat size="x-small" class="ma-1" readonly
-        :color="$thx.color.http_status(item.response.status)">{{ item.response.status_title }}</v-btn>
-      {{ item.response.mimetype }}
-      <v-chip size="x-small" class="ma-1">{{ item.response.bodytype || '' }}</v-chip>
+        :color="$thx.color.http_status(item.entity.response_status)">{{ item.entity.response.status_title }}</v-btn>
+      {{ item.entity.response_mimetype }}
+      <v-chip size="x-small" class="ma-1">{{ item.entity.response_body || '' }}</v-chip>
       <v-divider vertical />
     </template>
-    <template #expanded-row="{item, columns}">
+    <template #expanded-row="{item, columns, isExpanded}">
       <tr>
         <td :colspan="columns.length">
-          <edit-entity :index="item.index" />
+          <edit-entity :index="item.index" v-if="isExpanded" />
         </td>
       </tr>
     </template>
@@ -68,7 +68,7 @@ import templateMixDialog from '../components/templateMixDialog.vue';
 import editEntity from '../components/editEntity.vue';
 import Entity from '@/models/entity';
 
-import Request from '@/models/request';
+// import Request from '@/models/request';
 import Response from '@/models/response';
 
 const columns = [
@@ -91,11 +91,11 @@ export default {
   },
   methods: {
     append() {
-      this.entities.push(Entity.setup({
+      this.entities = this.entities.concat([Entity.setup({
         description: 'new endpoint',
         request: {},
         response: {},
-      }));
+      })]);
     },
     subtract(index) {
       this.entities.splice(index,1);

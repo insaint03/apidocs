@@ -34,26 +34,28 @@
         <tr>
           <th><v-icon title="connect definition">mdi-connection</v-icon></th>
           <td>
-            <markdown-field v-model="entity.request.description" label="description" v-bind="$thx.field" />
+            <markdown-field v-model="entity.request_desc" label="description" v-bind="$thx.field" />
             <v-row>
               <v-col>
-                <v-autocomplete v-model="entity.request.method" label="method" v-bind="$thx.field" :items="methods" clearable />
+                <v-autocomplete v-model="entity.request_method" label="method" v-bind="$thx.field" :items="methods" clearable />
               </v-col>
               <v-col>
-                <v-text-field v-model="entity.request.pathname" class="flex-grow px-2" label="pathname" v-bind="$thx.field" />
+                <v-text-field class="flex-grow px-2" label="path" v-bind="$thx.field"
+                  v-model="entity.request_pathname" />
               </v-col>
             </v-row>
-            <message-items-field v-model="entity.request.query_items" label="query" />
+            <message-items-field label="query"
+              v-model="entity.request_queries" />
           </td>
           <td>
-            <markdown-field v-model="entity.response.description" label="description" v-bind="$thx.field" />
+            <markdown-field v-model="entity.response_desc" label="description" v-bind="$thx.field" />
             <v-row>
               <v-col>
-                <v-autocomplete v-model="entity.response.status" label="status" v-bind="$thx.field" :items="statuses"
+                <v-autocomplete v-model="entity.response_status" label="status" v-bind="$thx.field" :items="statuses"
                   item-title="title" item-subtitle="code" item-value="code" />
               </v-col>
               <v-col>
-                <v-autocomplete v-model="entity.response.mimetype" class="flex-grow px-2" label="mimetype" v-bind="$thx.field" :items="mimetypes" />
+                <v-autocomplete v-model="entity.response_mimetype" class="flex-grow px-2" label="mimetype" v-bind="$thx.field" :items="mimetypes" />
               </v-col>
             </v-row>
           </td>
@@ -61,27 +63,25 @@
         <tr>
           <th><v-icon title="headers/cookies">mdi-dock-top</v-icon></th>
           <td>
-            <message-items-field v-model="entity.request.header_items" label="header" />
-            <message-items-field v-model="entity.request.cookie_items" label="cookie" />
+            <message-items-field v-model="entity.request_headers" label="header" />
+            <message-items-field v-model="entity.request_cookies" label="cookie" />
           </td>
           <td>
-            <message-items-field v-model="entity.response.header_items" label="header" />
-            <message-items-field v-model="entity.response.cookie_items" label="cookie" />
+            <message-items-field v-model="entity.response_headers" label="header" />
+            <message-items-field v-model="entity.response_cookies" label="cookie" />
           </td>
         </tr>
         <tr>
           <th><v-icon title="body">mdi-dock-bottom</v-icon></th>
           <td>
             <v-autocomplete 
-              :model-value="request.bodytype"
-              :disabled="/^get$/i.test(request.method)"
-              @update:model-value="(v)=>entity.request.body = v"
+              v-model="entity.request_body"
+              :disabled="/^get$/i.test(entity.request.method)"
               label="request.body" :items="datatype_all" item-title="name" item-value="name" v-bind="$thx.field" />
           </td>
           <td>
             <v-autocomplete 
-              :model-value="response.bodytype"
-              @update:model-value="(v)=>entity.response.body = v"
+              v-model="entity.response_body"
               label="responses" :items="datatype_all" item-title="name" item-value="name" v-bind="$thx.field" />
           </td>
         </tr>
@@ -98,14 +98,14 @@ import { useEndpointStore } from '@/stores/endpoint';
 import messageItemsField from '../components/messageItemsField.vue';
 import markdownField from '@/components/markdownField.vue';
 // import baseForm from '@/components/forms/baseForm.vue';
-import ObjectItems from '@/models/meta/objectItems'
+// import ObjectItems from '@/models/meta/objectItems'
 // import Request from '@/models/request';
 // import Response from '@/models/response';
 
-const tableHeaders = [
-  'request',
-  'response',
-]
+// const tableHeaders = [
+//   'request',
+//   'response',
+// ]
 
 export default {
   name: 'editEntity',
@@ -119,6 +119,10 @@ export default {
         // splice
         this.entities.splice(index, 1);
       }
+    },
+    test_update(v) {
+      console.log('update', v);
+      this.entity.request.query_items = v;
     }
   },
   props: {
@@ -130,12 +134,6 @@ export default {
   computed: {
     entity() {
       return this.entities[this.index];
-    },
-    request() {
-      return this.entity.request;
-    },
-    response() {
-      return this.entity.response;
     },
     ...mapState(useEndpointStore, [
       // 'parameters',

@@ -1,5 +1,6 @@
 <template>
   <v-textarea v-model="texts"
+    v-intersect="intersects"
     :disabled="disabled"
     :label="label" v-bind="$thx.field"
     @focus="focused=true" @blur="changes" />
@@ -23,7 +24,8 @@
   </div>
 </template>
 <script>
-import Patterns from '@/models/patterns.js';
+import ObjectItems from '@/models/meta/objectItems.js';
+// import Patterns from '@/models/patterns.js';
 import Datatype from '@/models/datatype.js';
 
 const model_mode = (mvalue)=>{
@@ -38,9 +40,9 @@ const model_mode = (mvalue)=>{
 
 const serializes = (values)=>{
   return {
-    array: ((vs)=>vs.map((v)=>typeof(v)==='string'?v:Patterns.item_serialize(v)).join('\n')),
+    array: ((vs)=>vs.map((v)=>typeof(v)==='string'?v:ObjectItems.serialize(v)).join('\n')),
     object: ((vs)=>Object.entries(vs)
-      .map(([k,v])=>Patterns.item_serialize({key:k, ...v}))
+      .map(([k,v])=>ObjectItems.serialize({key:k, ...v}))
       .join('\n')),
     string: ((vs)=>vs),
   }[model_mode(values)](values);
@@ -60,6 +62,11 @@ export default {
     label: String,
   },
   methods: {
+    intersects(isIntersecting) {
+      if(isIntersecting) {
+        this.texts = serializes(this.modelValue);
+      }
+    },
     changes() {
       // hide preview
       this.focused = false;
@@ -86,9 +93,9 @@ export default {
     },
   },
   watch: {
-    modelValue() {
-      this.texts = serializes(this.modelValue);
-    },
+    // modelValue() {
+    //   this.texts = serializes(this.modelValue);
+    // },
   },
   computed: {
     model_mode() {
@@ -98,13 +105,12 @@ export default {
       return this.texts
         .split('\n').map((ln)=>ln.trim())
         .filter((ln)=>ln!=null && 0<ln.length)
-        .map(Patterns.item_parse)
+        .map(ObjectItems.parse)
         .filter((v)=>v!=null && v.key && v.datatype)
         .map((it)=>({
           ...this.bindings(it.datatype), 
           ...it}));
     },
-
   },
   data() {
     return {

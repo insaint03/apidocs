@@ -33,7 +33,8 @@ export default class Entity extends Descriptable {
     set template_names(values) {
         this._tmpls = values;
         // update request/response bases
-        this.update_templates();
+        this._request = new Request(this.request.serialized, ...this.templates);
+        this._response = new Response(this.response.serialized, ...this.templates);
     }
    
 
@@ -84,19 +85,16 @@ export default class Entity extends Descriptable {
     get request_pathname() {return this.request.pathname;}
     set request_pathname(value) {this.request.path = value;}
     // queries
-    get request_queries() {return this.request.query_text }
-    set request_queries(value) {this.request.query_text = value;}
+    get request_queries() {return this.request.query_text; }
+    set request_queries(value) {this.request.queries = value;}
     // headers
-    get request_headers() {return this.request.headers.text;}
-    set request_headers(value) {
-        this._request.headers = (value||'').split('\n');}
+    get request_headers() {return this.request.headers_text;}
+    set request_headers(value) { this._request.headers = value; }
     // cookies
-    get request_cookies() {return this.request.cookies.text;}
-    set request_cookies(value) {
-        this._request.cookies = (value||'').split('\n')
-            .map(ObjectItems.parse);}
+    get request_cookies() {return this.request.cookies_text;}
+    set request_cookies(value) { this._request.cookies = value;}
     // body
-    get request_body() {return this.request.body.text;}
+    get request_body() {return this.request.bodytype;}
     set request_body(value) {this._request.body = value;}
 
     /* pass response properties*/
@@ -110,13 +108,13 @@ export default class Entity extends Descriptable {
     get response_mimetype() {return this.response.mimetype;}
     set response_mimetype(value) {this._response.mimetype = value;}
     // headers
-    get response_headers() {return this.response.headers;}
+    get response_headers() {return this.response.headers_text;}
     set response_headers(value) {this._response.headers = value;}
     // cookies
-    get response_cookies() {return this.response.cookies;}
+    get response_cookies() {return this.response.cookies_text;}
     set response_cookies(value) {this._response.cookies = value;}
     // body
-    get response_body() {return this.response.body;}
+    get response_body() {return this.response.bodytype;}
     set response_body(value) {this._response.body = value;}
 
 

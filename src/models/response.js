@@ -132,9 +132,9 @@ export default class Response extends Message {
 
     get serialized() {
         return {
+            ...super.serialized,
             mimetype: this.mimetype,
             status: this.status,
-            ...super.serialized,
         }
     }
 
@@ -168,8 +168,8 @@ export default class Response extends Message {
     static merge(...resps) {
         return resps.reduce((agg, resp)=>{
             return {
-                mimetype: agg.mimetype || resp.mimetype,
-                status: agg.status || resp.status,
+                mimetype: resp.mimetype || agg.mimetype,
+                status: resp.status || agg.status,
                 headers: (agg.headers || []).concat(resp.headers || [])
                     .filter((h,i,a)=>a.indexOf(h)===i), // unique
                 cookies: {...agg.cookies, ...resp.cookies},

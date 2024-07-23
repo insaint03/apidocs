@@ -1,43 +1,43 @@
 <template>
   <v-navigation-drawer class="fill-height pa-0"
-    order="1" location="right" 
-    :model-value="show" permanent>
+    order="1" location="right" :model-value="show" permanent>
     <div>
       <v-list-subheader>Templates</v-list-subheader>
       <!-- search control -->
-      <v-text-field v-model="search" label="Search & Create" outlined v-bind="$thx.field"
-        prepend-inner-icon="mdi-magnify"
-        append-inner-icon="mdi-plus-circle"
-        @click.stop
-        @click:append-inner="create_new(search)"
-        @keyup.enter.ctrl="create_new(search)" />
-      <!-- migration items -->
-      <v-list-item v-for="tmpl,ti in tags" :key="`template-tab.${tmpl.name}.${ti}`"
-        :active="selected==tmpl"
-        @click="selected = (selected!=tmpl) ? tmpl : null"
-        :title="tmpl.name">
-        <v-list-item-subtitle>
-          <v-icon size="small">{{ $thx.icon.tag }}</v-icon>
-          {{ tmpl.tagname }} 
-          <template v-if="tmpl.extends">/ {{ tmpl.extends }}</template>
-        </v-list-item-subtitle>
+      <v-list-item class="pa-0" color="default">
+        <v-text-field
+          v-model="search" label="Search & Create" outlined v-bind="$thx.field"
+          prepend-inner-icon="mdi-magnify"
+          append-inner-icon="mdi-plus-circle"
+          hide-details solo clearable
+          @click.stop
+          @click:append-inner="create_new(search)"
+          @keyup.enter.ctrl="create_new(search)" />
       </v-list-item>
-      <!-- items -->
-      <v-divider />
     </div>
-
+      <v-divider />
     <v-list
       class="h-75 overflow-auto"
       :color="$thx.color.template"
       @click.stop
       @update:selected="$emit('selected')"
       selectable slim>
+    <v-list-item v-for="tmpl,ti in tags" :key="`template-tab.${tmpl.name}.${ti}`"
+      :active="selected==tmpl"
+      @click="selected = (selected!=tmpl) ? tmpl : null"
+      :title="tmpl.name">
+      <v-list-item-subtitle>
+        <v-icon size="small">{{ $thx.icon.tag }}</v-icon>
+        {{ tmpl.tagname }} 
+        <template v-if="tmpl.extends">/ {{ tmpl.extends }}</template>
+      </v-list-item-subtitle>
+    </v-list-item>
+    <v-divider />
       <v-list-item v-for="tmpl,ti in none_tags" :key="`template-tab.x.${tmpl.name}.${ti}`"
         :title="tmpl.name" :subtitle="tmpl.extends"
         :active="selected==tmpl"
         @click="selected = (selected!=tmpl) ? tmpl : null" />
     </v-list>
-
   </v-navigation-drawer>
 </template>
 
@@ -111,4 +111,4 @@ export default {
   }
 }
 
-</script>@/stores/project
+</script>

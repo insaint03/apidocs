@@ -796,18 +796,34 @@ templates:
     response:
       mimetype: null
       status: null
-    description: To be updated within beta (expected to be in year 2024)
+    description: >-
+      To be updated within beta (expected to be in year 2024)
+
+      Concurrent (Jul.2024.) version is alpha/draft. The goal for now, is clear
+      refactoring and add essential features to open.
+
+      Expecting couple of months would be needed to remove ***draft*** suffix,
+      and 1-2 months should be taken to be beta, since the project lower its
+      priority since today. Bug fixes, feature updates, and so on will continue,
+      though let me see how this affects to the ground!
   futuer:
     name: futuer
     tagname: futuer
     datatypes: []
     request:
-      method: null
+      method: POST
       path: /z/future
     response:
       mimetype: null
       status: null
-    description: To be updated after beta (2025 or later)
+    description: >-
+      To be updated after beta (2025 or later)
+
+      Here apidocs is just a simple step, there's a long long ways to go.
+      There's many features prepared but not presented, either not has began
+      yet.
+
+      The timeline will be adapted as the situation goes.
 entities:
   - templates:
       - core
@@ -822,15 +838,24 @@ entities:
       - **download data** one can download data only, to advance at embeding
       mode. try ***File > save/download***
     request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
       method: GET
       path: /x/
-      queries: ''
-      description: ''
+      queries:
+        location: uri
+        timestamp: timestamp
     response:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: document
       mimetype: application/json
       status: 200
-      description: ''
-      body: document
   - templates:
       - core
       - _foundation.create
@@ -845,15 +870,22 @@ entities:
       to see text editor field. place yaml text content there, click "SAVE" at
       top/end right corner.
     request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
       method: POST
       path: /x/
-      queries: ''
-      description: ''
+      queries: {}
     response:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: document
       mimetype: application/json
       status: 200
-      description: ''
-      body: document
   - templates:
       - core
       - _foundation.update
@@ -874,15 +906,22 @@ entities:
       fragment which used in common. The component can be hierarchical
       inherited, and/or mix and combined.
     request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
       method: PUT
       path: /x/
-      queries: ''
-      description: ''
+      queries: {}
     response:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: document
       mimetype: application/json
       status: 200
-      description: ''
-      body: document
   - templates:
       - datatype
       - _foundation.list
@@ -909,15 +948,20 @@ entities:
       alternate every `object (dict)` into `array` at a single update, however
       can NOT update a `string` type and `number` type into `boolean` at once.
     request:
+      description: ''
+      headers: []
+      cookies: {}
+      body: null
       method: GET
       path: /x/datatype
-      queries: ''
-      description: ''
+      queries: {}
     response:
+      description: ''
+      headers: []
+      cookies: {}
+      body: datatype
       mimetype: application/json
       status: 200
-      description: ''
-      body: datatype
   - templates:
       - datatype
       - _foundation.create
@@ -936,15 +980,22 @@ entities:
        - place a name at `search & create` field.
        - press `ctrl+enter` to create the type by the name. basistype set default `object`.
     request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: datatype
       method: POST
       path: /x/datatype
-      queries: ''
-      description: ''
+      queries: {}
     response:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: datatype
       mimetype: application/json
       status: 200
-      description: ''
-      body: datatype
   - templates:
       - datatype
       - _foundation.get
@@ -969,113 +1020,162 @@ entities:
       Refer (c)Apple itunes property editor on multi-item selection, only
       properties in common can be set by the setting.
     request:
-      method: GET
-      path: /x/datatype
-      queries: ''
       description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: GET
+      path: /x/datatype/<datatype_name>
+      queries: {}
     response:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: datatype
       mimetype: application/json
       status: 200
-      description: ''
-      body: datatype
   - templates:
       - datatype
       - _foundation.update
     description: Edit datatypes
     request:
+      description: ''
+      headers: []
+      cookies: {}
+      body: null
       method: PUT
       path: /x/datatype
-      queries: ''
-      description: ''
+      queries: {}
     response:
+      description: ''
+      headers: []
+      cookies: {}
+      body: datatype
       mimetype: application/json
       status: 200
-      description: ''
-      body: datatype
   - templates:
       - template
       - _foundation.list
     description: List templates
     request:
+      description: ''
+      headers: []
+      cookies: {}
+      body: null
       method: GET
       path: /x/template
-      queries: ''
-      description: ''
+      queries: {}
     response:
+      description: ''
+      headers: []
+      cookies: {}
+      body: template
       mimetype: application/json
       status: 200
-      description: ''
-      body: template
   - templates:
       - template
       - _foundation.get
     description: Get a single template
     request:
-      method: GET
-      path: /x/template
-      queries: ''
       description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: GET
+      path: /x/template/<template_name>
+      queries: {}
     response:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: template
       mimetype: application/json
       status: 200
-      description: ''
-      body: template
   - templates:
       - template
       - _foundation.create
     description: Create templates
     request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
       method: POST
       path: /x/template
-      queries: ''
-      description: ''
+      queries: {}
     response:
+      description: ''
+      headers: []
+      cookies: {}
+      body: template
       mimetype: application/json
       status: 200
-      description: ''
-      body: template
   - templates:
       - template
       - _foundation.update
     description: Edit templates
     request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
       method: PUT
       path: /x/template
-      queries: ''
-      description: ''
+      queries: {}
     response:
+      description: ''
+      headers: []
+      cookies: {}
+      body: template
       mimetype: application/json
       status: 200
-      description: ''
-      body: template
   - templates:
       - endpoint
       - _foundation.list
     description: List endpoints
     request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
       method: GET
       path: /x/endpoint
-      queries: ''
-      description: ''
+      queries: {}
     response:
+      description: ''
+      headers: []
+      cookies: {}
+      body: endpoint
       mimetype: application/json
       status: 200
-      description: ''
-      body: endpoint
   - templates:
       - endpoint
       - _foundation.get
     description: Get a single endpoint
     request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
       method: GET
       path: /x/endpoint
-      queries: ''
-      description: ''
+      queries:
+        index: number
     response:
+      description: ''
+      headers: []
+      cookies: {}
+      body: endpoint
       mimetype: application/json
       status: 200
-      description: ''
-      body: endpoint
   - templates:
       - endpoint
       - _foundation.create
@@ -1097,27 +1197,347 @@ entities:
       for each migration type, plus CRUD (corresponding, _foundattion
       `create`/`list`&`get`/`update`/`delete` by order) will be set.
     request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
       method: POST
       path: /x/endpoint
-      queries: ''
-      description: ''
+      queries:
+        mix: array
     response:
+      description: ''
+      headers: []
+      cookies: {}
+      body: endpoint
       mimetype: application/json
       status: 200
-      description: ''
-      body: endpoint
   - templates:
       - endpoint
       - _foundation.update
     description: Edit endpoints
     request:
+      description: ''
+      headers: []
+      cookies: {}
+      body: null
       method: PUT
       path: /x/endpoint
-      queries: ''
-      description: ''
+      queries: {}
     response:
+      description: ''
+      headers: []
+      cookies: {}
+      body: endpoint
       mimetype: application/json
       status: 200
+  - templates:
+      - null
+      - beta
+    description: |-
+      static usage guide screen
+      Build (static) kickstart guide screen to follow
+    request:
       description: ''
-      body: endpoint
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: POST
+      path: /y/alpha/guide
+      queries: {}
+    response:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: string
+      mimetype: application/json
+      status: 200
+  - templates:
+      - null
+      - beta
+    description: >-
+      body type suggestion
+
+      From `template` body constraints + `template` related datatypes, suggest
+      prior candidates to set endpoint request-response body type
+    request:
+      description: ''
+      headers: []
+      cookies: {}
+      body: null
+      method: POST
+      path: /y/alpha/body
+      queries: {}
+    response:
+      description: ''
+      headers: []
+      cookies: {}
+      body: object
+      mimetype: application/json
+      status: 200
+  - templates:
+      - null
+      - beta
+    description: |-
+      datatype inheritance
+      Derive a child datatype feature, will automatically contains parent-items
+    request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: POST
+      path: /y/alpha/type_inherit
+      queries: {}
+    response:
+      description: ''
+      headers: []
+      cookies: {}
+      body: object
+      mimetype: application/json
+      status: 200
+  - templates:
+      - null
+      - beta
+    description: show history log screen
+    request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: POST
+      path: /y/alpha/history
+      queries: {}
+    response:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: string
+      mimetype: application/json
+      status: 200
+  - templates:
+      - null
+      - beta
+    description: |-
+      document specification screen
+      create document specification screen
+    request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: GET
+      path: /y/beta/spec
+      queries: {}
+    response:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: document
+      mimetype: application/html
+      status: 200
+  - templates:
+      - null
+      - beta
+    description: |-
+      export to swagger
+      export document to swagger format
+    request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: POST
+      path: /y/beta/swagger
+      queries: {}
+    response:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: document
+      mimetype: application/json
+      status: 200
+  - templates:
+      - null
+      - beta
+    description: request path pattern match
+    request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: GET
+      path: /y/beta/path_pattern
+      queries:
+        pathname: string
+    response:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: request
+      mimetype: application/json
+      status: 200
+  - templates:
+      - futuer
+    description: >-
+      datatype defaults, evaluation, examples
+
+      Add features to datatype models, currently disabled `defaults`,
+      `evaluation`, `examples` to work.
+    request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: GET
+      path: /z/future/datatype
+      queries: {}
+    response:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: datatype
+      mimetype: application/json
+      status: 200
+  - templates:
+      - futuer
+      - _foundation.get
+    description: >-
+      Cache current editing
+
+      make concurrent working data be cached within session storage, to achieve
+      seamless user experience
+    request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: GET
+      path: /z/future/cache
+      queries: {}
+    response:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: document
+      mimetype: application/json
+      status: 200
+  - templates:
+      - futuer
+      - _foundation.delete
+    description: |-
+      sync repository accounts
+      targetting:
+      - github
+      - mercurial
+      - aws/azure/gcp IAM
+
+      to sync & run with external repositories
+    request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: POST
+      path: /z/future/iam
+      queries: {}
+    response:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: string
+      mimetype: application/json
+      status: 200
+  - templates:
+      - null
+      - futuer
+    description: |-
+      quick build endpoints from datatype
+      datatype to build template, then mix CRUD right away to fasten the process
+    request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: GET
+      path: /z/future/quick
+      queries: {}
+    response:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: time
+      mimetype: application/json
+      status: 200
+  - templates:
+      - null
+      - futuer
+    description: >-
+      API explorer
+
+      Advancing `fetch`
+      [https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API),
+      test API explorer feature from viewer / embeddings.
+    request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: GET
+      path: /z/future/explore
+      queries: {}
+    response:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: object
+      mimetype: application/json
+      status: 200
+  - templates:
+      - null
+      - futuer
+    description: |-
+      embedding option
+      make embedding rich with multiple options, i.e.:
+      - viewer ***theme*** and its ***style options***
+      - show/hide ***viewer sections***
+    request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: GET
+      path: /z/future/embed
+      queries: {}
+    response:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: document
+      mimetype: application/json
+      status: 200
 timestamp: 1721380124977

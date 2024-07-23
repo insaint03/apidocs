@@ -66,8 +66,13 @@ export default class ObjectItems extends Serializable {
             .map((ln)=>ln.trim())
             .filter((ln)=>ln && 0<ln.length); 
     }
-    get items() { return this.value.map(ObjectItems.parse); }
-    set items(values) { this._raw = values.map(ObjectItems.serialize); }
+    get items() { return this.value
+            .map(ObjectItems.parse)
+            .filter((it)=>it!=null); 
+    }
+    set items(values) { 
+        this._raw = values.map(ObjectItems.serialize); 
+    }
 
     get dict() { 
         return Object.fromEntries(this._raw
