@@ -5,16 +5,23 @@ import editorScreen from '@/editor/index.vue'
 import gtm from '@/gtm.js'
 // import explorerScreen from '@/views/explorerView.vue'
 
-const routes = Object.entries({
-  view: viewerScreen,
-  edit: editorScreen,
-  // old: legacyEditor,
-  // 'explorer': '@/views/explorerView.vue',
-}).map(([name, component])=>({
-  name,
-  path: `/${name}`,
-  component: component,
-}));
+const load_props = ({query})=>({location: query.d});
+
+const routes = [
+  {name: 'index', path: '/', component: editorScreen, props: load_props},
+  {name: 'view', path: '/view', component: viewerScreen, props: load_props},
+  {name: 'edit', path: '/edit', component: editorScreen, props: load_props},
+];
+// const routes = Object.entries({
+//   view: viewerScreen,
+//   edit: editorScreen,
+//   // old: legacyEditor,
+//   // 'explorer': '@/views/explorerView.vue',
+// }).map(([name, component])=>({
+//   name,
+//   path: `/${name}`,
+//   component: component,
+// }));
 routes.push({
   name: 'index',
   path: '/',

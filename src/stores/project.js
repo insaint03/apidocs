@@ -9,6 +9,11 @@ import Datatype from '@/models/datatype';
 import models from '@/models';
 import gtm from '@/gtm.js';
 const storage_key = 'apidocs';
+const location_presets = {
+    'guide.example.en': import.meta.env.VITE_GUIDE_LOCATION,
+    'guide.example.ko': import.meta.env.VITE_GUIDE_LOCATION_KO,
+}
+
 
 export const useProjectStore = defineStore('project', {
     state: ()=>models.state,
@@ -69,6 +74,12 @@ export const useProjectStore = defineStore('project', {
             };
             this.caches();
 
+        },
+        async initialize(location) {
+            if(location) {
+                const loc = location_presets[location] || location;
+                return await this.loads(loc);
+            }
         },
         async loads(location) {
             gtm.push('load', {location,});

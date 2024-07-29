@@ -1,0 +1,1579 @@
+location: ''
+project:
+  name: apidoc
+  version: 0.4.a.draft
+  history: []
+  links:
+    - >-
+      (github) github <https://github.com/insaint03/apidocs|repository,
+      https://github.com/insaint03/apidocs/issues|issues>
+    - >-
+      (adv) 활용되었습니다
+      <https://vuejs.org|vue.js,https://vitejs.dev|vite.js,https://vuetifyjs.com|vuetify.js,https://github.com/nodeca/js-yaml|js-yaml,https://markdown-it.github.io/|markdown-it>
+      감사합니다
+    - (ref) 참고했습니다
+    - >-
+      <https://swagger.io|OpenAPI specification/swagger,https://redocly.com|redocly>
+  license: (CC) CC-BY-NC-SA 4.0 <https://creativecommons.org/licenses/by-nc-sa/4.0/>
+  contributors:
+    - >-
+      (owner) yg.song
+      <https://www.linkedin.com/in/%EC%9A%A9%EA%B7%BC-%EC%86%A1-53868187/|LinkedIn>
+      a.k.a dxnlab
+  description: >-
+    Rest(ful) API 문서화 편집/보기
+
+    ## 나는 그저 평범한 사람
+
+    ---
+
+    세상 어딘가에는 기술 문서를 깔끔하게 관리하며 프로젝트를 이끌어가는, 
+    극소수의 훌륭한 기술 리더들이 분명 있습니다. **나는 아닙니다**. 
+    다들 그렇지 않습니까? 우리, ***하드보일드 공돌이***들에게 
+    인간을 위한, 인간적인 자료를 유지 관리하는건 극도로 피곤한 일입니다. 
+    그럼에도 문서 작업은 업무를 추진하는데 필수적인 일입니다. **지극히**.
+    나를 포함해서 - 여기에 무언가 있어야 한다고 생각했습니다.
+
+    &nbsp;
+
+
+    - **빠르게**, 최우선 목료는 문서 작성과 유지에 필요한 시간과 노력을 절검하는 것입니다.
+    - **쉽게**, 문서의 수정과 공유가 간단하게 이루어질 수 있어야 합니다.
+    - **공돌이를 위하여**, 어차피 이런 자료를 만들고 소비하는건 우리네 ***공돌이*** 들입니다. ***효율성***의 기치 아래 짧게, 간명하게, 작게 유지합니다.
+
+    &nbsp;
+
+    ### OpenAPI specification / Swagger 참 좋죠, 그런데,
+
+    ---
+
+    [Openapi specification](https://swagger.io) 정말 멋진 툴입니다. 
+    그런데 그 문서를 만들고 유지하려면 이만저만한 노력이 들어가는게 아닙니다.
+    급할땐 차라리 ***스프레드시트***가 나을 때도 많습니다. 다들 그런거 아닙니까.
+    이제, 여기, 그 **사이의 무언가**를 제시합니다.
+
+
+    &nbsp;
+
+    API 문서 작성과 관리를 간편하게, 주요 타겟 사용자는 두 가지입니다.
+    - **서비스 개발자**는 API endpoint 정의를 쉽게 공유하고
+    - **서비스 사용자**는 레퍼런스 문서를 간편하게 찾아볼 수 있습니다.
+
+    &nbsp;
+
+    ***항상 효율적으로***, 나머지는 그때 그때 맞춰가면서.
+datatypes:
+  document:
+    name: document
+    basistype: object
+    description: >-
+      데이터 모음 기준 단위, yaml/json 형식 파일
+
+      하나의 **document** 문서는
+      - ***project*** 프로젝트를 설명하는 메타 정보를 담고 있습니다
+      - ***datatypes*** 데이터 스킴(scheme) 정의 정보를 목록으로 담고 있습니다.
+      - ***entities*** 혹은 ***endpoints*** 예상 Request(요청) - Response(응답) 정보를,
+      1:1의 한 쌍으로 포함합니다. 
+      - ***templates*** 여러 *endpoint*에서 공통 활용 가능한 부품 모음으로, 
+      조합해서 enpoint 목록을 만들게 됩니다.
+
+      &nbsp;
+
+      `File > open/import` 메뉴로 외부 문서(document URL)을 불러올 수 있습니다.
+      `File > save/download` 메뉴로 현재 데이터를 다운로드 할 수 있습니다.
+      그리고 `Embedding` html로 공유를 위한 별도 HTML 페이지를 만들 수 있습니다.
+    items:
+      '!project': project
+      '!datatypes': document._datatypes
+      '!entities': document._entities
+      '!templates': document._templates
+    examples: []
+  project:
+    name: project
+    basistype: object
+    description: 프로젝트 기술 메타정보 모음
+    items:
+      '!name': _.naming
+      version: project._version
+      description: _.description
+      license: liner
+      links: project._links
+      terms: project._terms
+      contributors: project._contributors
+      history: project._history
+    examples: []
+  datatype:
+    name: datatype
+    basistype: object
+    description: 데이터 스키마 정보와 타입(속성) 설정
+    items:
+      '!name': _.naming
+      '!basistype': datatype._basistype=string
+      description: _.description
+      items: items
+      migration: datatype._migration
+      defaults: datatype._defaults
+      evaluation: datatype._evaluation
+    examples: []
+  template:
+    name: template
+    basistype: object
+    description: >-
+      여러 endpoint에서 공통 활용 가능한 부품 모음
+
+      Template (템플릿)은 `apidocs`의 핵심 부품입니다. 
+      그 본래의 의미 - 형틀 - 에서 드러나듯, 여러 "형틀"을 짜 맞추고 조합해서 빠르게 다양한 `endpoint entities`를 만들게 됩니다.
+    items:
+      '!name': _.naming
+      description: _.description
+      extend: template._extend
+      datatypes: template._datatypes
+      request: request
+      response: response
+    examples: []
+  endpoint:
+    name: endpoint
+    basistype: object
+    description: >- 
+      1대1 대응 요청-응답 쌍
+
+      문제가 없다면, (요청 옵션에 따라 결정되는) 단일 API 엔드포인트는 단 하나의 응답을 반환해야 합니다.
+      따라서 `apidocs`는 엔드포인트 정의를 단일 요청과 그에 상응하는 단일 응답의 한 쌍으로 가정합니다.
+      오류, 혹은 내부 처리에 따라 응답 형식이 달라지는 경우, 요청 경로 패턴(`/*beta*/` 예정)을 통해
+      별도의 `enpoint entity`로 정의할 수 있습니다.
+    items:
+      description: _.description
+      templates: endpoint._templates
+      '!request': request
+      '!response': response
+    examples: []
+  request:
+    name: request
+    basistype: object
+    description: >-
+      HTTP 요청(Request) 메시지 정의
+
+      HTTP 요청 메시지의 정의를 담고 있습니다.
+    items:
+      '!method': request._method=GET
+      '!path': request._path
+      description: _.description
+      queries: _.http_queries
+      headers: _.http_headers
+      cookies: _.http_cookies
+      body: _.http_body
+    examples: []
+  response:
+    name: response
+    basistype: object
+    description: >-
+      HTTP 응답(Response) 메시지 정의
+      
+      HTTP 응답 메시지의 정의를 담고 있습니다.
+    items:
+      status: response._status=200(OK)
+      mimetype: response._mimetype=application+json
+      headers: _.http_headers
+      cookies: _.http_cookies
+      body: _.http_body
+    examples: []
+  document._datatypes:
+    name: document._datatypes
+    basistype: object
+    description: 문서(document) 내의 데이터 타입 목록
+    items:
+      '[name]': datatype
+    examples: []
+  document._templates:
+    name: document._templates
+    basistype: object
+    description: 문서(document) 내의 템플릿 목록
+    items:
+      '[name]': template
+    examples: []
+  document._entities:
+    name: document._entities
+    basistype: array
+    description: endpoint array in document
+    items:
+      - endpoint
+    examples: []
+  liner:
+    name: liner
+    basistype: object
+    description: >-
+      (분류) 제목 <링크1,링크2|표시명,...> 설명문구
+      
+      라이너(Liner)는 줄(line)을 기준으로 해석 가능한 조합 데이터를 표현하는 `apidocs`의 별도 형식입니다.
+      라이너는 프로젝트(project) 내에서 라이센스(License), 링크(Links), 관계자(Contributors) 등에 사용됩니다.
+      `(분류) 제목 <링크1,링크2|표시명,...> 설명문구` 형식으로, 
+      형식 구분자 (괄호 및 파이프)에 따라 serialize/deserialize 되어 하나의 조합 항목을 구성합니다.
+    items:
+      '!key': liner._key
+      '!title': liner._title
+      links: _.liner_links
+      description: liner._description
+    examples: []
+  liner._key:
+    name: liner._key
+    basistype: string
+    description: 라이너(Liner)의 분류 키 이름(keyname)
+    examples: []
+  liner._title:
+    name: liner._title
+    basistype: string
+    description: 라이너(Liner) 항목의 표시 제목(title)
+    examples: []
+  liner._description:
+    name: liner._description
+    basistype: string
+    description: 라이너(Liner) 항목에 대한 설명문구
+    examples: []
+  _.multi_liner:
+    name: _.multi_liner
+    basistype: array
+    description: 라이너(Liner) 여러 줄 모음
+    items:
+      - liner
+    examples: []
+  _.liner_link:
+    name: _.liner_link
+    basistype: object
+    description: >-
+      라이너(Liner)의 링크 목록. 쉼표(,) 구분
+
+      한 줄의 라이너(Liner) 항목에는 다수 연결 하이퍼링크가 포함될 수 있습니다.
+      하이퍼링크는 우선 쉼표(,)를 기준으로 구분되며, 후속 파이프(|) 이후의 내용으로 표시합니다.
+      가령 `<https://apidocs.dxnlab.com,https://apidocs.dxnlab.com/view|보기모드>` 라면,
+      첫 번째 항목 `https://apidocs.dxnlab.com`는 보기 모드에서 
+      <pre><a href="https://apidocs.dxnlab.com">https://apidocs.dxnlab.com</a></pre>로,
+      두 번째 항목 `https://apidocs.dxnlab.com/view`는 
+      <pre><a href="https://apidocs.dxnlab.com/view">보기모드</a></pre>로 표시됩니다.
+    items:
+      '!href': _.liner_link._href
+      anchor: _.liner_link._anchor
+    examples: []
+  _.liner_link._href:
+    name: _.liner_link._href
+    basistype: string
+    description: 라이너(Liner) 항목의 링크 연결 주소 href
+    examples: []
+  _.liner_link._anchor:
+    name: _.liner_link._anchor
+    basistype: string
+    description: 라이너(Liner) 항목의 링크 표시명 anchor, 없는 경우 href 사용
+    examples: []
+  _.liner_links:
+    name: _.liner_links
+    basistype: array
+    description: 라이너(Liner) 항목의 링크 목록
+    items:
+      - _.liner_link
+    examples: []
+  items:
+    name: items
+    basistype: array
+    description: >-
+      datatype (데이터타입) 정의에 포함된 구성 원소 목록
+
+      데이터타입 정의에 포함될 수 있는 구성 원소 목록은 세 가지로 구분합니다:
+      - `object_item` (객체 또는 딕셔너리/맵 형식)
+        객체 형식의 경우, 라이너(Liner)와 비슷한 별도 형식 (_.object_item)을 사용합니다.
+      - `array_item` (배열 형식)
+        배열 형식의 경우, 배열 원소로 허용된 데이터타입 이름의 목록입니다.<br/>
+      - `enum_item` (나열/Enumeration 형식)
+        나열 형식의 경우, 첫 번째 공백을 기준으로 나누어, 값과 설명으로 이루어집니다.
+    items:
+      - _.object_item
+      - _.array_item
+      - _.enum_item
+    examples: []
+  _.object_item:
+    name: _.object_item
+    basistype: object
+    description: >-
+      객체/딕셔너리/맵 유형 데이터타입의 원소 정의 항목
+
+      객체 원소 항목은 다음과 같이 구성됩니다:
+      - ***key***: 키. 객체 원소의 키 이름
+      - ***datatype***: 형식. 객체 원소의 데이터타입 이름
+      - ***defaults***: 객체 원소의 기본값
+      - ***description***: 객체 원소의 설명
+
+      &nbsp;
+
+      저장 문서에는 
+
+      ```yaml
+      //필수 원소
+      '!필수키': 데이터타입=기본값 //설명
+      //옵션 원소
+      옵션키: 데이터타입=기본값 //설명
+      ```
+      
+      
+      과 같이 저장하고, 이때 기본값과 설명은 옵션입니다. 
+      따라서 가장 간단하게 표현한다면,
+
+
+      ```yaml
+      items: 
+        '!id': string
+        'index': number
+      ```
+      과 같은 식이 됩니다.
+    items:
+      '!key': _.object_item._key
+      '!datatype': _.object_item._datatype
+      defaults: _.object_item._defaults
+      description: _.object_item._description
+    examples: []
+  _.enum_item:
+    name: _.enum_item
+    basistype: object
+    description: |-
+      Enum (나열형) 원소 항목 정의
+
+      내용 중 첫 번째 공백(space/tab/...)을 기준으로 나누어, 
+      각각 값(value)과 그 설명(desc)으로 적용됩니다.
+    items:
+      '!value': _.enum_item._value
+      desc: _.enum_item._desc
+    examples: []
+  _.naming:
+    name: _.naming
+    basistype: string
+    description: |-
+      이름 형식 <...namespace.>localname
+      
+      데이터타입, 템플릿에 적용되는 이름 형식입니다.
+      이름은 온점(.)으로 구분해서 네임스페이스(namespace)와 로컬 이름(localname)으로 나누어 볼 수 있습니다.
+    examples: []
+  _.description:
+    name: _.description
+    basistype: string
+    description: >-
+      설명 형식 (제목) \n 내용...
+
+      프로젝트, 데이터타입, 템플릿, 엔드포인트 및 요청-응답 등 여러 줄 설명에 공통 적용되는 설명문 형식입니다.
+      (라이너, 아이템 등 한 줄 형식에는 적용 안 됨) 줄바꿈(newline `\n`)을 기준으로 
+      첫 줄은 제목(summary), 이후는 설명(description)으로 해석합니다.
+      설명(description)은 마크다운 형식으로 표시됩니다.
+    examples: []
+  project._version:
+    name: project._version
+    basistype: string
+    description: 프로젝트의 버전 정보 (문자열string)
+    examples: []
+  project._license:
+    name: project._license
+    basistype: liner
+    description: 프로젝트의 라이선스 정보 (라이너liner)
+    items: {}
+    examples: []
+  project._links:
+    name: project._links
+    basistype: array
+    description: 프로젝트 관련 링크 목록 (멀티라이너 multi_liner)
+    items:
+      - liner
+    examples: []
+  project._terms:
+    name: project._terms
+    basistype: array
+    description: 프로젝트 관련 약관 목록 (멀티라이너 multi_liner)
+    items:
+      - liner
+    examples: []
+  project._contributors:
+    name: project._contributors
+    basistype: array
+    description: 프로젝트 관계자 목록 (멀티라이너 multi_liner)
+    items:
+      - liner
+    examples: []
+  project._history:
+    name: project._history
+    basistype: object
+    description: 프로젝트의 버전 히스토리 기록
+    items:
+      '[version]': _.multi_liner
+    examples: []
+  _.object_item._key:
+    name: _.object_item._key
+    basistype: string
+    description: 객체 아이템(object_item) 항목 중 키 이름 keyname
+    examples: []
+  _.object_item._datatype:
+    name: _.object_item._datatype
+    basistype: string
+    description: 객체 아이템(object_item) 항목 중 데이터타입 이름
+    examples: []
+  _.object_item._defaults:
+    name: _.object_item._defaults
+    basistype: string
+    description: 객체 아이템(object_item) 항목 중 기본값(defautls)
+    examples: []
+  _.object_item._description:
+    name: _.object_item._description
+    basistype: string
+    description: 객체 아이템(object_item) 항목 중 설명(description)
+    examples: []
+  _.enum_item._value:
+    name: _.enum_item._value
+    basistype: string
+    description: 나열 아이템(enum_item) 항목 중 값(value)
+    examples: []
+  _.enum_item._desc:
+    name: _.enum_item._desc
+    basistype: string
+    description: 나열 아이템(enum_item) 항목 중 설명(desc)
+    examples: []
+  datatype._basistype:
+    name: datatype._basistype
+    basistype: string
+    description: 데이터타입(datatype)의 직속 상위 타입 이름
+    examples: []
+  datatype._migration:
+    name: datatype._migration
+    basistype: string
+    description: 데이터타입(datatype)이 DB를 활용할 경우, 마이그레이션 대상 테이블 이름
+    examples: []
+  datatype._defaults:
+    name: datatype._defaults
+    basistype: string
+    description: 데이터타입(datatype)의 기본값
+    examples: []
+  datatype._evaluation:
+    name: datatype._evaluation
+    basistype: string
+    description: 데이터타입(datatype)의 유효성 검증 함수 (js eval 가능한 형식)
+    examples: []
+  request._method:
+    name: request._method
+    basistype: string
+    description: |-
+      HTTP 요청(Request)의 메소드 유형
+      - GET
+      - POST
+      - PUT
+      - PATCH
+      - DELETE
+      중 하나
+    examples: []
+  request._path:
+    name: request._path
+    basistype: string
+    description: HTTP 요청(Request)의 경로(pathname), 슬래시(/)로 구분
+    examples: []
+  _.http_body:
+    name: _.http_body
+    basistype: string
+    description: HTTP 요청/응답의 내용(body) 형식 데이터타입 이름
+    examples: []
+  response._status:
+    name: response._status
+    basistype: string
+    description: |-
+      HTTP 응답(Response)의 상태(status) 코드/이름.
+      기본값 `200 (OK)`
+    examples: []
+  response._mimetype:
+    name: response._mimetype
+    basistype: string
+    description: |-
+      HTTP 응답(Response)의 MIME 타입 유형
+      데이터타입의 직렬화(serialization) 형식 지정
+      기본값 `application/json`
+    examples: []
+  _.http_queries:
+    name: _.http_queries
+    basistype: array
+    description: HTTP 요청(Request)의 쿼리 파라미터
+    items:
+      - _.object_item
+    examples: []
+  _.http_headers:
+    name: _.http_headers
+    basistype: array
+    description: HTTP 요청/응답의 헤더(header) 파라미터. 목록형(Array)
+    items:
+      - _.object_item
+    examples: []
+  _.http_cookies:
+    name: _.http_cookies
+    basistype: array
+    description: HTTP 요청/응답의 쿠키(cookie) 파라미터. 딕셔너리형(Object)
+    items:
+      - _.object_item
+    examples: []
+  endpoint._templates:
+    name: endpoint._templates
+    basistype: array
+    description: 엔드포인트(enpoint)에 적용할 템플릿(template) 목록
+    items:
+      - _.naming
+    examples: []
+  template._tagname:
+    name: template._tagname
+    basistype: string
+    description: 템플릿(Template) 속성 중 그룹 표시에 적용되는 태그 이름
+    examples: []
+  template._extend:
+    name: template._extend
+    basistype: string
+    description: 템플릿(Template)의 직상위 상속 템플릿 이름
+    examples: []
+  template._datatypes:
+    name: template._datatypes
+    basistype: array
+    description: 템플릿(Template)에 연관된 데이터타입(datatype) 목록
+    items:
+      - _.naming
+    examples: []
+  datatype._origins:
+    name: datatype._origins
+    basistype: enum
+    description: 데이터타입의 기반(origin) 유형
+    items:
+      - boolean
+      - number
+      - string
+      - array
+      - object
+      - enum
+    examples: []
+  type_constraint:
+    name: type_constraint
+    basistype: object
+    description: 템플릿(Template)에서 적용되는 데이터타입 설정 제한 조건
+    items:
+      inherits: type_constraint._inherits
+      contains: type_constraint._contains
+      keyname: type_constraint._keyname
+      fixed: type_constraint._fixed
+    examples: []
+  type_constraint._inherits:
+    name: type_constraint._inherits
+    basistype: _.naming
+    description: '(/datatype): <datatype> 또는 그 하위 타입 허용'
+    examples: []
+  type_constraint._contains:
+    name: type_constraint._contains
+    basistype: _.naming
+    description: (@datatype) <datatype>을 아이템(items)으로 포함하는 타입 허용
+    examples: []
+  type_constraint._keyname:
+    name: type_constraint._keyname
+    basistype: string
+    description: >-
+      (#keyname) <keyname>을 키 이름으로 포함하는 타입 허용
+      기본 아이템(items)에 키이름(keyname)을 포함하는 타입 (객체/맵 또는 나열형)
+    examples: []
+  type_constraint._fixed:
+    name: type_constraint._fixed
+    basistype: _.naming
+    description: (!datatype) <datatype> 고정값으로 사용
+    examples: []
+  _.array_item:
+    name: _.array_item
+    basistype: _.naming
+    description: 배열 원소로 허용된 데이터타입 이름
+    examples: []
+templates:
+  _foundation.root:
+    name: _foundation.root
+    tagname: null
+    datatypes: []
+    request:
+      method: null
+      path: null
+    response:
+      mimetype: application/json
+      status: null
+    description: ''
+  _foundation.auth:
+    name: _foundation.auth
+    extend: _foundation.root
+    tagname: null
+    datatypes: []
+    request:
+      method: null
+      path: null
+    response:
+      mimetype: application/json
+      status: null
+    description: ''
+  _foundation.list:
+    name: _foundation.list
+    extend: _foundation.root
+    tagname: null
+    datatypes: []
+    request:
+      method: GET
+      path: null
+    response:
+      mimetype: application/json
+      status: null
+      body:
+        - inherit: array
+    description: ''
+  _foundation.get:
+    name: _foundation.get
+    extend: _foundation.root
+    tagname: null
+    datatypes: []
+    request:
+      method: GET
+      path: null
+    response:
+      mimetype: application/json
+      status: null
+      body:
+        - inherit: object
+    description: ''
+  _foundation.create:
+    name: _foundation.create
+    extend: _foundation.root
+    tagname: null
+    datatypes: []
+    request:
+      method: POST
+      path: null
+    response:
+      mimetype: application/json
+      status: null
+      body:
+        - inherit: object
+    description: ''
+  _foundation.update:
+    name: _foundation.update
+    extend: _foundation.root
+    tagname: null
+    datatypes: []
+    request:
+      method: PUT
+      path: null
+    response:
+      mimetype: application/json
+      status: null
+      body:
+        - inherit: object
+    description: ''
+  _foundation.delete:
+    name: _foundation.delete
+    extend: _foundation.root
+    tagname: null
+    datatypes: []
+    request:
+      method: DELETE
+      path: null
+    response:
+      mimetype: application/json
+      status: null
+      body:
+        - inherit: object
+    description: ''
+  core:
+    name: core
+    tagname: core
+    datatypes:
+      - document
+      - project
+      - datatype
+      - template
+      - endpoint
+    request:
+      method: null
+      path: /x/
+    response:
+      mimetype: null
+      status: null
+    description: >-
+      모든 정보를 한 파일 단위로 포함하고 있는 document(문서).
+
+      하나의 ***Document(문서)***는 Rest*ful* API 문서의 구성, 유지, 공유의 핵심 데이터를 담고 있는 단위 파일입니다.
+      
+      &nbsp;
+
+      `yaml/json` 형식으로 구성되며, 편집기와 보기, embedding HTML 페이지를 통해
+      간편하게 생성, 불러오기, 저장, 공유, 보기가 가능합니다.
+
+      &nbsp;
+
+      `apidocs`에서는 크게 두 가지 모드, **view (보기)** 모드와 **edit (편집)** 모드가 있습니다.
+      ***view 모드***는 문서를 보는 뷰어로, ***edit 모드***는 문서를 수정하는 편집기로 작동합니다.
+  datatype:
+    name: datatype
+    tagname: datatype
+    datatypes:
+      - datatype
+      - items
+    request:
+      method: null
+      path: /x/datatype
+    response:
+      mimetype: null
+      status: null
+      body:
+        - fixed: datatype
+    description: >-
+      데이터 스키마 정보와 타입(속성) 설정
+
+      결국 다 데이터입니다. ***datatype(데이터타입)***은 프로젝트의 데이터 형식 정의를 담고 있습니다.
+
+      &nbsp;
+
+      하나의 데이터타입(datatype) 항목은 다음 요소를 포함합니다:
+      - ***이름(name)***: 데이터타입 이름으로, namespace/localname으로 구분되며 프로젝트 내에서 중복 불가합니다(unique identifier).
+      - ***설명(description)***: 데이터타입에 대한 설명 문구입니다. 
+      - ***마이그레이션(migration)***: 특히 객체 유형 (origintype=object) 형식 데이터에서,
+        해당 데이터타입이 **DB 테이블**의 한 항목에 연결 마이그레이션 될 수 있습니다.
+        데이터타입의 마이그레이션(migration) 속성은 이 경우 연결 DB 테이블의 이름을 지정합니다.
+        일반적으로는 공백으로 남겨 둡니다.
+      - ***기반유형(basistype)***: 데이터타입은 클래스와 같이 상속(inherit) 가능합니다. 직상위 타입의 이름입니다.
+      - ***is_primitive***: 기초 형식 여부. 기초 형식(is_primitive=`TRUE`)일 경우 다음 두 가지 차이가 있습니다:
+       가) 기초형식은 편집 모드 및 보기 모드에서 옆쪽 목록 화면에 표시되지 않습니다.
+       나) 다른 형식의 아이템(items)에 입력할 경우, `datatype=primitive` 로 지정하면
+        해당 `primitive` 형식을 상속 받은 신규 데이터타입을 생성합니다. 
+        그러나 기초형식이 아니라면 지정된 데이터타입 형식을 그대로 사용합니다.
+      - ***아이템(items)***: `객체` (`딕셔너리` 혹은 `맵`), `배열`, `나열` 형식은 
+      다른 데이터 형식을 포함하는 모음형(collective) 데이터 형식입니다. 
+      그에 따라 데이터형식에 포함될 원소(element)의 조건 및 순서를 정의합니다.
+      - ---
+      - **(이하 alpha.draft 버전에서 아직 구현되지 않은 속성입니다)**
+      - ***기본값(defaults)***: 데이터타입의 기본값입니다.
+      - ***유효성검증(evaluation)***: 데이터타입을 검증하기 위한 js 함수입니다.
+        특히 예시(examples) 등에서 상속 구조에 따라, 상위 유효성부터 순차적으로 검증됩니다.
+      - ***예시(examples)***: 데이터타입의 예시 데이터입니다.
+  template:
+    name: template
+    tagname: template
+    datatypes:
+      - template
+      - type_constraint
+    request:
+      method: null
+      path: /x/template
+    response:
+      mimetype: null
+      status: null
+    description: >-
+      형틀. 엔드포인트(endpoint/entity)를 찍어내기 위한 공통 부품
+
+      템플릿(Template), 형틀은 `apidocs`의 핵심 기능입니다. 
+      보다 빠른 endpoint 구성을 위해, `apidocs` 의 편집 모드 중 `endpoint` 탭에서는
+      기존에 만들어 둔 형틀(Template) 목록을 조합해서 새로운 endpoint 다수를 *찍어 낼 수 있는*
+      `mix` 기능을 제공합니다. 
+  endpoint:
+    name: endpoint
+    tagname: endpoint
+    datatypes:
+      - endpoint
+      - request
+      - response
+      - request._path
+      - type_constraint
+    request:
+      method: null
+      path: /x/endpoint
+    response:
+      mimetype: null
+      status: null
+    description: >-
+      1대1 대응 요청-응답 쌍
+
+      문제가 없다면, (요청 옵션에 따라 결정되는) 단일 API 엔드포인트는 단 하나의 응답을 반환해야 합니다.
+      따라서 `apidocs`는 엔드포인트 정의를 단일 요청과 그에 상응하는 단일 응답의 한 쌍으로 가정합니다.
+      오류, 혹은 내부 처리에 따라 응답 형식이 달라지는 경우, 요청 경로 패턴(`/*beta*/` 예정)을 통해
+      별도의 `enpoint entity`로 정의할 수 있습니다.
+  patterns:
+    name: patterns
+    tagname: util.patterns
+    datatypes:
+      - _.naming
+      - _.description
+      - liner
+      - items
+      - _.object_item
+      - _.array_item
+      - _.enum_item
+      - request._path
+      - type_constraint
+    request:
+      method: null
+      path: /x/util
+    response:
+      mimetype: null
+      status: null
+    description: >-
+      활용 문자열 형식 패턴
+
+      - `naming` (`datatype`.name, `template`.name 활용) 
+      - `description`  
+      - `Liner(라이너)` (`project` - license, links, terms, contributors property) 
+      - `Items(아이템)`
+        - : `object_item(객체아이템)` (object.`items`, request.queries, http.headers, http.cookies)
+        - : `array_item(배열아이템)` (array.`items`)
+        - : `enum_item(나열아이템)` (enum.`items`)
+      - `request.path(요청경로)` (endpoint.request.path)
+      - `http.body(HTTP 내용)` (`template`의 경우 타입제한(TypeConstraints), 기타 request.body, response.body)
+  beta:
+    name: beta
+    tagname: futuer.beta
+    datatypes: []
+    request:
+      method: null
+      path: /z/beta
+    response:
+      mimetype: null
+      status: null
+    description: >-
+      Beta(2024년 연내) 목표 업데이트 기능
+
+      현재 (2024년 7월) 버전은 알파 초안(alpha draft) 상태입니다. 
+      앞으로 당분간은 버그 수정과 주요 리팩토링, 핵심 기능을 추가하려 합니다.
+
+      &nbsp;
+
+      `dxnlab`의 우선순위 정책에 따라, `apidocs`에서 ***초안 (draft)*** 꼬리표를 떼려면 1-2개월의 추가 작업이 필요할 것으로 예상됩니다.
+      물론 버그 수정, 기능 업데이트는 지속됩니다. 자세한 수정 마일스톤은 이슈보드를 참고 바랍니다.
+      `apidocs`의 프로젝트 우선순위는 향후 시장 반향에 따라 조정할 예정입니다. 만관부!
+
+  futuer:
+    name: futuer
+    tagname: futuer
+    datatypes: []
+    request:
+      method: POST
+      path: /z/future
+    response:
+      mimetype: null
+      status: null
+    description: >-
+      정식출시(2025년 또는 그 이후) 목표 업데이트 기능
+
+      오늘의 `apidocs`는 그저 첫 걸음일 뿐, 아직도 가야 할 길이 많습니다.
+      미구현인 기능은 물론이고 아직 구상 단계에 있는 기능도 많습니다.
+      그만큼 앞으로 고쳐 나갈 것, 추가할 것들이 꽤 많이 있겠지요.
+      
+      &nbsp;
+
+      목표는 느슨하게 그러나 꾸준히 가져가려 합니다.
+      여러분의 관심, 그리고 향후 dxnlab의 발전이 더 빠른 발전의 열쇠가 되어 줄 것으로 믿습니다.
+entities:
+  - templates:
+      - core
+      - _foundation.get
+    description: >-
+      문서(document) 보기
+
+      문서를 보기 위한 방법입니다:
+      - **보기 모드:** `/view` 다른 모드 화면에서 우측 상단의 눈 모양 아이콘을 클릭하면 보기모드로 이동합니다.
+      - **embed 모드:** 현재 내용을 바탕으로 embed HTML 문서를 만들 수 있습니다.
+        메뉴의 ***File > embedding...*** 을 클릭.
+      - **데이터 다운로드** 데이터만 다운로드 받아서 raw file 형태로 보고, 수정하거나 embed mode 내용을 바꿀 수 있습니다.
+        메뉴의 ***File > save/download*** (또는 우측 상단 다운로드 아이콘) 클릭.
+    request:
+      description: HTTP 요청(Request)
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: GET
+      path: /x/
+      queries:
+        location: uri
+        timestamp: timestamp
+    response:
+      description: HTTP 응답(Response)
+      headers:
+        - ''
+      cookies: {}
+      body: document
+      mimetype: application/json
+      status: 200
+  - templates:
+      - core
+      - _foundation.create
+    description: >-
+      문서(Document)의 작성
+
+      문서를 작성하는 방법입니다:
+      - 바닥부터 새로: 메뉴의 ***File > clear new*** 클릭
+      - 외부 URL에서 가져오기 : 메뉴의 ***File > open/import ...*** 클릭
+      - raw yaml/json 내용 가져오기: 편집 모드(edit mode) 하단의 탭 항목 중, 
+        가장 오른쪽 ***txt*** 탭을 클릭해서 이동합니다. 
+        텍스트 영역 내에 내용을 입력합니다. 
+        내용은 (입력창 좌측 상단 버튼에 따라) YAML/JSON 형식을 허용하며, 
+        위 아래 각각의 "SYNC" 버튼 클릭 또는 화면 전환시 (intersect false) 자동으로 적용됩니다.
+    request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: POST
+      path: /x/
+      queries: {}
+    response:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: document
+      mimetype: application/json
+      status: 200
+  - templates:
+      - core
+      - _foundation.update
+    description: >-
+      문서(Document)의 편집
+
+      - **project**: project meta data info
+
+      - **datatypes**: edit data types at this section. beware, left-side
+      datatypes tab is multi-selectable, multi-editable.
+
+      - **endpoints**: edit endpoint/entities here. Mix & match templates to
+      run. It will be last place to run.
+
+      - **templates**: "templates", are - as its name suggest - are data
+      fragment which used in common. The component can be hierarchical
+      inherited, and/or mix and combined.
+    request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: PUT
+      path: /x/
+      queries: {}
+    response:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: document
+      mimetype: application/json
+      status: 200
+  - templates:
+      - datatype
+      - _foundation.list
+    description: >-
+      List datatypes
+
+      At the bottom of `edit` mode, 5 tabs are presented. `datatypes` mode is
+      second of the tabs. Or, selecting any of `datatypes` left-side panel
+      (shown on `datatypes`, `endpoints` tabs) will move over tabs.
+
+
+      &nbsp;
+
+
+      The side panel is multi-selectable, not like `templates` panel at the
+      opposite side. Since `datatypes` are concreate component of the content
+      but `templates` are rather abstract building blocks, **datatypes are
+      multi-selectable and multi-updatable**. Clicking datatype with `ctrl` or
+      `shift` key held, the selection will be toggled.
+
+
+      Editor form at the middle shows the data. When it's multi-selected, only
+      fields has value in common are enabled to edit. Which implies, one can
+      alternate every `object (dict)` into `array` at a single update, however
+      can NOT update a `string` type and `number` type into `boolean` at once.
+    request:
+      description: ''
+      headers: []
+      cookies: {}
+      body: null
+      method: GET
+      path: /x/datatype
+      queries: {}
+    response:
+      description: ''
+      headers: []
+      cookies: {}
+      body: datatype
+      mimetype: application/json
+      status: 200
+  - templates:
+      - datatype
+      - _foundation.create
+    description: >-
+      Create datatypes
+
+      datatype names are ***unique identifier*** among the project. Take advance
+      <namespace> prefix to avoid overlapping.
+
+
+      1. create at edit mode - `datatypes` tab:
+       - deselect any datatype from left-side panel `datatypes`
+       - multiline `names`, common basistype form will be presented
+       - put names (seperated by newline) to create, then click "SAVE" button at the right hand side of the form.
+      2. create at `datatypes` side panel
+       - place a name at `search & create` field.
+       - press `ctrl+enter` to create the type by the name. basistype set default `object`.
+    request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: datatype
+      method: POST
+      path: /x/datatype
+      queries: {}
+    response:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: datatype
+      mimetype: application/json
+      status: 200
+  - templates:
+      - datatype
+      - _foundation.get
+    description: >-
+      Get a single datatype
+
+      On edit mode, section `datatypes` and/or `endpoints`, left-hand side panel
+      `datatypes` is a place that can select to read/get datatype(s).
+
+
+      &nbsp; 
+
+
+      Single click will toggle a single datatype selection and, `ctrl+click` or
+      `shift+click` will multi select toggle the datatypes.
+
+
+
+      However, editor pane in the middle of `datatypes` tab section, will show
+      selected datatype(s)'s properties.
+
+      Refer (c)Apple itunes property editor on multi-item selection, only
+      properties in common can be set by the setting.
+    request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: GET
+      path: /x/datatype/<datatype_name>
+      queries: {}
+    response:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: datatype
+      mimetype: application/json
+      status: 200
+  - templates:
+      - datatype
+      - _foundation.update
+    description: Edit datatypes
+    request:
+      description: ''
+      headers: []
+      cookies: {}
+      body: null
+      method: PUT
+      path: /x/datatype
+      queries: {}
+    response:
+      description: ''
+      headers: []
+      cookies: {}
+      body: datatype
+      mimetype: application/json
+      status: 200
+  - templates:
+      - template
+      - _foundation.list
+    description: List templates
+    request:
+      description: ''
+      headers: []
+      cookies: {}
+      body: null
+      method: GET
+      path: /x/template
+      queries: {}
+    response:
+      description: ''
+      headers: []
+      cookies: {}
+      body: template
+      mimetype: application/json
+      status: 200
+  - templates:
+      - template
+      - _foundation.get
+    description: Get a single template
+    request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: GET
+      path: /x/template/<template_name>
+      queries: {}
+    response:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: template
+      mimetype: application/json
+      status: 200
+  - templates:
+      - template
+      - _foundation.create
+    description: Create templates
+    request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: POST
+      path: /x/template
+      queries: {}
+    response:
+      description: ''
+      headers: []
+      cookies: {}
+      body: template
+      mimetype: application/json
+      status: 200
+  - templates:
+      - template
+      - _foundation.update
+    description: Edit templates
+    request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: PUT
+      path: /x/template
+      queries: {}
+    response:
+      description: ''
+      headers: []
+      cookies: {}
+      body: template
+      mimetype: application/json
+      status: 200
+  - templates:
+      - endpoint
+      - _foundation.list
+    description: List endpoints
+    request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: GET
+      path: /x/endpoint
+      queries: {}
+    response:
+      description: ''
+      headers: []
+      cookies: {}
+      body: endpoint
+      mimetype: application/json
+      status: 200
+  - templates:
+      - endpoint
+      - _foundation.get
+    description: Get a single endpoint
+    request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: GET
+      path: /x/endpoint
+      queries:
+        index: number
+    response:
+      description: ''
+      headers: []
+      cookies: {}
+      body: endpoint
+      mimetype: application/json
+      status: 200
+  - templates:
+      - endpoint
+      - _foundation.create
+      - template
+    description: >-
+      Create endpoints.
+
+      At edit mode, `endpoints` section, simply click `+` button top-right side
+      of the panel will append a single (blank) endpoint.
+
+
+      &nbsp;
+
+
+      Try `Mix` button instead. At `Mix` button, it will show a dialog that can
+      select sequences of templates. After selecting templates at each stage, it
+      will adds **combinatorial** (cartesian - cross product) numbers of
+      endpoints at once. Normally, there might be a tag-named datatype template
+      for each migration type, plus CRUD (corresponding, _foundattion
+      `create`/`list`&`get`/`update`/`delete` by order) will be set.
+    request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: POST
+      path: /x/endpoint
+      queries:
+        mix: array
+    response:
+      description: ''
+      headers: []
+      cookies: {}
+      body: endpoint
+      mimetype: application/json
+      status: 200
+  - templates:
+      - endpoint
+      - _foundation.update
+    description: Edit endpoints
+    request:
+      description: ''
+      headers: []
+      cookies: {}
+      body: null
+      method: PUT
+      path: /x/endpoint
+      queries: {}
+    response:
+      description: ''
+      headers: []
+      cookies: {}
+      body: endpoint
+      mimetype: application/json
+      status: 200
+  - templates:
+      - null
+      - beta
+    description: |-
+      static usage guide screen
+      Build (static) kickstart guide screen to follow
+    request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: POST
+      path: /y/alpha/guide
+      queries: {}
+    response:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: string
+      mimetype: application/json
+      status: 200
+  - templates:
+      - null
+      - beta
+    description: >-
+      body type suggestion
+
+      From `template` body constraints + `template` related datatypes, suggest
+      prior candidates to set endpoint request-response body type
+    request:
+      description: ''
+      headers: []
+      cookies: {}
+      body: null
+      method: POST
+      path: /y/alpha/body
+      queries: {}
+    response:
+      description: ''
+      headers: []
+      cookies: {}
+      body: object
+      mimetype: application/json
+      status: 200
+  - templates:
+      - null
+      - beta
+    description: |-
+      datatype inheritance
+      Derive a child datatype feature, will automatically contains parent-items
+    request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: POST
+      path: /y/alpha/type_inherit
+      queries: {}
+    response:
+      description: ''
+      headers: []
+      cookies: {}
+      body: object
+      mimetype: application/json
+      status: 200
+  - templates:
+      - null
+      - beta
+    description: show history log screen
+    request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: POST
+      path: /y/alpha/history
+      queries: {}
+    response:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: string
+      mimetype: application/json
+      status: 200
+  - templates:
+      - null
+      - beta
+    description: |-
+      document specification screen
+      create document specification screen
+    request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: GET
+      path: /y/beta/spec
+      queries: {}
+    response:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: document
+      mimetype: application/html
+      status: 200
+  - templates:
+      - null
+      - beta
+    description: |-
+      export to swagger
+      export document to swagger format
+    request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: POST
+      path: /y/beta/swagger
+      queries: {}
+    response:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: document
+      mimetype: application/json
+      status: 200
+  - templates:
+      - null
+      - beta
+    description: request path pattern match
+    request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: GET
+      path: /y/beta/path_pattern
+      queries:
+        pathname: string
+    response:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: request
+      mimetype: application/json
+      status: 200
+  - templates:
+      - futuer
+    description: >-
+      datatype defaults, evaluation, examples
+
+      Add features to datatype models, currently disabled `defaults`,
+      `evaluation`, `examples` to work.
+    request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: GET
+      path: /z/future/datatype
+      queries: {}
+    response:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: datatype
+      mimetype: application/json
+      status: 200
+  - templates:
+      - futuer
+      - _foundation.get
+    description: >-
+      Cache current editing
+
+      make concurrent working data be cached within session storage, to achieve
+      seamless user experience
+    request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: GET
+      path: /z/future/cache
+      queries: {}
+    response:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: document
+      mimetype: application/json
+      status: 200
+  - templates:
+      - futuer
+      - _foundation.delete
+    description: |-
+      sync repository accounts
+      targetting:
+      - github
+      - mercurial
+      - aws/azure/gcp IAM
+
+      to sync & run with external repositories
+    request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: POST
+      path: /z/future/iam
+      queries: {}
+    response:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: string
+      mimetype: application/json
+      status: 200
+  - templates:
+      - null
+      - futuer
+    description: |-
+      quick build endpoints from datatype
+      datatype to build template, then mix CRUD right away to fasten the process
+    request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: GET
+      path: /z/future/quick
+      queries: {}
+    response:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: time
+      mimetype: application/json
+      status: 200
+  - templates:
+      - null
+      - futuer
+    description: >-
+      API explorer
+
+      Advancing `fetch`
+      [https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API),
+      test API explorer feature from viewer / embeddings.
+    request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: GET
+      path: /z/future/explore
+      queries: {}
+    response:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: object
+      mimetype: application/json
+      status: 200
+  - templates:
+      - null
+      - futuer
+    description: |-
+      embedding option
+      make embedding rich with multiple options, i.e.:
+      - viewer ***theme*** and its ***style options***
+      - show/hide ***viewer sections***
+    request:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: null
+      method: GET
+      path: /z/future/embed
+      queries: {}
+    response:
+      description: ''
+      headers:
+        - ''
+      cookies: {}
+      body: document
+      mimetype: application/json
+      status: 200
+timestamp: 1721380124977

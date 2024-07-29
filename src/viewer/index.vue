@@ -28,21 +28,28 @@ export default {
     documentView,
     emptyView,
   },
-  onMounted() {
+  mounted() {
+    this.initialize(this.location);
   },
   methods: {
-    scrolls(e) {
-    },
     moment(timestamp) {
       return (new Date(timestamp)).toLocaleString();
     },
     ...mapActions(useProjectStore, [
+      'initialize',
       'caches',
       'revoke',
       'loads',
       'saves',
       'recovers',
     ]),
+  },
+  props: {
+    location: {
+      type: String,
+      required: false,
+      default: null,
+    },
   },
   computed: {
     info_bindings() {

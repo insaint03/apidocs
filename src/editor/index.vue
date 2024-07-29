@@ -21,16 +21,24 @@ export default {
     
   },
   mounted() {
-    this.revoke();
+    this.initialize(this.location);
   },
   methods: {
     ...mapActions(useProjectStore, [
+      'initialize',
       'caches',
       'revoke',
       'loads',
       'saves',
       'recovers',
     ]),
+  },
+  props: {
+    location: {
+      type: String,
+      required: false,
+      default: null,
+    },
   },
   computed: {
     ...mapState(useProjectStore, [
