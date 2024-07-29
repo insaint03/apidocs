@@ -15,7 +15,7 @@
     <!-- by tag definition -->
     <v-list-subheader>by tag</v-list-subheader>
     <v-list-item v-for="tmpl in tags" :key="`toc.tag-${tmpl.tagname}`"
-      value="tag" :color="$thx.color.tag"
+      :value="tmpl.tagname" :color="$thx.color.tag"
       @click="opens(`_tag.${tmpl.tagname}`)"
       :title="tmpl.tagname" :subtitle="tmpl.summary"
       :href="`#/tag/${tmpl.tagname}/`"
