@@ -94,9 +94,9 @@ export default {
     tags: Array,
     pathname: String,
     method: String,
-    status: String,
-    request: Request,
-    response: Response,
+    status: {type: [String, Number], default: 200},
+    request: Object,
+    response: Object,
     responses: Object,
   },
   data() {

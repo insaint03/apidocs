@@ -44,6 +44,11 @@ export default {
   watch: {
   },
   props: {
+    init_tab: {
+      type: String,
+      required: false,
+      default: tab_defaults,
+    },
   },
   computed: {
     show_datatype_tab() {
@@ -76,7 +81,7 @@ export default {
   data() {
     return {
       editTabs:tabs.editTabs,
-      tab:tab_defaults,
+      tab: this.init_tab,
       nav_left: false,
       nav_right: false,
 

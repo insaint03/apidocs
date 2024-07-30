@@ -85,10 +85,13 @@ export default {
     init_values() {
       this.items = this.values.items;
     },
-    changes() {
+    async changes() {
       this.$emit('change', this.items);
       this.focused = false;
-      this.update_items(this.items);
+      await this.update_items(this.items);
+
+      // update current items
+      this.items = this.values.items;
     },
     ...mapActions(useDatatypeStore, [
       'findtype',

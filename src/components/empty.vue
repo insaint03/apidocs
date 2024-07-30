@@ -13,7 +13,8 @@
         <v-col>
           <v-list elevation="1" color="primary">
             <v-list-item title="start new" subtitle="start new project" prepend-icon="mdi-new-box" @click="clears" />
-            <v-list-item active title="open apidocs" subtitle="see apidocs example document" @click="load_guide" prepend-icon="mdi-information-box" />
+            <v-list-item active title="Guide Example" subtitle="see apidocs example document" href="./?view=guide.example.en" prepend-icon="mdi-information-box" />
+            <v-list-item active title="가이드 예제" subtitle="한국어 가이드 샘플이 나왔습니다" href="./?view=guide.example.ko" prepend-icon="mdi-information-box" />
             <v-list-item title="import" subtitle="import from external link" prepend-icon="mdi-import" @click="import_dialog=true" />
           </v-list>
         </v-col>

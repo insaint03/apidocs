@@ -5,7 +5,9 @@ import editorScreen from '@/editor/index.vue'
 import gtm from '@/gtm.js'
 // import explorerScreen from '@/views/explorerView.vue'
 
-const load_props = ({query})=>({location: query.d});
+const load_props = ({query})=>({
+  location: query.d,
+});
 
 const routes = [
   {name: 'index', path: '/', component: editorScreen, props: load_props},
@@ -32,6 +34,16 @@ const router = createRouter({
   // history: createWebHashHistory(),
   history: createWebHistory(),
   routes,
+});
+router.beforeEach((to, from, next)=>{
+  // let path = to.path;
+  if(to.query.view) {
+    return next({path: '/view', query: {d: to.query.view}});
+  } else if(to.query.edit) {
+    return next({path: '/edit', query: {d: to.query.edit}});
+  } else {
+    return next();
+  }
 });
 router.beforeResolve = async (to)=>{
   gtm.push('pageview', {page: to.path});

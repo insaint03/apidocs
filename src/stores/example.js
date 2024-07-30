@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { useProjectStore } from "./project";
 
 export const useExampleStore = defineStore('example', {
     state() {
@@ -28,7 +29,16 @@ export const useExampleStore = defineStore('example', {
                     desc: 'A toDo example with multiple entities and templates',
                     disabled: true,
                 }
-            ]
+            ],
+            guide: {
+                en: import.meta.env.VITE_GUIDE_LOCATION,
+                ko: import.meta.env.VITE_GUIDE_LOCATION_KO,
+            },
+            presets: [
+                {title: 'Guide Example', d: 'guide.example.en'},
+                {title: '가이드 예제', d: 'guide.example.ko'},
+            ],
+            project: useProjectStore(),
         }
     },
 });

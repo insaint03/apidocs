@@ -1,6 +1,6 @@
 <template>
   <v-main app>
-    <edit-view v-if="project_ready" />
+    <edit-view v-if="project_ready" :init_tab="tab" />
     <empty-view v-else />
   </v-main>
 </template>
@@ -39,6 +39,10 @@ export default {
       required: false,
       default: null,
     },
+    tab: {
+      type: String,
+      required: false,
+    }
   },
   computed: {
     ...mapState(useProjectStore, [

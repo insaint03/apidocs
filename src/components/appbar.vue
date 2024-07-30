@@ -123,6 +123,7 @@ export default {
     
     ...mapState(useProjectStore, [
       'location',
+      // 'progress',
     ]),
   },
   data() {

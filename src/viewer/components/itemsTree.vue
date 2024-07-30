@@ -56,7 +56,7 @@ export default {
     },
   },
   props: {
-    root: String,
+    root: {type: [String, Object]},
   },
   computed: {
     datatype() {
