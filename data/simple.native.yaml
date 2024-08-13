@@ -10,6 +10,22 @@ project:
   license: (MIT) MIT License <https://opensource.org/licenses/MIT>
   contributors:
     - (owner) John Doe <>
+  history:
+    - version: 0.0.1
+      date: 2019-01-01
+      items: 
+        - (add) something <link>
+        - (change) something <link>
+    - version: 0.1.0
+      date: 2019-01-02
+      items: 
+        - (add) foo <linkx>
+        - (edit) bar <link>
+    - version: 1.0.0
+      date: 2019-01-03
+      items: 
+        - (add) baz <link>
+        - (edit) qux <link>
   keywords:
     - example
 datatypes:

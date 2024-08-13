@@ -58,6 +58,23 @@ const themes = {
                 terms: 'mdi-file-document-outline',
                 privacy: 'mdi-file-document-outline',
                 other: 'mdi-file-document-outline',
+            },
+            history: {
+                add: 'mdi-plus-circle',
+                append: 'mdi-plus-circle',
+                plus: 'mdi-plus-circle',
+                create: 'mdi-plus-circle',
+                feature: 'mdi-tools',
+                update: 'mdi-update',
+                upgrade: 'mdi-arrow-up-bold',
+                fix: 'mdi-wrench',
+                change: 'mdi-update',
+                modify: 'mdi-update',
+                remove: 'mdi-minus-circle',
+                delete: 'mdi-minus-circle',
+                minus: 'mdi-minus-circle',
+                sunset: 'mdi-weather-sunset-down',
+                deprecated: 'mdi-minus-circle',
             }
         },
         field: {

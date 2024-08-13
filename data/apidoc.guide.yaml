@@ -2,7 +2,34 @@ location: ''
 project:
   name: apidoc
   version: 0.4.a.draft
-  history: []
+  history:
+    - version: 0.0.1
+      date: 2024-03-15
+      items:
+        - (add) project initiated
+    - version: 0.0.2
+      date: 2024-03-22
+      items:
+        - (update) prototype reshaped
+    - version: 0.0.3
+      date: 2024-06-11
+      items:
+        - (update) viewer-oriented version reshaped
+    - version: 0.0.4.a.draft
+      date: 2024-08-13
+      items:
+        - (update) editor reshaped
+        - (update) viewer reshaped
+        - (add) liner components
+        - (add) items components
+        - (add) body type constraints
+        - (new) subalpha published. 2024.06.28.
+        - (feature) download feature ready
+        - (feature) embedding feature ready
+        - (feature) raw text gets/sets ready
+        - (new) alpha draft published. 2024.07.23.
+        - (add) Korean document prepared
+        - (feature) version history dialog ready
   links:
     - >-
       (github) github <https://github.com/insaint03/apidocs|repository,

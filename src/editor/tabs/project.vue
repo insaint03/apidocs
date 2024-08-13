@@ -41,7 +41,7 @@
         </v-col>
         <v-col md="6" sm="12">
           <!-- TODO: document history -->
-          <history-field :project="project" />
+          <history-field v-model="project.history" v-model:version="project.version" />
         </v-col>
       </v-row>
     </v-card-text>

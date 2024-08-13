@@ -3,7 +3,8 @@ import Serializable from "./serializable";
 
 export default class MultiLiner extends Serializable {
     constructor(value=[]) {
-        super(value);
+        super();
+        this.value = value;
     }
 
     get value() {

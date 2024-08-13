@@ -2,7 +2,34 @@ location: ''
 project:
   name: apidoc
   version: 0.4.a.draft
-  history: []
+  history:
+      - version: 0.0.1
+        date: 2024-03-15
+        items:
+          - (add) 프로젝트 개시
+      - version: 0.0.2
+        date: 2024-03-22
+        items:
+          - (update) 프로토타입 구조 변경
+      - version: 0.0.3
+        date: 2024-06-11
+        items:
+          - (update) 보기모드 중심 구조 변경
+      - version: 0.0.4.a.draft
+        date: 2024-08-13
+        items:
+          - (update) 편집모드 재구성
+          - (update) 보기모드 재구성
+          - (add) 라이너 liner 요소 추가
+          - (add) 아이템 items 요소 추가
+          - (add) body type constraints
+          - (new) subalpha 테스트. 2024.06.28.
+          - (feature) 다운로드 기능 발행
+          - (feature) 임베딩 기능 발행
+          - (feature) 텍스트 입력창 추가
+          - (new) alpha draft 발행. 2024.07.23.
+          - (add) 한국어 가이드 샘플 추가
+          - (feature) 버전 히스토리 기능 발행
   links:
     - >-
       (github) github <https://github.com/insaint03/apidocs|repository,

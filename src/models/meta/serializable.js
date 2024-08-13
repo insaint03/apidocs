@@ -11,7 +11,7 @@ export default class Serializable {
         }
 
 
-        this._raw = values
+        this._raw = (values||[])
             .filter((el)=>el!=null)
             .map((el)=>(typeof(el)==='object'?objSerializer(el):el))
             .filter((el)=>el!=null);
