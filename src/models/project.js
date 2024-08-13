@@ -96,7 +96,11 @@ export default class Project extends Descriptable {
             name: this.name,
             // description: this.description,
             version: this.version,
-            history: this.history,
+            history: this.history.map(({version, date, items})=>({
+                version,
+                date: date.toISOString ? date.toISOString() : date,
+                items: items.value,
+            })),
             links: this.links,
             license: this.license_text,
             contributors: this.contributors,

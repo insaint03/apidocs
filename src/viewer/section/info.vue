@@ -25,7 +25,7 @@
             <v-divider v-if="0<li" />
             <liner-list-group :label="lkey" :items="litems" :icons="$thx.icon[lkey]" />
           </template>
-          <template v-if="project.history ">
+          <template v-if="project.history && 0<project.history.length">
             <v-divider />
             <v-list-item append-icon="mdi-chevron-right" @click="show_history=true">
               <template #prepend>
