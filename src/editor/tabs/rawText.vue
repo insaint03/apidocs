@@ -11,7 +11,7 @@
       <v-spacer />
       <v-toolbar-items>
         <!-- update if dirty -->
-        <v-btn text readonly @click="load_update" :disabled="!dirty">
+        <v-btn text @click="load_update" :disabled="!dirty">
           <v-icon>mdi-sync</v-icon>
         </v-btn>
       </v-toolbar-items>

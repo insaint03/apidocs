@@ -2,7 +2,6 @@ import Descriptable from './descriptable';
 // import Patterns from './patterns'
 
 import Name from './meta/name';
-import Liner from './meta/liner';
 import SingleLiner from './meta/singleLiner';
 import MultiLiner from './meta/multiLiner';
 import ArrayItems from './meta/arrayItems';
@@ -19,7 +18,12 @@ export default class Project extends Descriptable {
         this._terms = new MultiLiner(terms);
         this._contributors = new MultiLiner(contributors);
         this._keywords = new ArrayItems(keywords);
-        this._history = history || [];
+        this._history = (history||[])
+            .map(({version, date, items})=>({
+            version,
+            date: new Date(date),
+            items: new MultiLiner(items),
+        }))
     }
 
     /* name related fields */
@@ -67,26 +71,25 @@ export default class Project extends Descriptable {
     set keyword_text(value) { this._keywords.value = value.split(/\s*,\s*/g); }
 
 
-    // history contains: version, date, items (single-liner)
-    get history() { return this._history.value || []; }
-    get history_text() {
-        return this.history.map(({version, date, items})=>({
-            version,
-            date,
-            items: (items||[]).map(Liner.serialize),
-        }));
-    }
-    set history(value) { 
-        if(value) {
-            this.history_log(value); 
+    get history() { return this._history || []; }
+    set history(value) {
+        // version current
+        const it = this.history.find(({version})=>version==this.version);
+        // assuming date as today
+        const date = (new Date()).toISOString();
+        // set it or create new
+        if(it) {
+            it.items.value = value;
+            it.date = date;
+        } else {
+            this._history.push({
+                version: this.version,
+                date,
+                items: new MultiLiner(value),
+            });
         }
     }
-    get history_items() {
-        return Object.fromEntries(this.history.map(({version, date, items})=>[
-            version,
-            {version, date, items},
-        ]));
-    }
+
 
     get serialized() {
         return {
@@ -99,31 +102,6 @@ export default class Project extends Descriptable {
             contributors: this.contributors,
             // keywords: this.keywords,
             ...super.serialized,
-        }
-    }
-
-    // history only appends
-    history_log({version, date, items}) { 
-        // single_history: {version:str, date:str(ISO Format), items:array(liners)}
-        version = version || this._version;
-        // find the version item from concurrent history
-        let it = this.history.find((h)=>h.version===version);
-        let created = false;
-        // create a new history if not found
-        if(!it) {
-            it = {version,};
-            created = true;
-        }
-
-        // overwrite the date if needed
-        it.date = date || new Date().toISOString();
-        it.items = (it.items || [])
-            .concat(
-                (items instanceof Array?items:(items||'').split('\n'))
-                .map(Liner.parse));
-        // 
-        if(created) {
-            this._history = this.history.concat([it]);
         }
     }
 }
