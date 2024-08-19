@@ -162,11 +162,6 @@ export const useProjectStore = defineStore('project', {
             sessionStorage.setItem(storage_key, localStorage.getItem(storage_key));
             this.revoke();
         },
-        // set_go_view(location='https://raw.githubusercontent.com/insaint03/apidocs/main/data/apidoc.guide.yaml') {
-        //     return this.loads(location)
-        //         // update to viewmode
-        //         .then(()=>this.$router.push('/view'));
-        // }
         remove_datatypes(...selecteds) {
             selecteds = selecteds || [];
             // remove from models            
@@ -176,6 +171,17 @@ export const useProjectStore = defineStore('project', {
                 delete this.datatypes[name];
             });
 
+        },
+        update_datatypes(key, value, ...names) {
+            this.$patch((state)=>{
+                const targets = names
+                    .map((n)=>this.datatypes[n])
+                    .filter((dt)=>dt!=null);
+                targets.forEach((dt)=>{
+                    dt[key] = value;
+                });
+                state.hasChanged = true;
+            });
         }
     }
 });

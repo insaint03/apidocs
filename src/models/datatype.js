@@ -18,16 +18,12 @@ export default class Datatype extends Descriptable {
         // except for origin generation
         if(name === basistype) {
             this._basistype = null;
-            this._origintype = name;
         } 
         // ordinary cases
         else {
-            let basis = Datatype.find(basistype || Datatype.default_basis, true);
-            this._basistype = basis.name;
-            this._origintype = basis.origintype;
+            this._basistype = basistype;
         }
         this._defaults = null;
-        this._items = null;
         this._migration = null;
     
         Datatype._store.push(this);
@@ -55,8 +51,13 @@ export default class Datatype extends Descriptable {
     get basis() { return Datatype.find(this._basistype || this._origintype); }
     set basis(value) { 
         const _basis = Datatype.find(value.name || value);
+        if(!_basis) { return; }
         this._basistype = _basis.name;
-        this._items = null;
+        // inherits items
+        if(_basis.items!=null && 0<_basis.items.length) { 
+            this.items_raw.value = _basis.items; 
+        }
+
         this._hierarchy = null;
     }
     get basistype() { return this._basistype; }
@@ -289,9 +290,6 @@ export default class Datatype extends Descriptable {
         const comparison = (typeof(name)=='object' 
             ? (name.name || name.toString())
             : name || '').trim();
-        // if(!comparison.trim) {
-        //     console.log('no trim', comparison, typeof(comparison));
-        // }
         const ret = Datatype.all.find((d)=>d.name === comparison);
         if(must && !ret) {
             throw new ValueNotFound(Datatype._type, name);
