@@ -4,10 +4,11 @@
       :label="$props.label || 'properties'"
       :name="$props.name || 'items'"
       v-bind="$thx.field"
+      v-intersect="onIntersect"
       auto-grow
-      @focus="focused=true" @blur="changes"
+      @focus="onFocus" @blur="changes"
     />
-    <div v-show="focused">
+    <div v-show="show_preview">
       <v-divider>preview</v-divider>
       <v-list>
         <v-list-item v-for="(it,ii) in previews" :key="`items-field.${ii}`"
@@ -87,11 +88,19 @@ export default {
     },
     async changes() {
       this.$emit('change', this.items);
-      this.focused = false;
+      this.show_preview = false;
       await this.update_items(this.items);
 
       // update current items
       this.items = this.values.items;
+    },
+    onIntersect() {
+      // console.log('intersect', arguments)
+    },
+    onFocus() {
+      // update items text
+      this.init_values();
+      this.show_preview = true;
     },
     ...mapActions(useDatatypeStore, [
       'findtype',
@@ -179,7 +188,7 @@ export default {
   },
   data() {
     return {
-      focused: false,
+      show_preview: false,
       // value: this.modelValue,
       raw_mode: false, 
       autopush: false,

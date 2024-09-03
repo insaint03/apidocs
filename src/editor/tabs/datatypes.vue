@@ -8,7 +8,7 @@
     </template>
   </tab-header>
   <v-card flat>
-    <v-card-text>
+    <v-card-text :key="`datatype-updated.${last_updated}`">
       <v-form v-if="has_select">
         <v-row>
           <v-col cols="3">
@@ -88,8 +88,10 @@ export default {
     itemsField,
   },
   methods: {
-    changes($ev) {
-      return this.updates($ev.target.name, $ev.target.value);
+    async changes($ev) {
+      const outs = await this.updates($ev.target.name, $ev.target.value);
+      this.last_updated = Date.now();
+      return outs;
     },
     clear(){
       if(window.confirm(`delete ${this.selection.join(', ')}?`)) {
@@ -188,6 +190,7 @@ export default {
   },
   data() {
     return {
+      last_updated: Date.now(),
       menus: [
         { id: 'create', title: 'create_new', callback: function(){ window.alert('new datatype'); }, },
         { id: 'inherit', title:'inherit_new', callback: function(){ window.alert('inherits datatype'); }, },
