@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory, /*, createWebHashHistory */ } from 'vue-router'
 import viewerScreen from '@/viewer/index.vue'
 import editorScreen from '@/editor/index.vue'
+import guideView from '@/views/guide.vue'
+import specView from '@/views/spec.vue'
 // import legacyEditor from '@/views/editorView.legacy.vue'
 import gtm from '@/gtm.js'
 // import explorerScreen from '@/views/explorerView.vue'
@@ -13,22 +15,9 @@ const routes = [
   {name: 'index', path: '/', component: editorScreen, props: load_props},
   {name: 'view', path: '/view', component: viewerScreen, props: load_props},
   {name: 'edit', path: '/edit', component: editorScreen, props: load_props},
+  { name: 'guide', path: '/guide', component: guideView, props: load_props },
+  { name: 'spec', path: '/spec', component: specView, props: load_props }
 ];
-// const routes = Object.entries({
-//   view: viewerScreen,
-//   edit: editorScreen,
-//   // old: legacyEditor,
-//   // 'explorer': '@/views/explorerView.vue',
-// }).map(([name, component])=>({
-//   name,
-//   path: `/${name}`,
-//   component: component,
-// }));
-routes.push({
-  name: 'index',
-  path: '/',
-  component: editorScreen,
-})
 
 const router = createRouter({
   // history: createWebHashHistory(),
@@ -48,4 +37,4 @@ router.beforeEach((to, from, next)=>{
 router.beforeResolve = async (to)=>{
   gtm.push('pageview', {page: to.path});
 };
-export default router
+export default router;
